@@ -55,8 +55,6 @@ router.post(
       // Send params back down
       "client_id", // client
       "redirect_uri", // client.redirect
-      // tried 'code'
-      // token is not supported for some reason https://github.com/oauthjs/node-oauth2-server/blob/master/lib/handlers/authorize-handler.js#L32
       "response_type",
       "grant_type", // authorization_code
       "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
@@ -73,22 +71,19 @@ router.post(
     return next();
     // 3)
   },
-  (req, res, next) => {
-    console.log(" ABOUT TO AUTHORIZE");
-    return oauthServer.authorize({
-      authenticateHandler: {
-        handle: (req) => {
-          DebugControl.log.functionName("Authenticate Handler");
-          DebugControl.log.parameters(
-            Object.keys(req.body).map((k) => ({ name: k, value: req.body[k] }))
-          );
-          return req.body.user;
-        },
+  oauthServer.authorize({
+    authenticateHandler: {
+      handle: (req) => {
+        DebugControl.log.functionName("Authenticate Handler");
+        DebugControl.log.parameters(
+          Object.keys(req.body).map((k) => ({ name: k, value: req.body[k] }))
+        );
+        return req.body.user;
       },
-      allowEmptyState: true,
-      authorizationCodeLifetime: 600, // 10min, default 5 minutes
-    });
-  }
+    },
+    allowEmptyState: true,
+    authorizationCodeLifetime: 600, // 10min, default 5 minutes
+  })
 );
 
 export default router;

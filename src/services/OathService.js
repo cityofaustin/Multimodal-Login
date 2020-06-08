@@ -1,5 +1,5 @@
 import OAuthServer from "express-oauth-server";
-import * as model from "../database/models/Oath";
+import model from "../database/models/Oath";
 
 const oathServer = new OAuthServer({
   debug: true,
