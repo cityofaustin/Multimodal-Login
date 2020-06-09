@@ -5,9 +5,15 @@
   "main": "index.js",
   "scripts": {
     "webpack": "webpack -d --config webpack.config.js",
-    "start": "nodemon --exec npx babel-node src/app.js",
+    "start": "npx babel-node src/app.js",
+    "dev": "nodemon --ignore 'src/static/' --exec 'npm run webpack &&  COMPILER_ENV=server babel-node src/app.js'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build"
+    "prebuild": "rm -rf dist/*",
+    "build": "npm run webpack-production && npm run babel-production",
+    "postbuild": "cp -r src/static dist/static",
+    "webpack-production": "webpack -p",
+    "babel-production": "NODE_ENV=production COMPILER_ENV=server npx babel --out-dir dist src",
+    "build-start": "node dist/app.js"
   },
   "repository": {
     "type": "git",

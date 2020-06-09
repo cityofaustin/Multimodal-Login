@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
@@ -90,6 +91,11 @@ const config = [{
     },
 
     plugins: [
+        new webpack.DefinePlugin({
+            "process.env": {
+                BROWSER: JSON.stringify(true)
+            }
+        }),
         new CleanWebpackPlugin(),
         // create blog,
         new MiniCssExtractPlugin({

@@ -1,9 +1,12 @@
 import React from "react";
 
-// import global from './global.css'
-// import index from './index.css'
-
-// import img from './img.jpg'
+let img;
+// https://stackoverflow.com/a/30355080/6907541
+if (process.env.BROWSER) {
+  require("./login.css");
+  img = require("./img.jpg").default;
+  // console.log(img1);
+}
 
 class Login extends React.Component {
   constructor() {
@@ -12,8 +15,8 @@ class Login extends React.Component {
   }
 
   onFormSubmit = (event) => {
-    // event.preventDefault();
-    // alert('test');
+    event.preventDefault();
+    alert("test");
   };
 
   // onNameChangeHandler = (event) => {
@@ -36,9 +39,9 @@ class Login extends React.Component {
         <div>
           <div>
             <div>
-              <h1>Login</h1>
+              <h1 className="heading">Login</h1>
               <form
-                // onSubmit={this.onFormSubmit}
+                onSubmit={this.onFormSubmit}
                 method="POST"
                 action="/authorize"
               >
@@ -83,6 +86,12 @@ class Login extends React.Component {
 
                 <input type="submit" value="Submit" />
               </form>
+              <img
+                src={"/public/img/f53665075594dc59980862e7e2dca27a.jpg"}
+                width="200"
+                height="200"
+                alt="something"
+              />
               <span>
                 <h5>username1: {this.state.userName1}</h5>
               </span>

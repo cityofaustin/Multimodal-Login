@@ -14,6 +14,8 @@ import path from "path";
 
 common.dbClient = dbClient;
 
+delete process.env.BROWSER;
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
