@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "webpack": "webpack -d --config webpack.config.js",
     "start": "nodemon --exec npx babel-node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build"
@@ -26,6 +27,8 @@
     "express": "^4.17.1",
     "express-oauth-server": "^2.0.0",
     "mongoose": "^5.9.18",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
@@ -39,6 +42,14 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-file-loader": "^2.0.0",
     "babel-plugin-transform-require-ignore": "^0.1.1",
-    "nodemon": "^2.0.2"
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.5.3",
+    "file-loader": "^6.0.0",
+    "html-webpack-plugin": "^4.3.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "nodemon": "^2.0.2",
+    "raw-loader": "^4.0.1",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   }
 }

@@ -10,6 +10,7 @@ import express from "express";
 import common from "./common/common";
 import MongoDbClient from "./database/MongoDbClient";
 import ejs from "ejs";
+import path from "path";
 
 common.dbClient = dbClient;
 
@@ -17,8 +18,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// set the view engine to ejs
+// View engine setup
+app.set("views", path.join(__dirname, 'static', "views"));
 app.set("view engine", "ejs");
+
+// Middleware
+app.use('/public', express.static(path.join(__dirname, 'static', 'public')));
 
 app.use("/", index);
 

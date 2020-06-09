@@ -1,6 +1,7 @@
 import OAuthClientsModel from './OAuthClient';
-import OAuthAuthorizationCodesModel from './OAuthAuthorizationCodesModel';
-import OAuth
+import OAuthAuthorizationCodesModel from './OAuthAuthorizationCode';
+import OAuthTokensModel from './OAuthToken';
+import OAuthUsersModel from './OAuthUser';
 
 const getAccessToken = async (bearerToken) => {
   const oathToken = await OAuthTokensModel.findOne({
@@ -10,14 +11,17 @@ const getAccessToken = async (bearerToken) => {
 };
 
 const getRefreshToken = async (refreshToken) => {
-  // TODO:
-  return {};
-  // return await OAuthTokensModel.findOne({ refreshToken: refreshToken }).lean();
+  return await OAuthTokensModel.findOne({ refreshToken: refreshToken }).lean();
 };
 
 const getAuthorizationCode = async (authorizationCode) => {
-  // TODO:
-  return {};
+  const authCode = await OAuthAuthorizationCodesModel.findOne({
+    authorizationCode,
+  })
+    .populate("client")
+    .populate("user")
+    .lean();
+  return authCode;
 };
 
 const getClient = async (clientId, clientSecret) => {
@@ -28,10 +32,11 @@ const getClient = async (clientId, clientSecret) => {
   return oathClient;
 };
 
-const getUser = async (username) => {
-  return await OAuthUsersModel.findOne({
-    username: username,
+const getUser = async (_id) => {
+  const user = await OAuthUsersModel.findOne({
+    _id
   }).lean();
+  return user;
 };
 
 const saveToken = async (token, client, user) => {
@@ -93,11 +98,11 @@ const saveAuthorizationCode = async (code, client, user) => {
     clientId: client.clientId,
     userId: user._id,
   });
-  const clientSaved = await this.getClient(
+  const clientSaved = await getClient(
     client.clientId,
     client.clientSecret
   );
-  const userSaved = await common.dbClient.getAccountById(user._id);
+  const userSaved = await getUser(user._id);
   authCode.client = clientSaved;
   authCode.user = userSaved;
 
@@ -112,8 +117,10 @@ const saveAuthorizationCode = async (code, client, user) => {
 };
 
 const revokeAuthorizationCode = async (code) => {
-  // TODO:
-  return {};
+  await OAuthAuthorizationCodesModel.deleteMany({
+    authorizationCode: code.authorizationCode,
+  });
+  return true;
 };
 
 export default {
