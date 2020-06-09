@@ -91,6 +91,7 @@ const config = [{
     },
 
     plugins: [
+        // https://stackoverflow.com/a/30355080/6907541
         new webpack.DefinePlugin({
             "process.env": {
                 BROWSER: JSON.stringify(true)

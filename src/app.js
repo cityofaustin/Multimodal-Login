@@ -14,6 +14,7 @@ import path from "path";
 
 common.dbClient = dbClient;
 
+// https://stackoverflow.com/a/30355080/6907541
 delete process.env.BROWSER;
 
 const app = express();
