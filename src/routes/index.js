@@ -15,14 +15,14 @@ const router = express.Router();
 //   res.status(200).render('pages/index', { reactApp: reactComp });
 // });
 
-router.get('/login', async (req, res) => {
+router.get("/login", async (req, res) => {
   let reactComp = renderToString(React.createElement(Login));
-  res.status(200).render('pages/login', { reactApp: reactComp });
+  res.status(200).render("./pages/login", { reactApp: reactComp });
 });
 
-router.get('/register', async (req, res) => {
+router.get("/register", async (req, res) => {
   let reactComp = renderToString(React.createElement(Register));
-  res.status(200).render('pages/register', { reactApp: reactComp });
+  res.status(200).render("pages/register", { reactApp: reactComp });
 });
 
 // TODO: Delete this route
@@ -63,15 +63,16 @@ router.post(
     passwords.push(req.body.password1);
     passwords.push(req.body.password2);
     passwords.push(req.body.password3);
-    
+
     // FIXME: hard coding the other required variables for now.
     // ref: response_type=code&client_id=t1L0EvTYT-H_xU3oNaR0BBYc&redirect_uri=https://www.oauth.com/playground/authorization-code.html&scope=photo+offline_access&state=fhhD2qGTUbCvDALY
-    req.body.client_id='t1L0EvTYT-H_xU3oNaR0BBYc';
-    req.body.response_type='code';
-    req.body.redirect_uri='http://localhost:3001';
-    req.body.scope='';
-    req.body.state=''; // TODO: generated randomly from the client I think
+    req.body.client_id = "t1L0EvTYT-H_xU3oNaR0BBYc";
+    req.body.response_type = "code";
+    req.body.redirect_uri = "http://localhost:3001";
+    req.body.scope = "";
+    req.body.state = ""; // TODO: generated randomly from the client
 
+    // const accountMatched = true;
     const accountMatched = await common.dbClient.getAccountByCredentials(
       usernames,
       passwords
@@ -115,15 +116,22 @@ router.post(
   })
 );
 
-router.post('/token', (req,res,next) => {
-  DebugControl.log.flow('Token')
-  next()
-}, oauthServer.token({
-  requireClientAuthentication: { // whether client needs to provide client_secret
-    'authorization_code': false,
-    accessTokenLifetime: 3600, // 1hr, default 1 hour
-    refreshTokenLifetime: 1209600 // 2wk, default 2 weeks
+router.post(
+  "/token",
+  (req, res, next) => {
+    DebugControl.log.flow("Token");
+    console.log(" POST TO TOKEN ");
+    console.log(res.body);
+    next();
   },
-}));  // Sends back token
+  oauthServer.token({
+    requireClientAuthentication: {
+      // whether client needs to provide client_secret
+      authorization_code: false,
+      accessTokenLifetime: 3600, // 1hr, default 1 hour
+      refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
+    },
+  })
+); // Sends back token
 
 export default router;

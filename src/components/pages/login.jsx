@@ -19,15 +19,17 @@ class Login extends React.Component {
   componentWillMount() {
     if (process.env.BROWSER) {
       setTimeout(() => {
-        document.getElementById("splash").style.display = "none";
-        document.getElementById("main").style.display = "block";
+        document.getElementById("splash").style.animation = "fadeout 2s";
+        document.getElementById("splash").style.opacity = 0;
+        document.getElementById("main").style.animation = "fadein 2s";
+        document.getElementById("main").style.opacity = 1;
       }, 2000);
     }
   }
 
   onFormSubmit = (event) => {
-    event.preventDefault();
-    alert("test");
+    // event.preventDefault();
+    // alert("test");
   };
 
   handleInputChange = (e) => {
@@ -52,14 +54,14 @@ class Login extends React.Component {
           <LogoSvg />
         </div>
 
-        <main id="main" style={{ display: "none" }}>
+        <main id="main" style={{ position: 'absolute', top: 0, opacity: 0 }}>
           <div>
             <div>
               <div>
-                <DeleteSvg />
+                {/* <DeleteSvg /> */}
                 <h1 className="heading">Login</h1>
                 <form
-                  onSubmit={this.onFormSubmit}
+                  // onSubmit={this.onFormSubmit}
                   method="POST"
                   action="/authorize"
                 >
