@@ -73,6 +73,18 @@ const config = [
             },
           ],
         },
+        {
+          test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+          use: [
+            {
+              loader: "file-loader",
+              options: {
+                name: "[name].[ext]",
+                outputPath: "/public/fonts",
+              },
+            },
+          ],
+        },
         // {
         //   test: /\.svg$/,
         //   use: [
@@ -111,11 +123,10 @@ const config = [
         },
       }),
       new CleanWebpackPlugin(),
-      // create blog,
-      new MiniCssExtractPlugin({
-        filename: production ? "css/[contentHash].css" : "css/[id].css",
-        chunkFilename: production ? "css/[contentHash].css" : "css/[id].css",
-      }),
+      // new MiniCssExtractPlugin({
+      //   filename: production ? "css/[contentHash].css" : "css/[id].css",
+      //   chunkFilename: production ? "css/[contentHash].css" : "css/[id].css",
+      // }),
       // Ejs pages
       ...generateHtml(pages),
     ],

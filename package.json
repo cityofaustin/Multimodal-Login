@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "webpack": "webpack -d --config webpack.config.js",
+    "webpack": "webpack --mode development --config webpack.config.js",
+    "webpack:watch": "webpack --mode development --config webpack.config.js --watch",
     "start": "npx babel-node src/app.js",
     "dev": "nodemon --ignore 'src/static/' --exec 'npm run webpack &&  COMPILER_ENV=server babel-node src/app.js'",
     "test": "echo \"Error: no test specified\" && exit 1",
