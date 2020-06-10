@@ -18,15 +18,16 @@ common.dbClient = dbClient;
 delete process.env.BROWSER;
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // View engine setup
-app.set("views", path.join(__dirname, 'static', "views"));
+app.set("views", path.join(__dirname, "static", "views"));
 app.set("view engine", "ejs");
 
 // Middleware
-app.use('/public', express.static(path.join(__dirname, 'static', 'public')));
+app.use("/public", express.static(path.join(__dirname, "static", "public")));
 
 app.use("/", index);
 

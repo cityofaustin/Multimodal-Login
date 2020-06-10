@@ -15,8 +15,8 @@ class Login extends React.Component {
   }
 
   onFormSubmit = (event) => {
-    event.preventDefault();
-    alert("test");
+    // event.preventDefault();
+    // alert("test");
   };
 
   // onNameChangeHandler = (event) => {
@@ -41,7 +41,7 @@ class Login extends React.Component {
             <div>
               <h1 className="heading">Login</h1>
               <form
-                onSubmit={this.onFormSubmit}
+                // onSubmit={this.onFormSubmit}
                 method="POST"
                 action="/authorize"
               >

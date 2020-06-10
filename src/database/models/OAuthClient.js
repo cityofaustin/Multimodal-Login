@@ -9,4 +9,4 @@ const OAuthClientSchema = new mongoose.Schema({
 
 const OAuthClient = mongoose.model("OAuthClient", OAuthClientSchema);
 
-export default OAuthClient;
+module.exports = OAuthClient;

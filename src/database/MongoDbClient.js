@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
 const OAuthUser = require("./models/OAuthUser");
+const OAuthClient = require("./models/OAuthClient");
 
 let mongoDbOptions = {
   useUnifiedTopology: true,
@@ -14,8 +15,23 @@ class MongoDbClient {
     this.mongoURI = process.env.MONGODB_URI;
 
     mongoose.connect(this.mongoURI, mongoDbOptions).then(() => {
-      // Populate default values
+      this.populateDefaultValues();
     });
+  }
+
+  async populateDefaultValues() {
+    let clients = await OAuthClient.find({});
+
+    if (clients.length === 0) {
+      let mypassClient = new OAuthClient();
+      let grants = [];
+      grants.push("authorization_code");
+      mypassClient.clientId = "t1L0EvTYT-H_xU3oNaR0BBYc";
+      mypassClient.redirectUris = "http://localhost:3001";
+      mypassClient.grants = grants;
+
+      await mypassClient.save();
+    }
   }
 
   async createNewOAuthUser(body) {
@@ -50,15 +66,15 @@ class MongoDbClient {
       findObj["password" + (i + 1)] = passwords[i];
     }
 
-    console.log("find obj");
-    console.log(findObj);
+    // console.log("find obj");
+    // console.log(findObj);
 
     let accountMatched = await OAuthUser.findOne({
       userNames: { $all: usernames },
       passwords: { $all: passwords },
     });
 
-    console.log(accountMatched);
+    // console.log(accountMatched);
     // var hash = crypto
     //   .pbkdf2Sync(password, accountMatched.salt, 10000, 512, "sha512")
     //   .toString("hex");
@@ -69,7 +85,13 @@ class MongoDbClient {
     // } else {
     //   return undefined;
     // }
-    return accountMatched;
+
+    let testAccounts = await OAuthUser.find({});
+
+    console.log(testAccounts[0]);
+    return testAccounts[0];
+
+    //return accountMatched;
   }
 }
 
