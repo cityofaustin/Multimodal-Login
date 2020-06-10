@@ -3,9 +3,9 @@ import common from "../common/common";
 import DebugControl from "../util/debug";
 import oauthServer from "../services/OathService";
 import { renderToString } from "react-dom/server"
-import Login from "../pages/login";
+import Login from "../components/pages/login";
 // import Index from "../pages/index";
-import Register from "../pages/register";
+import Register from "../components/pages/register";
 import React from "react";
 
 const router = express.Router();

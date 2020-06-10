@@ -43,6 +43,6 @@ if (process.env.COMPILER_ENV === 'server') {
   )
 }
 
-const addConfigs = { ignore: ["./src/static/"] }
+const addConfigs = { }
 
 module.exports = { plugins, presets, ...addConfigs }
