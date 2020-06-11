@@ -151,7 +151,9 @@ class Login extends React.Component {
                 id="redirect_url"
                 name="redirect_url"
                 type="hidden"
-                value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
+                value="http://mypass-atx.s3-website.us-east-2.amazonaws.com"
+                // TODO: get https setup for auth service if pointing to https
+                // value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
               />
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />

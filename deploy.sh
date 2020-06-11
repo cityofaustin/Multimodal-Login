@@ -12,6 +12,6 @@ npm install
 npm run build
 
 forever stop 0
-forever start -c "npm start" ./
+forever start -c "node ./dist/app.js" ./
 
 echo ~~FINISHED~~
