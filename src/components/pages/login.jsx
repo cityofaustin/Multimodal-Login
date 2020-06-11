@@ -127,7 +127,7 @@ class Login extends React.Component {
                 id="redirect_url"
                 name="redirect_url"
                 type="hidden"
-                value="http://localhost:3001"
+                value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
               />
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />
