@@ -19,6 +19,6 @@ npm install --production
 
 forever stop 0
 # NOTE: going to run manually to test it first.
-# forever start -c "node app.js" ./
+forever start -c "node app.js" ./
 
 echo ~~FINISHED~~
