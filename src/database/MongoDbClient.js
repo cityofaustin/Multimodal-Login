@@ -91,9 +91,6 @@ class MongoDbClient {
   }
 
   async getAccountByCredentials(usernames, passwords) {
-    const findObj = {};
-
-    // let  = 1;
     let neededMatches = 1;
     let authMatches = 0;
     let authorized = false;
