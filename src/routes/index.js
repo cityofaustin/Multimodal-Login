@@ -9,7 +9,9 @@ import React from "react";
 
 const router = express.Router();
 
-router.get("/users/username/:username/matched", async (req, res) => {
+router
+  .route("/users/username/:username/matched")
+  .get(async (req, res) => {
   const userName = req.params.username;
   let user = await common.dbClient.findUserByUserName(userName);
   if(user) {
@@ -17,6 +19,12 @@ router.get("/users/username/:username/matched", async (req, res) => {
   } else {
     return res.json({ matched: false });
   }
+});
+
+// TODO: Delete this route
+router.get("/users", async (req, res) => {
+  let allUsers = await common.dbClient.getAllAuthAccounts();
+  return res.json({ users: allUsers });
 });
 
 router.get("/login", async (req, res) => {
