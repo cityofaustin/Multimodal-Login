@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const OAuthUser = require("./models/OAuthUser");
-const OAuthClient = require("./models/OAuthClient");
+import OAuthUser from "./models/OAuthUser";
+import OAuthClient from "./models/OAuthClient";
 
 let mongoDbOptions = {
   useUnifiedTopology: true,
@@ -57,6 +57,14 @@ class MongoDbClient {
   async getAllAuthAccounts() {
     const authUsers = await OAuthUser.find({});
     return authUsers;
+  }
+
+  async findUserByUserName(userName) {
+    let user = await OAuthUser.findOne({
+      userNames: { $in: userName }
+    })
+
+    return user;
   }
 
   async getAccountByCredentials(usernames, passwords) {

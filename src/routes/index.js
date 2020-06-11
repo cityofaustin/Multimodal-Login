@@ -10,10 +10,15 @@ import React from "react";
 
 const router = express.Router();
 
-// router.get("/", (req, res) => {
-//   let reactComp = renderToString(React.createElement(Index));
-//   res.status(200).render('pages/index', { reactApp: reactComp });
-// });
+router.get("/users/username/:username/matched", async (req, res) => {
+  const userName = req.params.username;
+  let user = await common.dbClient.findUserByUserName(userName);
+  if(user) {
+    return res.json({ matched: true });
+  } else {
+    return res.json({ matched: false });
+  }
+});
 
 router.get("/login", async (req, res) => {
   let reactComp = renderToString(React.createElement(Login));

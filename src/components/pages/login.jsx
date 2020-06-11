@@ -1,5 +1,4 @@
-import React, { Fragment, createElement } from "react";
-// import DeleteSvg from "../delete-svg";
+import React, { Fragment } from "react";
 import LogoSvg from "../logo-svg";
 import ContactSvg from "../contact-svg";
 
@@ -9,25 +8,43 @@ if (process.env.BROWSER) {
   require("../global.scss");
   require("./login.scss");
   img = require("../../img/img.jpg").default;
-  const img2 = require("../../img/delete.svg").default;
 }
 
 class Login extends React.Component {
   constructor() {
     super();
-    this.state = { userName1: "1", password1: "1" };
+    this.state = {
+      userName1: "",
+      password1: "",
+      hasFoundUser: false,
+      findUserError: "",
+    };
   }
 
   componentDidMount() {
     if (process.env.BROWSER) {
       setTimeout(() => {
-        document.getElementById("splash").style.animation = "fadeout 2s";
+        document.getElementById("splash").style.animation = "fadeout 1s";
         document.getElementById("splash").style.opacity = 0;
-        document.getElementById("main").style.animation = "fadein 2s";
+        document.getElementById("main").style.animation = "fadein 1s";
         document.getElementById("main").style.opacity = 1;
       }, 1000);
     }
   }
+
+  findUser = async () => {
+    const { userName1 } = { ...this.state };
+    let { findUserError, hasFoundUser } = { ...this.state };
+    const httpResponse = await fetch(`/users/username/${userName1}/matched`);
+    const response = await httpResponse.json();
+    if (response.matched) {
+      findUserError = "";
+      hasFoundUser = true;
+    } else {
+      findUserError = "No account found with that username";
+    }
+    this.setState({ findUserError, hasFoundUser });
+  };
 
   onFormSubmit = (event) => {
     // event.preventDefault();
@@ -41,6 +58,7 @@ class Login extends React.Component {
   };
 
   renderUsernamePrompt() {
+    const { userName1, findUserError } = { ...this.state };
     return (
       <div className="username-container">
         <div className="section">
@@ -50,9 +68,21 @@ class Login extends React.Component {
             <ContactSvg />
             <div className="username">Username</div>
             <div className="prompt">Please enter your username below...</div>
-            <input className="username-input" type="text" placeholder="..." />
-            <div className="error"></div>
-            <input className="find-user" type="button" value="Find me" />
+            <input
+              className="username-input"
+              name="userName1"
+              type="text"
+              placeholder="..."
+              value={userName1}
+              onChange={this.handleInputChange}
+            />
+            <div className="error">{findUserError}</div>
+            <input
+              className="find-user"
+              type="button"
+              value="Find me"
+              onClick={this.findUser}
+            />
             <div className="forgot">Forgot your username?</div>
           </div>
         </div>
@@ -60,71 +90,52 @@ class Login extends React.Component {
     );
   }
 
-  renderLogin() {
+  renderLoginWithMethods() {
+    const { userName1 } = { ...this.state };
     return (
-      <div>
-        <div>
-          <div>
-            {/* <DeleteSvg /> */}
-            <h1 className="heading">Login</h1>
-            <form
-              // onSubmit={this.onFormSubmit}
-              method="POST"
-              action="/authorize"
-            >
-              <label htmlFor="fname">Username1:</label>
+      <div className="login-container">
+        <div className="section">
+          <div className="title">Choose your login method</div>
+          <div className="subtitle">To access your account</div>
+          <div className="card">
+            <div className="method-title">Method #1</div>
+            <form method="POST" action="/authorize">
               <input
-                type="text"
+                type="hidden"
                 id="userName1"
                 name="userName1"
-                onChange={this.handleInputChange}
-                value={this.state.userName1}
+                value={userName1}
               />
-              <br />
-              <br />
-              <label htmlFor="lname">Password1:</label>
-              <input
-                type="text"
-                id="password1"
-                name="password1"
-                onChange={this.handleInputChange}
-                value={this.state.password1}
-              />
-              <br />
-              <br />
+              <div className="form-input">
+                <label htmlFor="lname">Password1:</label>
+                <input
+                  type="text"
+                  id="password1"
+                  name="password1"
+                  onChange={this.handleInputChange}
+                  value={this.state.password1}
+                />
+              </div>
+              <div className="form-input">
+                <label htmlFor="fname">Username2:</label>
+                <input type="text" id="userName2" name="userName2" />
+              </div>
+              <div className="form-input">
+                <label htmlFor="lname">Password2:</label>
+                <input type="text" id="password2" name="password2" />
+              </div>
+              <div className="form-input">
+                <label htmlFor="fname">Username3:</label>
+                <input type="text" id="userName3" name="userName3" />
+              </div>
 
-              <label htmlFor="fname">Username2:</label>
-              <input type="text" id="userName2" name="userName2" />
-              <br />
-              <br />
-              <label htmlFor="lname">Password2:</label>
-              <input type="text" id="password2" name="password2" />
-              <br />
-              <br />
+              <div className="form-input">
+                <label htmlFor="lname">Password3:</label>
+                <input type="text" id="password3" name="password3" />
+              </div>
 
-              <label htmlFor="fname">Username3:</label>
-              <input type="text" id="userName3" name="userName3" />
-              <br />
-              <br />
-              <label htmlFor="lname">Password3:</label>
-              <input type="text" id="password3" name="password3" />
-              <br />
-              <br />
-
-              <input type="submit" value="Submit" />
+              <input className="login" type="submit" value="Submit" />
             </form>
-            <img
-              src={"/public/img/f53665075594dc59980862e7e2dca27a.jpg"}
-              width="200"
-              height="200"
-              alt="something"
-            />
-            <span>
-              <h5>username1: {this.state.userName1}</h5>
-            </span>
-            <span>
-              <h5>password1: {this.state.password1}</h5>
-            </span>
           </div>
         </div>
       </div>
@@ -132,6 +143,7 @@ class Login extends React.Component {
   }
 
   render() {
+    const { hasFoundUser } = { ...this.state };
     return (
       <Fragment>
         <div
@@ -146,10 +158,9 @@ class Login extends React.Component {
         >
           <LogoSvg />
         </div>
-
         <main id="main" style={{ position: "absolute", top: 0, opacity: 0 }}>
-          {this.renderLogin()}
-          {/* {this.renderUsernamePrompt()} */}
+          {!hasFoundUser && this.renderUsernamePrompt()}
+          {hasFoundUser && this.renderLoginWithMethods()}
         </main>
       </Fragment>
     );
