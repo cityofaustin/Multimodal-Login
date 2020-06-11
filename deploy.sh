@@ -9,6 +9,8 @@ cd multimodal-login
 git pull
 
 npm install
+npm run build
+
 forever stop 0
 forever start -c "npm start" ./
 
