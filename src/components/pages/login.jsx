@@ -134,7 +134,29 @@ class Login extends React.Component {
                 <input type="text" id="password3" name="password3" />
               </div>
 
-              <input className="login" type="submit" value="Submit" />
+              {/* FIXME: should be set from the query string but this works for now. */}
+              <input
+                id="client_id"
+                name="client_id"
+                type="hidden"
+                value="t1L0EvTYT-H_xU3oNaR0BBYc"
+              />
+              <input
+                id="response_type"
+                name="response_type"
+                type="hidden"
+                value="code"
+              />
+              <input
+                id="redirect_url"
+                name="redirect_url"
+                type="hidden"
+                value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
+              />
+              <input id="scope" name="scope" type="hidden" value="" />
+              <input id="state" name="state" type="hidden" value="" />
+
+              <input className="login" type="submit" value="Login" />              
             </form>
           </div>
         </div>

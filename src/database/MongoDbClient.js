@@ -26,17 +26,48 @@ class MongoDbClient {
       let mypassClient = new OAuthClient();
       let grants = [];
       grants.push("authorization_code");
-      mypassClient.clientId = "t1L0EvTYT-H_xU3oNaR0BBYc";
-      mypassClient.redirectUris = "http://localhost:3001";
+      mypassClient.clientId = process.env.CLIENT_ID;
+      mypassClient.redirectUris = process.env.REDIRECT_URI;
       mypassClient.grants = grants;
 
       await mypassClient.save();
     }
+
+    let users = await OAuthUser.find({});
+    if (users.length === 0) {
+      let sally = {
+        userName1: "owner1",
+        password1: "owner1",
+        userName2: "owner2",
+        password2: "owner2",
+        userName3: "owner3",
+        password3: "owner3",
+      };
+
+      let billy = {
+        userName1: "caseworker1",
+        password1: "caseworker1",
+        userName2: "caseworker1",
+        password2: "caseworker1",
+        userName3: "caseworker1",
+        password3: "caseworker1",
+      };
+
+      await this.createNewOAuthUser(sally, "sally-oauth-123");
+      await this.createNewOAuthUser(billy, "billy-oauth-123");
+    }
+
+    console.log("Oauth Server Ready!");
   }
 
-  async createNewOAuthUser(body) {
+  async createNewOAuthUser(body, uuid = undefined) {
     const user = new OAuthUser();
-    user.uuid = uuidv4();
+
+    if (uuid === undefined) {
+      user.oauthId = uuidv4();
+    } else {
+      user.oauthId = uuid;
+    }
 
     user.usernames = [];
     user.passwords = [];
@@ -68,19 +99,26 @@ class MongoDbClient {
   }
 
   async getAccountByCredentials(usernames, passwords) {
-    const findObj = {};
+    let neededMatches = 1;
+    let authMatches = 0;
+    let authorized = false;
+    let accountMatched;
+    let counter = 0;
     for (let i = 0; i < usernames.length; i++) {
-      findObj["userName" + (i + 1)] = usernames[i];
-      findObj["password" + (i + 1)] = passwords[i];
+      counter = i;
+
+      accountMatched = await OAuthUser.findOne({
+        userNames: usernames[i],
+      });
+
+      if (accountMatched && accountMatched.passwords[i] === passwords[i]) {
+        authMatches++;
+        if (authMatches === neededMatches) {
+          authorized = true;
+          break;
+        }
+      }
     }
-
-    // console.log("find obj");
-    // console.log(findObj);
-
-    let accountMatched = await OAuthUser.findOne({
-      userNames: { $all: usernames },
-      passwords: { $all: passwords },
-    });
 
     // console.log(accountMatched);
     // var hash = crypto
@@ -94,12 +132,16 @@ class MongoDbClient {
     //   return undefined;
     // }
 
-    let testAccounts = await OAuthUser.find({});
+    // let testAccounts = await OAuthUser.find({});
 
-    console.log(testAccounts[0]);
-    return testAccounts[0];
+    // console.log(testAccounts[0]);
+    // return testAccounts[0];
 
-    //return accountMatched;
+    if (authorized) {
+      return accountMatched;
+    } else {
+      return undefined;
+    }
   }
 }
 
