@@ -34,6 +34,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.3",
     "express-oauth-server": "^2.0.0",
+    "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.18",
     "react": "^16.12.0",

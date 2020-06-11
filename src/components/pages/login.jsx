@@ -15,7 +15,7 @@ if (process.env.BROWSER) {
 class Login extends React.Component {
   constructor() {
     super();
-    this.state = { userName1: "1", password1: "1" };
+    this.state = { userName1: "owner1", password1: "owner1" };
   }
 
   componentDidMount() {
@@ -66,7 +66,7 @@ class Login extends React.Component {
         <div>
           <div>
             {/* <DeleteSvg /> */}
-            <h1 className="heading">Login</h1>
+            <h1 className="heading">Login!</h1>
             <form
               // onSubmit={this.onFormSubmit}
               method="POST"
@@ -110,6 +110,27 @@ class Login extends React.Component {
               <input type="text" id="password3" name="password3" />
               <br />
               <br />
+
+              <input
+                id="client_id"
+                name="client_id"
+                type="hidden"
+                value="t1L0EvTYT-H_xU3oNaR0BBYc"
+              />
+              <input
+                id="response_type"
+                name="response_type"
+                type="hidden"
+                value="code"
+              />
+              <input
+                id="redirect_url"
+                name="redirect_url"
+                type="hidden"
+                value="http://localhost:3001"
+              />
+              <input id="scope" name="scope" type="hidden" value="" />
+              <input id="state" name="state" type="hidden" value="" />
 
               <input type="submit" value="Submit" />
             </form>

@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 // loginType.type faceId
 // loginType.password 1234
 var OAuthUserSchema = new mongoose.Schema({
-  uuid: { type: String, index: true },
+  oauthId: { type: String, index: true },
   userNames: [String],
   passwords: [String],
 });
