@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
-import LogoSvg from "../logo-svg";
-import ContactSvg from "../contact-svg";
+import LogoSvg from "../svg/logo-svg";
+import ContactSvg from "../svg/contact-svg";
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541

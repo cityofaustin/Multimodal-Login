@@ -2,10 +2,10 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const production = process.env.NODE_ENV === "production";
 
-const pages = ["login", "register"];
+const pages = ["index", "login", "register"];
 
 const generateEntryPoints = (entry) => {
   return entry.reduce((obj, item) => {

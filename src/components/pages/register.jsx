@@ -1,54 +1,85 @@
-import React from "react";
+import React, { Fragment, Component } from "react";
+import LogoSvg from "../svg/logo-svg";
 
-// import global from './global.css'
-// import index from './index.css'
-// import img from './img.jpg'
+// https://stackoverflow.com/a/30355080/6907541
+if (process.env.BROWSER) {
+  require("../global.scss");
+  require("./register.scss");
+}
 
-class Register extends React.Component {
+class Register extends Component {
   constructor() {
     super();
     this.state = {};
   }
 
-  render() {
+  componentDidMount() {
+    if (process.env.BROWSER) {
+      setTimeout(() => {
+        document.getElementById("splash").style.animation = "fadeout 1s";
+        document.getElementById("splash").style.opacity = 0;
+        document.getElementById("main").style.animation = "fadein 1s";
+        document.getElementById("main").style.opacity = 1;
+      }, 1000);
+    }
+  }
+
+  renderRegister() {
     return (
-      <main>
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="jumbotron">
-              <h1>Register</h1>
-              <form method="POST" action="/register">
-                <label for="fname">Username1:</label>
-                <input type="text" id="userName1" name="userName1" />
-                <br />
-                <br />
-                <label for="lname">Password1:</label>
-                <input type="text" id="password1" name="password1" />
-                <br />
-                <br />
-                <label for="fname">Username2:</label>
-                <input type="text" id="userName2" name="userName2" />
-                <br />
-                <br />
-                <label for="lname">Password2:</label>
-                <input type="text" id="password2" name="password2" />
-                <br />
-                <br />
-                <label for="fname">Username2:</label>
-                <input type="text" id="userName3" name="userName3" />
-                <br />
-                <br />
-                <label for="lname">Password3:</label>
-                <input type="text" id="password3" name="password3" />
-                <br />
-                <br />
-                <input type="submit" value="Submit" />
-              </form>
-            </div>
+      <div className="row">
+        <div className="col-sm-12">
+          <div className="jumbotron">
+            <h1>Register</h1>
+            <form method="POST" action="/register">
+              <label htmlFor="fname">Username1:</label>
+              <input type="text" id="userName1" name="userName1" />
+              <br />
+              <br />
+              <label htmlFor="lname">Password1:</label>
+              <input type="text" id="password1" name="password1" />
+              <br />
+              <br />
+              <label htmlFor="fname">Username2:</label>
+              <input type="text" id="userName2" name="userName2" />
+              <br />
+              <br />
+              <label htmlFor="lname">Password2:</label>
+              <input type="text" id="password2" name="password2" />
+              <br />
+              <br />
+              <label htmlFor="fname">Username2:</label>
+              <input type="text" id="userName3" name="userName3" />
+              <br />
+              <br />
+              <label htmlFor="lname">Password3:</label>
+              <input type="text" id="password3" name="password3" />
+              <br />
+              <br />
+              <input type="submit" value="Submit" />
+            </form>
           </div>
         </div>
-      </main>
+      </div>
     );
+  }
+
+  render() {
+    if (process.env.BROWSER) {
+      return (
+        <Fragment>
+          <div id="splash">
+            <LogoSvg />
+          </div>
+          <main id="main">
+            {this.renderRegister()}
+          </main>
+        </Fragment>
+      );
+    } else {
+      return (
+        <Fragment />
+      );
+    }
   }
 }
 
