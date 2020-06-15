@@ -64,8 +64,6 @@ const saveToken = async (token, client, user) => {
   // Can't just chain `lean()` to `save()` as we did with `findOne()` elsewhere. Instead we use `Promise` to resolve the data.
   let saveResult = await accessToken.save();
 
-  // let oauthId = "123";
-
   const accessJWT = jwt.sign(
     {
       sub: user._id, // subject, whom the token refers to
