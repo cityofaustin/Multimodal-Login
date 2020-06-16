@@ -1,28 +1,49 @@
-import React, { Fragment, Component } from "react";
-import LogoSvg from "../svg/logo-svg";
+import React, { Fragment, Component } from 'react';
+import LogoSvg from '../svg/logo-svg';
+import WebCameraShapshot from '../web-camera-shapshot';
+import CognitiveFaceService from '../../services/CognitiveFaceService';
 
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
-  require("../global.scss");
-  require("./register.scss");
+  require('../global.scss');
+  require('./register.scss');
 }
 
 class Register extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      faceRegister: false,
+    };
   }
 
   componentDidMount() {
     if (process.env.BROWSER) {
       setTimeout(() => {
-        document.getElementById("splash").style.animation = "fadeout 1s";
-        document.getElementById("splash").style.opacity = 0;
-        document.getElementById("main").style.animation = "fadein 1s";
-        document.getElementById("main").style.opacity = 1;
+        document.getElementById('splash').style.animation = 'fadeout 1s';
+        document.getElementById('splash').style.opacity = 0;
+        document.getElementById('main').style.animation = 'fadein 1s';
+        document.getElementById('main').style.opacity = 1;
       }, 1000);
     }
   }
+
+  handleSnapshot = async (blob) => {
+    if (blob) {
+      try {
+        // const response = await CognitiveFaceService.detectFromBlob(blob);
+        // console.log(response);
+        // const faceId = response[0].faceId;
+        // TODO:
+        const faceAuthResponse = await CognitiveFaceService.registerFaceToUsername(
+          '',
+          'caseworker1'
+        );
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+  };
 
   renderRegister() {
     return (
@@ -64,21 +85,28 @@ class Register extends Component {
   }
 
   render() {
+    const { faceRegister } = { ...this.state };
     if (process.env.BROWSER) {
       return (
         <Fragment>
           <div id="splash">
             <LogoSvg />
           </div>
-          <main id="main">
-            {this.renderRegister()}
-          </main>
+          <main id="main">{this.renderRegister()}</main>
+          <input
+            type="button"
+            value="Face Register as Billy"
+            onClick={() => {
+              this.setState({ faceRegister: !faceRegister });
+            }}
+          />
+          {faceRegister && (
+            <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
+          )}
         </Fragment>
       );
     } else {
-      return (
-        <Fragment />
-      );
+      return <Fragment />;
     }
   }
 }

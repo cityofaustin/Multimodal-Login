@@ -23,13 +23,13 @@ describe("CognitiveFaceService", () => {
 
   it("verifies that two faces closely match", async() => {
     const response = await CognitiveFaceService.verifyFaceToFace("deb8e7b5-d0e9-4ac1-99c4-3d4c4bc4b209", "1aab37d9-410a-48e1-afca-eb001105a97a");
-    // console.log(JSON.stringify(response));
+    console.log(JSON.stringify(response));
     expect(response.isIdentical).toBeTruthy();
   });
 
   it("verifies that two faces don't match", async() => {
     const response = await CognitiveFaceService.verifyFaceToFace("deb8e7b5-d0e9-4ac1-99c4-3d4c4bc4b209", "87c8e88a-5a2f-48e6-be13-0045f98af6d1");
-    // console.log(JSON.stringify(response));
+    console.log(JSON.stringify(response));
     expect(response.isIdentical).toBeFalsy();
   });
 

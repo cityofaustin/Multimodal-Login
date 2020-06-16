@@ -1,33 +1,36 @@
-import React, { Fragment } from "react";
-import LogoSvg from "../svg/logo-svg";
-import ContactSvg from "../svg/contact-svg";
+import React, { Fragment } from 'react';
+import LogoSvg from '../svg/logo-svg';
+import ContactSvg from '../svg/contact-svg';
+import WebCameraShapshot from '../web-camera-shapshot';
+import CognitiveFaceService from '../../services/CognitiveFaceService';
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
-  require("../global.scss");
-  require("./login.scss");
-  img = require("../../img/img.jpg").default;
+  require('../global.scss');
+  require('./login.scss');
+  img = require('../../img/img.jpg').default;
 }
 
 class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      userName1: "",
-      password1: "",
+      userName1: '',
+      password1: '',
       hasFoundUser: false,
-      findUserError: "",
+      findUserError: '',
+      faceVerify: false,
     };
   }
 
   componentDidMount() {
     if (process.env.BROWSER) {
       setTimeout(() => {
-        document.getElementById("splash").style.animation = "fadeout 1s";
-        document.getElementById("splash").style.opacity = 0;
-        document.getElementById("main").style.animation = "fadein 1s";
-        document.getElementById("main").style.opacity = 1;
+        document.getElementById('splash').style.animation = 'fadeout 1s';
+        document.getElementById('splash').style.opacity = 0;
+        document.getElementById('main').style.animation = 'fadein 1s';
+        document.getElementById('main').style.opacity = 1;
       }, 1000);
     }
   }
@@ -38,10 +41,10 @@ class Login extends React.Component {
     const httpResponse = await fetch(`/users/username/${userName1}/matched`);
     const response = await httpResponse.json();
     if (response.matched) {
-      findUserError = "";
+      findUserError = '';
       hasFoundUser = true;
     } else {
-      findUserError = "No account found with that username";
+      findUserError = 'No account found with that username';
     }
     this.setState({ findUserError, hasFoundUser });
   };
@@ -55,6 +58,23 @@ class Login extends React.Component {
     const { value } = e.target;
     const key = e.target.name;
     this.setState({ [key]: value });
+  };
+
+  handleSnapshot = async (blob) => {
+    if (blob) {
+      try {
+        const response = await CognitiveFaceService.detectFromBlob(blob);
+        console.log(response);
+        const faceId = response[0].faceId;
+        // TODO:
+        const faceAuthResponse = await CognitiveFaceService.verifyFaceToUsername(
+          faceId,
+          'caseworker1'
+        );
+      } catch (err) {
+        console.err(err.message);
+      }
+    }
   };
 
   renderUsernamePrompt() {
@@ -158,7 +178,7 @@ class Login extends React.Component {
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />
 
-              <input className="login" type="submit" value="Login" />              
+              <input className="login" type="submit" value="Login" />
             </form>
           </div>
         </div>
@@ -167,25 +187,37 @@ class Login extends React.Component {
   }
 
   render() {
-    const { hasFoundUser } = { ...this.state };
+    const { hasFoundUser, faceVerify } = { ...this.state };
     return (
       <Fragment>
-        <div
-          id="splash"
-          style={{
-            backgroundColor: "#2362c7",
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+        <Fragment>
+          <div
+            id="splash"
+            style={{
+              backgroundColor: '#2362c7',
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <LogoSvg />
+          </div>
+          <main id="main" style={{ position: 'absolute', top: 0, opacity: 0 }}>
+            {!hasFoundUser && this.renderUsernamePrompt()}
+            {hasFoundUser && this.renderLoginWithMethods()}
+          </main>
+        </Fragment>
+        <input
+          type="button"
+          value="Face Verify as Billy"
+          onClick={() => {
+            this.setState({ faceVerify: !faceVerify });
           }}
-        >
-          <LogoSvg />
-        </div>
-        <main id="main" style={{ position: "absolute", top: 0, opacity: 0 }}>
-          {!hasFoundUser && this.renderUsernamePrompt()}
-          {hasFoundUser && this.renderLoginWithMethods()}
-        </main>
+        />
+        {faceVerify && (
+          <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
+        )}
       </Fragment>
     );
   }
