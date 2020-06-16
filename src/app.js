@@ -18,7 +18,13 @@ common.dbClient = dbClient;
 delete process.env.BROWSER;
 
 const app = express();
-app.use(cors());
+
+if (
+  process.env.ENVIRONMENT === "DEVELOPMENT" ||
+  process.env.ENVIRONMENT === "HEROKU"
+) {
+  app.use(cors());
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
