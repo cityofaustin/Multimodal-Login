@@ -7,6 +7,10 @@ import Index from "../components/pages/index";
 import Login from "../components/pages/login";
 import Register from "../components/pages/register";
 import React from "react";
+import CognitiveFaceService from "../services/CognitiveFaceService";
+import StringUtil from "../util/StringUtil";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -45,6 +49,40 @@ router.get("/register", async (req, res) => {
 router.post("/register", async (req, res) => {
   let newUser = await common.dbClient.createNewOAuthUser(req.body);
   return res.json({ newUser: newUser });
+});
+
+router.post("/verify/face", async(req, res) => {
+  if (
+    req.files === undefined ||
+    req.files === null ||
+    req.files.img === undefined
+  ) {
+    res.status(501).json({
+      error: "Must include a file to upload.",
+    });
+    return;
+  }
+  const file = req.files.img[0] === undefined ? req.files.img : req.files.img[0];
+  const dataBuffer = fs.readFileSync(file.tempFilePath);
+  const response = await CognitiveFaceService.verifyFaceToUsername(dataBuffer, req.body.username);
+  return res.json({ registerFaceResponse: response });
+});
+
+router.post("/register/face", async(req, res) => {
+  if (
+    req.files === undefined ||
+    req.files === null ||
+    req.files.img === undefined
+  ) {
+    res.status(501).json({
+      error: "Must include a file to upload.",
+    });
+    return;
+  }
+  const file = req.files.img[0] === undefined ? req.files.img : req.files.img[0];
+  const dataBuffer = fs.readFileSync(file.tempFilePath);
+  const response = await CognitiveFaceService.registerFaceToUsername(dataBuffer, req.body.username);
+  return res.json({ registerFaceResponse: response });
 });
 
 router.post(

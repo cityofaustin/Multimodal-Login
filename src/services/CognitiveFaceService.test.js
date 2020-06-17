@@ -1,6 +1,7 @@
 import CognitiveFaceService from "./CognitiveFaceService.js";
 import StringUtil from "../util/StringUtil.js";
 import path from "path";
+import { response } from "express";
 
 describe("CognitiveFaceService", () => {
   it("detects faces in the image", async () => {
@@ -33,5 +34,40 @@ describe("CognitiveFaceService", () => {
     expect(response.isIdentical).toBeFalsy();
   });
 
+  it("verifies a face to a username", async() => {
+    const base64Image = await StringUtil.stringFromFile(path.resolve("src", "services", "mocks", "personTwoFaceThree.txt"));
+    const detectionResponse = await CognitiveFaceService.detectFromDataUrl(base64Image);
+    console.log(detectionResponse);
+    const response = await CognitiveFaceService.verifyFaceToUsername(detectionResponse[0].faceId, 'becky');
+    console.log(response);
+    // { isIdentical: true, confidence: 0.96075 }
+  });
+
+  // TODO: turning of until we get db working in unit tests.
+  // it("registers a face to a username", async() => {
+  //   const base64Image = await StringUtil.stringFromFile(path.resolve("src", "services", "mocks", "personTwoFaceOne.txt"));
+  //   const response = await CognitiveFaceService.registerFaceToUsername(base64Image, 'becky');
+  //   console.log(JSON.stringify(response));
+  //   // e.g.     {"persistedFaceId":"759614cb-ed70-4da6-b0d7-a23485c7b4b6"}
+  // }, 10000);
+
+  it("verifies face to username", async() => {
+    const response = await CognitiveFaceService.verifyFaceToUsername('', 'test');
+  });
+
+  it("gets a person group in account", async() => {
+    const response = await CognitiveFaceService.getPersonGroup('mypasstest2');
+    console.log(JSON.stringify(response));
+  });
+
+  it("lists person groups in account", async() => {
+    const response = await CognitiveFaceService.personGroupList();
+    console.log(JSON.stringify(response));
+  }, 10000);
+
+  it("lists person groups persons in account", async() => {
+    const response = await CognitiveFaceService.personGroupPersonList('mypasstest');
+    console.log(response);
+  }, 10000);
 
 });

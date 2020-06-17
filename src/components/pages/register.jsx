@@ -14,6 +14,7 @@ class Register extends Component {
     super();
     this.state = {
       faceRegister: false,
+      userName1: '',
     };
   }
 
@@ -28,17 +29,30 @@ class Register extends Component {
     }
   }
 
+  handleInputChange = (e) => {
+    const { value } = e.target;
+    const key = e.target.name;
+    this.setState({ [key]: value });
+  };
+
   handleSnapshot = async (blob) => {
+    const { userName1 } = {...this.state};
     if (blob) {
       try {
-        // const response = await CognitiveFaceService.detectFromBlob(blob);
-        // console.log(response);
-        // const faceId = response[0].faceId;
-        // TODO:
-        const faceAuthResponse = await CognitiveFaceService.registerFaceToUsername(
-          '',
-          'caseworker1'
-        );
+        const imgFile = new File([blob], 'imgFile.png', {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+        const input = '/register/face';
+        const formdata = new FormData();
+        formdata.append('img', imgFile, 'imgFile');
+        formdata.append('username', userName1);
+        const init = {
+          method: 'POST',
+          body: formdata
+        };
+        const response = await fetch(input, init);
+        console.log(response);
       } catch (err) {
         console.error(err.message);
       }
@@ -53,7 +67,7 @@ class Register extends Component {
             <h1>Register</h1>
             <form method="POST" action="/register">
               <label htmlFor="fname">Username1:</label>
-              <input type="text" id="userName1" name="userName1" />
+              <input type="text" id="userName1" name="userName1" onChange={this.handleInputChange} />
               <br />
               <br />
               <label htmlFor="lname">Password1:</label>

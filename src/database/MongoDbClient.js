@@ -93,8 +93,12 @@ class MongoDbClient {
   async findUserByUserName(userName) {
     let user = await OAuthUser.findOne({
       userNames: { $in: userName }
-    })
+    });
+    return user;
+  }
 
+  async saveUser(user) {
+    await user.save();
     return user;
   }
 

@@ -61,18 +61,25 @@ class Login extends React.Component {
   };
 
   handleSnapshot = async (blob) => {
+    const { userName1 } = {...this.state};
     if (blob) {
       try {
-        const response = await CognitiveFaceService.detectFromBlob(blob);
+        const imgFile = new File([blob], 'imgFile.png', {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+        const input = '/verify/face';
+        const formdata = new FormData();
+        formdata.append('img', imgFile, 'imgFile');
+        formdata.append('username', userName1);
+        const init = {
+          method: 'POST',
+          body: formdata
+        };
+        const response = await fetch(input, init);
         console.log(response);
-        const faceId = response[0].faceId;
-        // TODO:
-        const faceAuthResponse = await CognitiveFaceService.verifyFaceToUsername(
-          faceId,
-          'caseworker1'
-        );
       } catch (err) {
-        console.err(err.message);
+        console.error(err.message);
       }
     }
   };

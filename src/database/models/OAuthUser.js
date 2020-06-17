@@ -7,6 +7,7 @@ var OAuthUserSchema = new mongoose.Schema({
   oauthId: { type: String, index: true },
   userNames: [String],
   passwords: [String],
+  facePersonId: String
 });
 
 const OAuthUser = mongoose.model("OAuthUser", OAuthUserSchema);

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 
+// NOTE: would like to do this/sort of used this as a reference at least for the web camera snapshot:
+// ref: https://aralroca.com/blog/opencv-in-the-web
 // We'll limit the processing size to 200px.
 const maxVideoSize = 200;
 
