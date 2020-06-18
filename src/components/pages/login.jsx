@@ -3,6 +3,7 @@ import LogoSvg from '../svg/logo-svg';
 import ContactSvg from '../svg/contact-svg';
 import WebCameraShapshot from '../web-camera-shapshot';
 import CognitiveFaceService from '../../services/CognitiveFaceService';
+import UrlUtil from '../../util/url-util';
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541
@@ -156,26 +157,23 @@ class Login extends React.Component {
                 />
               </div>
 
-              {/* FIXME: should be set from the query string but this works for now. */}
               <input
                 id="client_id"
                 name="client_id"
                 type="hidden"
-                value="t1L0EvTYT-H_xU3oNaR0BBYc"
+                value={UrlUtil.getQueryVariable("client_id")}
               />
               <input
                 id="response_type"
                 name="response_type"
                 type="hidden"
-                value="code"
+                value={UrlUtil.getQueryVariable("response_type")}
               />
               <input
                 id="redirect_url"
                 name="redirect_url"
                 type="hidden"
-                // value="http://mypass-atx.s3-website.us-east-2.amazonaws.com"
-                // TODO: get https setup for auth service if pointing to https
-                value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
+                value={UrlUtil.getQueryVariable("redirect_url")}
               />
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />

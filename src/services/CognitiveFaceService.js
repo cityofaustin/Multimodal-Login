@@ -119,7 +119,11 @@ class CognitiveFaceService {
   static async verifyFaceToUsername(dataBuffer, username) {
     const faceId = (await this.detectFromBlob(dataBuffer))[0].faceId;
     let matchedUser = await common.dbClient.findUserByUserName(username);
-    return await this.verifyFaceToPerson(faceId, matchedUser.facePersonId, this.personGroupId);
+    return await this.verifyFaceToPerson(
+      faceId,
+      matchedUser.facePersonId,
+      this.personGroupId
+    );
   }
 
   // Verify whether one face matches person
@@ -155,36 +159,37 @@ class CognitiveFaceService {
     }
     // FIXME: need to store a face cognition personId in the oathuser object.
     // TODO grab oathusers by username
-    let matchedUser = await common.dbClient.findUserByUserName(username);
-    console.log(matchedUser);
-    let personId = matchedUser.facePersonId; // 03773eb6-138f-449a-913a-7f8515451adf fictional becky person
-    const personGroupPersonResponse = await this.getPersonGroupPerson(
-      this.personGroupId,
-      personId
-    );
-    console.log(personGroupPersonResponse);
-    if (!personGroupPersonResponse.error) { // delete it so we can add a person again.
-      await this.deletePersonGroupPerson(personGroupPersonResponse.personId);
-    }
+    // let matchedUser = await common.dbClient.findUserByUserName(username);
+    // console.log(matchedUser);
+    // let personId = matchedUser.facePersonId; // 03773eb6-138f-449a-913a-7f8515451adf fictional becky person
+    // const personGroupPersonResponse = await this.getPersonGroupPerson(
+    // this.personGroupId,
+    // personId
+    // );
+    // console.log(personGroupPersonResponse);
+    // if (!personGroupPersonResponse.error) { // delete it so we can add a person again.
+    // await this.deletePersonGroupPerson(personGroupPersonResponse.personId);
+    // }
     // if(personGroupPersonResponse.error && personGroupPersonResponse.error.code === 'PersonNotFound') {
+    console.log({personGroupId: this.personGroupId, username});
     const responseCreatePersonGroupPerson = await this.createPersonGroupPerson(
       this.personGroupId,
       username
     );
     console.log('---created new user');
     console.log(responseCreatePersonGroupPerson);
-    personId = responseCreatePersonGroupPerson.personId;
-    matchedUser.facePersonId = personId;
-    matchedUser = await common.dbClient.saveUser(matchedUser);
-    console.log('---saved user');
+    const personId = responseCreatePersonGroupPerson.personId;
+    // matchedUser.facePersonId = personId;
+    // matchedUser = await common.dbClient.saveUser(matchedUser);
+    // console.log('---saved user');
     // }
     // create face and associate with username/person
-    const facePersonGroupPersonResponse = await this.addFacePersonGroupPerson(
+    await this.addFacePersonGroupPerson(
       this.personGroupId,
       personId,
       dataBuffer
     );
-    return facePersonGroupPersonResponse;
+    return responseCreatePersonGroupPerson;
   }
 
   // person group create
@@ -253,7 +258,7 @@ class CognitiveFaceService {
         'Ocp-Apim-Subscription-Key': this.subscriptionKey,
       },
       body: JSON.stringify({
-        name: username,
+        name: username.length <= 0 ? 'generic-user' : username,
         userData: 'a registered mypass user',
       }),
     };

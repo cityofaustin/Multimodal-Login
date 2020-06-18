@@ -54,8 +54,15 @@ class MongoDbClient {
         faceTemplate: "caseworker",
       };
 
+      let admin = {
+        username: "admin",
+        password: "admin",
+        faceTemplate: "admin",
+      };
+
       await this.createNewOAuthUser(sally, "sally-oauth-123");
       await this.createNewOAuthUser(billy, "billy-oauth-123");
+      await this.createNewOAuthUser(admin, "admin-oauth-123");
     }
 
     console.log("Oauth Server Ready!");
@@ -111,6 +118,7 @@ class MongoDbClient {
     let user = await OAuthUser.findOne({
       username: userName,
     });
+    return user;
   }
 
   async saveUser(user) {

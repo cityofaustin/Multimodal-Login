@@ -14,7 +14,8 @@ class Register extends Component {
     super();
     this.state = {
       faceRegister: false,
-      userName1: '',
+      username: '',
+      faceTemplate: undefined,
     };
   }
 
@@ -36,7 +37,7 @@ class Register extends Component {
   };
 
   handleSnapshot = async (blob) => {
-    const { userName1 } = {...this.state};
+    const { username } = { ...this.state };
     if (blob) {
       try {
         const imgFile = new File([blob], 'imgFile.png', {
@@ -46,13 +47,15 @@ class Register extends Component {
         const input = '/register/face';
         const formdata = new FormData();
         formdata.append('img', imgFile, 'imgFile');
-        formdata.append('username', userName1);
+        formdata.append('username', username);
         const init = {
           method: 'POST',
-          body: formdata
+          body: formdata,
         };
         const response = await fetch(input, init);
+        const responseJSON = await response.json();
         console.log(response);
+        this.setState({ faceTemplate: responseJSON.registerFaceResponse.personId, faceRegister: false });
       } catch (err) {
         console.error(err.message);
       }
@@ -60,22 +63,44 @@ class Register extends Component {
   };
 
   renderRegister() {
+    const { faceRegister, faceTemplate } = { ...this.state };
     return (
       <div className="row">
         <div className="col-sm-12">
           <div className="jumbotron">
             <h1>Register</h1>
             <form method="POST" action="/register">
-              <label htmlFor="fname">Username:</label>
-              <input type="text" id="username" name="username" onChange={this.handleInputChange} />
+              <label htmlFor="fname">Username: </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                onChange={this.handleInputChange}
+              />
               <br />
               <br />
-              <label htmlFor="lname">Password:</label>
+              <label htmlFor="lname">Password: </label>
               <input type="text" id="password" name="password" />
               <br />
               <br />
-              <label htmlFor="lname">Face Template Guid</label>
-              <input type="text" id="faceTemplate" name="faceTemplate" />
+              <label htmlFor="lname">Face Recognition: {faceTemplate} </label>
+              <input
+                type="button"
+                value="Setup"
+                onClick={() => {
+                  this.setState({ faceRegister: !faceRegister });
+                }}
+              />
+              {faceRegister && (
+                <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
+              )}
+              <input
+                type="hidden"
+                id="faceTemplate"
+                name="faceTemplate"
+                value={faceTemplate}
+              />
+              <br />
               <br />
               <input type="submit" value="Submit" />
             </form>
@@ -86,7 +111,6 @@ class Register extends Component {
   }
 
   render() {
-    const { faceRegister } = { ...this.state };
     if (process.env.BROWSER) {
       return (
         <Fragment>
@@ -94,16 +118,6 @@ class Register extends Component {
             <LogoSvg />
           </div>
           <main id="main">{this.renderRegister()}</main>
-          <input
-            type="button"
-            value="Face Register as Billy"
-            onClick={() => {
-              this.setState({ faceRegister: !faceRegister });
-            }}
-          />
-          {faceRegister && (
-            <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
-          )}
         </Fragment>
       );
     } else {
