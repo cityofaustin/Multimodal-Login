@@ -77,6 +77,7 @@ const saveToken = async (token, client, user) => {
       exp: parseInt(token.accessTokenExpiresAt.getTime() / 1000), // expiration time, seconds since unix epoch
       jti: saveResult._id, // jwt id unique identifier for this token
       client_id: clearInterval.clientId,
+      username: user.username,
     },
     process.env.AUTH_SECRET
   );
