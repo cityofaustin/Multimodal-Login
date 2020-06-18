@@ -16,8 +16,9 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      userName1: '',
-      password1: '',
+      username: "",
+      password: "",
+      faceTemplate: "",
       hasFoundUser: false,
       findUserError: '',
       faceVerify: false,
@@ -36,9 +37,9 @@ class Login extends React.Component {
   }
 
   findUser = async () => {
-    const { userName1 } = { ...this.state };
+    const { username } = { ...this.state };
     let { findUserError, hasFoundUser } = { ...this.state };
-    const httpResponse = await fetch(`/users/username/${userName1}/matched`);
+    const httpResponse = await fetch(`/users/username/${username}/matched`);
     const response = await httpResponse.json();
     if (response.matched) {
       findUserError = '';
@@ -85,7 +86,7 @@ class Login extends React.Component {
   };
 
   renderUsernamePrompt() {
-    const { userName1, findUserError } = { ...this.state };
+    const { username, findUserError } = { ...this.state };
     return (
       <div className="username-container">
         <div className="section">
@@ -97,10 +98,10 @@ class Login extends React.Component {
             <div className="prompt">Please enter your username below...</div>
             <input
               className="username-input"
-              name="userName1"
+              name="username"
               type="text"
               placeholder="..."
-              value={userName1}
+              value={username}
               onChange={this.handleInputChange}
             />
             <div className="error">{findUserError}</div>
@@ -118,7 +119,7 @@ class Login extends React.Component {
   }
 
   renderLoginWithMethods() {
-    const { userName1 } = { ...this.state };
+    const { username } = { ...this.state };
     return (
       <div className="login-container">
         <div className="section">
@@ -129,36 +130,30 @@ class Login extends React.Component {
             <form method="POST" action="/authorize">
               <input
                 type="hidden"
-                id="userName1"
-                name="userName1"
-                value={userName1}
+                id="username"
+                name="username"
+                value={username}
               />
               <div className="form-input">
-                <label htmlFor="lname">Password1:</label>
+                <label htmlFor="lname">Password:</label>
                 <input
                   type="text"
-                  id="password1"
-                  name="password1"
+                  id="password"
+                  name="password"
                   onChange={this.handleInputChange}
-                  value={this.state.password1}
+                  value={this.state.password}
                 />
-              </div>
-              <div className="form-input">
-                <label htmlFor="fname">Username2:</label>
-                <input type="text" id="userName2" name="userName2" />
-              </div>
-              <div className="form-input">
-                <label htmlFor="lname">Password2:</label>
-                <input type="text" id="password2" name="password2" />
-              </div>
-              <div className="form-input">
-                <label htmlFor="fname">Username3:</label>
-                <input type="text" id="userName3" name="userName3" />
               </div>
 
               <div className="form-input">
-                <label htmlFor="lname">Password3:</label>
-                <input type="text" id="password3" name="password3" />
+                <label htmlFor="lname">Face Template:</label>
+                <input
+                  type="text"
+                  id="faceTemplate"
+                  name="faceTemplate"
+                  onChange={this.handleInputChange}
+                  value={this.state.faceTemplate}
+                />
               </div>
 
               {/* FIXME: should be set from the query string but this works for now. */}
@@ -178,9 +173,9 @@ class Login extends React.Component {
                 id="redirect_url"
                 name="redirect_url"
                 type="hidden"
-                value="http://mypass-atx.s3-website.us-east-2.amazonaws.com"
+                // value="http://mypass-atx.s3-website.us-east-2.amazonaws.com"
                 // TODO: get https setup for auth service if pointing to https
-                // value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
+                value="https://mypass-atx.s3.us-east-2.amazonaws.com/index.html"
               />
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />
