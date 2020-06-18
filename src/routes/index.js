@@ -7,15 +7,16 @@ import Index from "../components/pages/index";
 import Login from "../components/pages/login";
 import Register from "../components/pages/register";
 import React from "react";
+import { ConnectionStates } from "mongoose";
+const Schema = require("./middleware/schema");
+const { celebrate } = require("celebrate");
 
 const router = express.Router();
 
-router
-  .route("/users/username/:username/matched")
-  .get(async (req, res) => {
+router.route("/users/username/:username/matched").get(async (req, res) => {
   const userName = req.params.username;
   let user = await common.dbClient.findUserByUserName(userName);
-  if(user) {
+  if (user) {
     return res.json({ matched: true });
   } else {
     return res.json({ matched: false });
@@ -42,30 +43,24 @@ router.get("/register", async (req, res) => {
   res.status(200).render("./pages/register", { reactApp: reactComp });
 });
 
-router.post("/register", async (req, res) => {
-  let newUser = await common.dbClient.createNewOAuthUser(req.body);
-  return res.json({ newUser: newUser });
-});
+router.post(
+  "/register",
+  celebrate({
+    body: Schema.userRegisterSchema,
+  }),
+  async (req, res) => {
+    let newUser = await common.dbClient.createNewOAuthUser(req.body);
+    return res.json({ newUser: newUser });
+  }
+);
 
 router.post(
   "/authorize",
   async (req, res, next) => {
     DebugControl.log.flow("Initial User Authentication");
 
-    const usernames = [];
-    usernames.push(req.body.userName1);
-    usernames.push(req.body.userName2);
-    usernames.push(req.body.userName3);
-
-    const passwords = [];
-    passwords.push(req.body.password1);
-    passwords.push(req.body.password2);
-    passwords.push(req.body.password3);
-
-    // const accountMatched = true;
     const accountMatched = await common.dbClient.getAccountByCredentials(
-      usernames,
-      passwords
+      req.body
     );
 
     if (accountMatched) {
@@ -109,8 +104,6 @@ router.post(
   "/token",
   (req, res, next) => {
     DebugControl.log.flow("Token");
-    console.log(" POST TO TOKEN ");
-    console.log(res.body);
     next();
   },
   oauthServer.token({

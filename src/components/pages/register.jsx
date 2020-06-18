@@ -31,29 +31,16 @@ class Register extends Component {
           <div className="jumbotron">
             <h1>Register</h1>
             <form method="POST" action="/register">
-              <label htmlFor="fname">Username1:</label>
-              <input type="text" id="userName1" name="userName1" />
+              <label htmlFor="fname">Username:</label>
+              <input type="text" id="username" name="username" />
               <br />
               <br />
-              <label htmlFor="lname">Password1:</label>
-              <input type="text" id="password1" name="password1" />
+              <label htmlFor="lname">Password:</label>
+              <input type="text" id="password" name="password" />
               <br />
               <br />
-              <label htmlFor="fname">Username2:</label>
-              <input type="text" id="userName2" name="userName2" />
-              <br />
-              <br />
-              <label htmlFor="lname">Password2:</label>
-              <input type="text" id="password2" name="password2" />
-              <br />
-              <br />
-              <label htmlFor="fname">Username2:</label>
-              <input type="text" id="userName3" name="userName3" />
-              <br />
-              <br />
-              <label htmlFor="lname">Password3:</label>
-              <input type="text" id="password3" name="password3" />
-              <br />
+              <label htmlFor="lname">Face Template Guid</label>
+              <input type="text" id="faceTemplate" name="faceTemplate" />
               <br />
               <input type="submit" value="Submit" />
             </form>
@@ -70,15 +57,11 @@ class Register extends Component {
           <div id="splash">
             <LogoSvg />
           </div>
-          <main id="main">
-            {this.renderRegister()}
-          </main>
+          <main id="main">{this.renderRegister()}</main>
         </Fragment>
       );
     } else {
-      return (
-        <Fragment />
-      );
+      return <Fragment />;
     }
   }
 }

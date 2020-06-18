@@ -3,6 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 
 import OAuthUser from "./models/OAuthUser";
 import OAuthClient from "./models/OAuthClient";
+import LoginTypeBase from "./models/LoginTypeBase";
+import PasswordLoginType from "./models/PasswordLoginType";
+import FaceLoginType from "./models/FaceLoginType";
+
+import crypto from "crypto";
+
+const REQUIRED_PASSWORDS = 1;
 
 let mongoDbOptions = {
   useUnifiedTopology: true,
@@ -36,21 +43,15 @@ class MongoDbClient {
     let users = await OAuthUser.find({});
     if (users.length === 0) {
       let sally = {
-        userName1: "owner1",
-        password1: "owner1",
-        userName2: "owner2",
-        password2: "owner2",
-        userName3: "owner3",
-        password3: "owner3",
+        username: "owner",
+        password: "owner",
+        faceTemplate: "owner",
       };
 
       let billy = {
-        userName1: "caseworker1",
-        password1: "caseworker1",
-        userName2: "caseworker1",
-        password2: "caseworker1",
-        userName3: "caseworker1",
-        password3: "caseworker1",
+        username: "caseworker",
+        password: "caseworker",
+        faceTemplate: "caseworker",
       };
 
       await this.createNewOAuthUser(sally, "sally-oauth-123");
@@ -69,19 +70,35 @@ class MongoDbClient {
       user.oauthId = uuid;
     }
 
-    user.usernames = [];
-    user.passwords = [];
+    user.username = body.username;
+    user.loginTypes = [];
 
-    user.userNames.push(body.userName1);
-    user.passwords.push(body.password1);
+    if (body.password !== undefined) {
+      const passwordLoginType = new PasswordLoginType();
 
-    user.userNames.push(body.userName2);
-    user.passwords.push(body.password2);
+      const saltHash = this.getSecretSaltHash(body.password);
+      passwordLoginType.passwordSalt = saltHash.salt;
+      passwordLoginType.passwordHash = saltHash.hash;
 
-    user.userNames.push(body.userName3);
-    user.passwords.push(body.password3);
+      await passwordLoginType.save();
+
+      user.loginTypes.push(passwordLoginType);
+    }
+
+    if (body.faceTemplate !== undefined) {
+      const faceLoginType = new FaceLoginType();
+
+      const saltHash = this.getSecretSaltHash(body.faceTemplate);
+      faceLoginType.faceGuidSalt = saltHash.salt;
+      faceLoginType.faceGuidHash = saltHash.hash;
+
+      await faceLoginType.save();
+
+      user.loginTypes.push(faceLoginType);
+    }
 
     await user.save();
+
     return user;
   }
 
@@ -92,57 +109,78 @@ class MongoDbClient {
 
   async findUserByUserName(userName) {
     let user = await OAuthUser.findOne({
-      userNames: { $in: userName }
-    })
+      username: userName,
+    });
 
     return user;
   }
 
-  async getAccountByCredentials(usernames, passwords) {
-    let neededMatches = 1;
-    let authMatches = 0;
-    let authorized = false;
-    let accountMatched;
-    let counter = 0;
-    for (let i = 0; i < usernames.length; i++) {
-      counter = i;
+  async getAccountByCredentials(body) {
+    let user = await OAuthUser.findOne({
+      username: body.username,
+    }).populate("loginTypes");
 
-      accountMatched = await OAuthUser.findOne({
-        userNames: usernames[i],
-      });
+    if (user === null || user === undefined) {
+      return undefined;
+    }
 
-      if (accountMatched && accountMatched.passwords[i] === passwords[i]) {
-        authMatches++;
-        if (authMatches === neededMatches) {
-          authorized = true;
-          break;
-        }
+    let successfulLoginPasswords = 0;
+
+    for (let loginType of user.loginTypes) {
+      if (
+        loginType.itemtype === "PasswordLoginType" &&
+        this.validSecret(
+          body.password,
+          loginType.passwordSalt,
+          loginType.passwordHash
+        )
+      ) {
+        successfulLoginPasswords++;
+      }
+
+      if (
+        loginType.itemtype === "FaceLoginType" &&
+        this.validSecret(
+          body.faceTemplate,
+          loginType.faceGuidSalt,
+          loginType.faceGuidHash
+        )
+      ) {
+        successfulLoginPasswords++;
       }
     }
 
-    // console.log(accountMatched);
-    // var hash = crypto
-    //   .pbkdf2Sync(password, accountMatched.salt, 10000, 512, "sha512")
-    //   .toString("hex");
-    // const validPassword = accountMatched.hash === hash;
-
-    // if (accountMatched && password === accountMatched.password) {
-    //   return accountMatched;
-    // } else {
-    //   return undefined;
-    // }
-
-    // let testAccounts = await OAuthUser.find({});
-
-    // console.log(testAccounts[0]);
-    // return testAccounts[0];
-
-    if (authorized) {
-      return accountMatched;
+    if (successfulLoginPasswords >= REQUIRED_PASSWORDS) {
+      return user;
     } else {
       return undefined;
     }
   }
+
+  // Helpers
+  validSecret = function (password, secretSalt, secretHash) {
+    if (
+      password === undefined ||
+      secretHash === undefined ||
+      secretSalt === undefined
+    ) {
+      return false;
+    }
+
+    var hash = crypto
+      .pbkdf2Sync(password, secretSalt, 10000, 512, "sha512")
+      .toString("hex");
+    return secretHash === hash;
+  };
+
+  getSecretSaltHash = function (password) {
+    const salt = crypto.randomBytes(16).toString("hex");
+    const hash = crypto
+      .pbkdf2Sync(password, salt, 10000, 512, "sha512")
+      .toString("hex");
+
+    return { salt: salt, hash: hash };
+  };
 }
 
 module.exports = MongoDbClient;
