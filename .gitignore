@@ -3,3 +3,4 @@
 src/static
 node_modules
 dist
+tmp
