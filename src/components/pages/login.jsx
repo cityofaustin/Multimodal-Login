@@ -17,9 +17,9 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: "",
-      password: "",
-      faceTemplate: "",
+      username: '',
+      password: '',
+      faceTemplate: '',
       hasFoundUser: false,
       findUserError: '',
       faceVerify: false,
@@ -37,7 +37,8 @@ class Login extends React.Component {
     }
   }
 
-  findUser = async () => {
+  findUser = async (e) => {
+    e.preventDefault();
     const { username } = { ...this.state };
     let { findUserError, hasFoundUser } = { ...this.state };
     const httpResponse = await fetch(`/users/username/${username}/matched`);
@@ -51,11 +52,6 @@ class Login extends React.Component {
     this.setState({ findUserError, hasFoundUser });
   };
 
-  onFormSubmit = (event) => {
-    // event.preventDefault();
-    // alert("test");
-  };
-
   handleInputChange = (e) => {
     const { value } = e.target;
     const key = e.target.name;
@@ -63,7 +59,7 @@ class Login extends React.Component {
   };
 
   handleSnapshot = async (blob) => {
-    const { userName1 } = {...this.state};
+    const { userName1 } = { ...this.state };
     if (blob) {
       try {
         const imgFile = new File([blob], 'imgFile.png', {
@@ -76,7 +72,7 @@ class Login extends React.Component {
         formdata.append('username', userName1);
         const init = {
           method: 'POST',
-          body: formdata
+          body: formdata,
         };
         const response = await fetch(input, init);
         console.log(response);
@@ -93,27 +89,24 @@ class Login extends React.Component {
         <div className="section">
           <div className="title">First off</div>
           <div className="subtitle">Help us find your account</div>
-          <div className="card">
-            <ContactSvg />
-            <div className="username">Username</div>
-            <div className="prompt">Please enter your username below...</div>
-            <input
-              className="username-input"
-              name="username"
-              type="text"
-              placeholder="..."
-              value={username}
-              onChange={this.handleInputChange}
-            />
-            <div className="error">{findUserError}</div>
-            <input
-              className="find-user"
-              type="button"
-              value="Find me"
-              onClick={this.findUser}
-            />
-            <div className="forgot">Forgot your username?</div>
-          </div>
+          <form onSubmit={(e) => this.findUser(e)}>
+            <div className="card">
+              <ContactSvg />
+              <div className="username">Username</div>
+              <div className="prompt">Please enter your username below...</div>
+              <input
+                className="username-input"
+                name="username"
+                type="text"
+                placeholder="..."
+                value={username}
+                onChange={this.handleInputChange}
+              />
+              <div className="error">{findUserError}</div>
+              <input className="find-user" type="submit" value="Find me" />
+              <div className="forgot">Forgot your username?</div>
+            </div>
+          </form>
         </div>
       </div>
     );
@@ -161,19 +154,19 @@ class Login extends React.Component {
                 id="client_id"
                 name="client_id"
                 type="hidden"
-                value={UrlUtil.getQueryVariable("client_id")}
+                value={UrlUtil.getQueryVariable('client_id')}
               />
               <input
                 id="response_type"
                 name="response_type"
                 type="hidden"
-                value={UrlUtil.getQueryVariable("response_type")}
+                value={UrlUtil.getQueryVariable('response_type')}
               />
               <input
                 id="redirect_url"
                 name="redirect_url"
                 type="hidden"
-                value={UrlUtil.getQueryVariable("redirect_url")}
+                value={UrlUtil.getQueryVariable('redirect_url')}
               />
               <input id="scope" name="scope" type="hidden" value="" />
               <input id="state" name="state" type="hidden" value="" />
