@@ -7,6 +7,8 @@ import cors from "cors";
 
 import index from "./routes/index";
 import express from "express";
+import fileUpload from "express-fileupload";
+
 import common from "./common/common";
 import MongoDbClient from "./database/MongoDbClient";
 import ejs from "ejs";
@@ -27,6 +29,7 @@ if (
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload({ useTempFiles: true }));
 
 // View engine setup
 app.set("views", path.join(__dirname, "static", "views"));

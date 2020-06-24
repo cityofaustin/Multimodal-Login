@@ -1,21 +1,25 @@
-import express from "express";
-import common from "../common/common";
-import DebugControl from "../util/debug";
-import oauthServer from "../services/OathService";
-import { renderToString } from "react-dom/server";
-import Index from "../components/pages/index";
-import Login from "../components/pages/login";
-import Register from "../components/pages/register";
-import React from "react";
-import { ConnectionStates } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-const Schema = require("./middleware/schema");
-const { celebrate } = require("celebrate");
-const smsUtil = require("../common/smsUtil");
+import express from 'express';
+import common from '../common/common';
+import DebugControl from '../util/debug';
+import oauthServer from '../services/OathService';
+import { renderToString } from 'react-dom/server';
+import Index from '../components/pages/index';
+import Login from '../components/pages/login';
+import Register from '../components/pages/register';
+import React from 'react';
+import CognitiveFaceService from '../services/CognitiveFaceService';
+import StringUtil from '../util/StringUtil';
+import path from 'path';
+import fs from 'fs';
+import { ConnectionStates } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+const Schema = require('./middleware/schema');
+const { celebrate } = require('celebrate');
+const smsUtil = require('../common/smsUtil');
 
 const router = express.Router();
 
-router.route("/users/username/:username/matched").get(async (req, res) => {
+router.route('/users/username/:username/matched').get(async (req, res) => {
   const userName = req.params.username;
   let user = await common.dbClient.findUserByUserName(userName);
   if (user) {
@@ -30,23 +34,23 @@ router.route("/users/username/:username/matched").get(async (req, res) => {
 //   return res.json({ users: allUsers });
 // });
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   let reactComp = renderToString(React.createElement(Index));
-  res.status(200).render("./pages/index", { reactApp: reactComp });
+  res.status(200).render('./pages/index', { reactApp: reactComp });
 });
 
-router.get("/login", async (req, res) => {
+router.get('/login', async (req, res) => {
   let reactComp = renderToString(React.createElement(Login));
-  res.status(200).render("./pages/login", { reactApp: reactComp });
+  res.status(200).render('./pages/login', { reactApp: reactComp });
 });
 
-router.get("/register", async (req, res) => {
+router.get('/register', async (req, res) => {
   let reactComp = renderToString(React.createElement(Login));
-  res.status(200).render("./pages/register", { reactApp: reactComp });
+  res.status(200).render('./pages/register', { reactApp: reactComp });
 });
 
 router.post(
-  "/register",
+  '/register',
   celebrate({
     body: Schema.userRegisterSchema,
   }),
@@ -56,7 +60,7 @@ router.post(
   }
 );
 
-router.post("/request-social-login-code", async (req, res) => {
+router.post('/request-social-login-code', async (req, res) => {
   const user = await common.dbClient.findUserByUserName(req.body.username);
 
   if (user === null || user === undefined) {
@@ -78,8 +82,8 @@ router.post("/request-social-login-code", async (req, res) => {
   const oneTimeCode = getRandomInt(100000, 999999);
   await common.dbClient.addOneTimeCode(user._id, oneTimeCode);
 
-  const send = require("gmail-send")({
-    user: "mypass.austinatx@gmail.com",
+  const send = require('gmail-send')({
+    user: 'mypass.austinatx@gmail.com',
     pass: process.env.MYPASS_GMAIL_PASSWORD,
     to: user.contactEmail,
     subject: `Mypass user ${user.username} is requesting a login code`,
@@ -98,17 +102,17 @@ router.post("/request-social-login-code", async (req, res) => {
   try {
     smsUtil.sendSms(
       `The one time code for user: ${user.username} is ${oneTimeCode}.`,
-      "+1" + user.phoneNumber
+      '+1' + user.phoneNumber
     );
   } catch (err) {
-    console.log("error!");
+    console.log('error!');
     console.log(err);
   }
 
-  return res.json({ msg: "success" });
+  return res.json({ msg: 'success' });
 });
 
-router.get("/provide-social-login-code/:uuid", async (req, res) => {
+router.get('/provide-social-login-code/:uuid', async (req, res) => {
   let uuid = req.params.uuid;
 
   let socialLogin = await common.dbClient.findSocialLoginByUuid(uuid);
@@ -121,8 +125,8 @@ router.get("/provide-social-login-code/:uuid", async (req, res) => {
     oneTimeCode
   );
 
-  const send = require("gmail-send")({
-    user: "mypass.austinatx@gmail.com",
+  const send = require('gmail-send')({
+    user: 'mypass.austinatx@gmail.com',
     pass: process.env.MYPASS_GMAIL_PASSWORD,
     to: user.email,
     subject: `One time login code: ${oneTimeCode}`,
@@ -138,13 +142,55 @@ router.get("/provide-social-login-code/:uuid", async (req, res) => {
     }
   );
 
-  res.status(200).json({ msg: "success" });
+  res.status(200).json({ msg: 'success' });
+});
+
+router.post('/verify/face', async (req, res) => {
+  if (
+    req.files === undefined ||
+    req.files === null ||
+    req.files.img === undefined
+  ) {
+    res.status(501).json({
+      error: 'Must include a file to upload.',
+    });
+    return;
+  }
+  const file =
+    req.files.img[0] === undefined ? req.files.img : req.files.img[0];
+  const dataBuffer = fs.readFileSync(file.tempFilePath);
+  const response = await CognitiveFaceService.verifyFaceToUsername(
+    dataBuffer,
+    req.body.username
+  );
+  return res.json({ registerFaceResponse: response });
+});
+
+router.post('/register/face', async (req, res) => {
+  if (
+    req.files === undefined ||
+    req.files === null ||
+    req.files.img === undefined
+  ) {
+    res.status(501).json({
+      error: 'Must include a file to upload.',
+    });
+    return;
+  }
+  const file =
+    req.files.img[0] === undefined ? req.files.img : req.files.img[0];
+  const dataBuffer = fs.readFileSync(file.tempFilePath);
+  const response = await CognitiveFaceService.registerFaceToUsername(
+    dataBuffer,
+    req.body.username
+  );
+  return res.json({ registerFaceResponse: response });
 });
 
 router.post(
-  "/authorize",
+  '/authorize',
   async (req, res, next) => {
-    DebugControl.log.flow("Initial User Authentication");
+    DebugControl.log.flow('Initial User Authentication');
 
     const accountMatched = await common.dbClient.getAccountByCredentials(
       req.body
@@ -156,26 +202,26 @@ router.post(
     }
 
     const params = [
-      "client_id",
-      "redirect_uri",
-      "response_type",
-      "grant_type",
-      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
-      "scope",
+      'client_id',
+      'redirect_uri',
+      'response_type',
+      'grant_type',
+      'state', // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+      'scope',
     ]
       .map((a) => `${a}=${req.body[a]}`)
-      .join("&");
+      .join('&');
     return res.redirect(`/oauth?success=false&${params}`);
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url
-    DebugControl.log.flow("Authorization");
+    DebugControl.log.flow('Authorization');
     return next();
   },
   oauthServer.authorize({
     authenticateHandler: {
       handle: (req) => {
-        DebugControl.log.functionName("Authenticate Handler");
+        DebugControl.log.functionName('Authenticate Handler');
         DebugControl.log.parameters(
           Object.keys(req.body).map((k) => ({ name: k, value: req.body[k] }))
         );
@@ -188,9 +234,9 @@ router.post(
 );
 
 router.post(
-  "/token",
+  '/token',
   (req, res, next) => {
-    DebugControl.log.flow("Token");
+    DebugControl.log.flow('Token');
     next();
   },
   oauthServer.token({
