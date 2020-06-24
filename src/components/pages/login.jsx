@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import LogoSvg from "../svg/logo-svg";
 import ContactSvg from "../svg/contact-svg";
+import axios from "axios";
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541
@@ -17,8 +18,10 @@ class Login extends React.Component {
       username: "",
       password: "",
       faceTemplate: "",
+      oneTimeCode: "",
       hasFoundUser: false,
       findUserError: "",
+      requestLoginCode: false,
     };
   }
 
@@ -32,6 +35,31 @@ class Login extends React.Component {
       }, 1000);
     }
   }
+
+  requestLoginCode = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append(username, this.state.username);
+
+    let res;
+
+    try {
+      res = await axios.post(
+        "http://localhost:5001/request-social-login-code",
+        { username: this.state.username }
+      );
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
+    }
+
+    console.log(res);
+    let data = await res.data;
+    console.log(data);
+
+    this.setState({ requestLoginCode: true });
+  };
 
   findUser = async () => {
     const { username } = { ...this.state };
@@ -93,12 +121,24 @@ class Login extends React.Component {
 
   renderLoginWithMethods() {
     const { username } = { ...this.state };
+    let oneTimeCodeHidden = "hidden";
+
+    if (this.state.requestLoginCode) {
+      oneTimeCodeHidden = "text";
+    }
     return (
       <div className="login-container">
         <div className="section">
           <div className="title">Choose your login method</div>
           <div className="subtitle">To access your account</div>
           <div className="card">
+            <input
+              className="login"
+              type="submit"
+              value="Request One Time Code"
+              onClick={this.requestLoginCode}
+            />
+
             <div className="method-title">Method #1</div>
             <form method="POST" action="/authorize">
               <input
@@ -126,6 +166,17 @@ class Login extends React.Component {
                   name="faceTemplate"
                   onChange={this.handleInputChange}
                   value={this.state.faceTemplate}
+                />
+              </div>
+
+              <div className="form-input">
+                <label htmlFor="lname">One Time Code:</label>
+                <input
+                  type={oneTimeCodeHidden}
+                  id="oneTimeCode"
+                  name="oneTimeCode"
+                  onChange={this.handleInputChange}
+                  value={this.state.oneTimeCode}
                 />
               </div>
 

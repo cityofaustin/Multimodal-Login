@@ -28,6 +28,8 @@
   "homepage": "https://github.com/cityofaustin/multimodal-login#readme",
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.10.1",
+    "aws-sdk": "^2.702.0",
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "celebrate": "^12.1.1",
     "cors": "^2.8.5",
@@ -37,6 +39,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.3",
     "express-oauth-server": "^2.0.0",
+    "gmail-send": "^1.8.10",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.18",

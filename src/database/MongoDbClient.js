@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import OAuthUser from "./models/OAuthUser";
 import OAuthClient from "./models/OAuthClient";
+import SocialLogin from "./models/SocialLogin";
 import LoginTypeBase from "./models/LoginTypeBase";
 import PasswordLoginType from "./models/PasswordLoginType";
 import FaceLoginType from "./models/FaceLoginType";
@@ -42,16 +43,23 @@ class MongoDbClient {
 
     let users = await OAuthUser.find({});
     if (users.length === 0) {
+      const ownerEmail = "wiyase1364@royandk.com";
+      const caseWorkerEmail = "joxef68600@tmail15.com";
+
       let sally = {
         username: "owner",
         password: "owner",
         faceTemplate: "owner",
+        email: ownerEmail,
+        contactEmail: caseWorkerEmail,
+        phoneNumber: "5555555555",
       };
 
       let billy = {
         username: "caseworker",
         password: "caseworker",
         faceTemplate: "caseworker",
+        email: caseWorkerEmail,
       };
 
       await this.createNewOAuthUser(sally, "sally-oauth-123");
@@ -71,6 +79,10 @@ class MongoDbClient {
     }
 
     user.username = body.username;
+    user.email = body.email;
+    user.contactEmail = body.contactEmail;
+    user.phoneNumber = body.phoneNumber;
+
     user.loginTypes = [];
 
     if (body.password !== undefined) {
@@ -102,6 +114,36 @@ class MongoDbClient {
     return user;
   }
 
+  async createSocialLogin(requestingUserId, providingUserId, uuid) {
+    const socialLogin = new SocialLogin();
+    socialLogin.uuid = uuid;
+    socialLogin.requestingUserId = requestingUserId;
+    socialLogin.providingUserId = providingUserId;
+    socialLogin.timestamp = new Date();
+
+    await socialLogin.save();
+  }
+
+  async findSocialLoginByUuid(uuid) {
+    let socialLogin = await SocialLogin.findOne({
+      uuid: uuid,
+    });
+
+    return socialLogin;
+  }
+
+  async getUserById(id) {
+    const user = await OAuthUser.findById(id);
+    return user;
+  }
+
+  async addOneTimeCode(userId, oneTimeCode) {
+    const user = await OAuthUser.findById(userId);
+    user.oneTimeCode = oneTimeCode;
+    user.oneTimeCodeIssueDate = new Date();
+    await user.save();
+  }
+
   async getAllAuthAccounts() {
     const authUsers = await OAuthUser.find({});
     return authUsers;
@@ -115,6 +157,23 @@ class MongoDbClient {
     return user;
   }
 
+  async findUserByUserName(userName) {
+    let user = await OAuthUser.findOne({
+      username: userName,
+    });
+
+    return user;
+  }
+
+  async findUserByEmail(email) {
+    let user = await OAuthUser.findOne({
+      email: email,
+    });
+
+    return user;
+  }
+
+  // If they are authorized to login
   async getAccountByCredentials(body) {
     let user = await OAuthUser.findOne({
       username: body.username,
@@ -126,8 +185,31 @@ class MongoDbClient {
 
     let successfulLoginPasswords = 0;
 
+    if (
+      user.oneTimeCode !== undefined &&
+      "" + body.oneTimeCode === "" + user.oneTimeCode
+    ) {
+      user.oneTimeCode = undefined;
+      await user.save();
+
+      // TODO: Add timestamp checking
+      // let now = new Date();
+      // let OneDayInSeconds = 86400;
+
+      // if (
+      //   now.getTime() - oneTimeCodeIssueDate.timestamp.getTime() >
+      //   OneDayInSeconds
+      // ) {
+      //   console.log("Expired One Time Code");
+      // } else {
+      //   successfulLoginPasswords++;
+      // }
+      successfulLoginPasswords++;
+    }
+
     for (let loginType of user.loginTypes) {
       if (
+        body.password &&
         loginType.itemtype === "PasswordLoginType" &&
         this.validSecret(
           body.password,
@@ -139,6 +221,7 @@ class MongoDbClient {
       }
 
       if (
+        body.faceTemplate &&
         loginType.itemtype === "FaceLoginType" &&
         this.validSecret(
           body.faceTemplate,

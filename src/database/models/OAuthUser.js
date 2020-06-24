@@ -11,6 +11,11 @@ var OAuthUserSchema = new mongoose.Schema({
     match: [/^[a-zA-Z0-9]+$/, "is invalid"],
     index: true,
   },
+  email: String,
+  contactEmail: String,
+  phoneNumber: String,
+  oneTimeCode: Number,
+  oneTimeCodeIssueDate: Date,
   loginTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: "LoginTypeBase" }],
 });
 
