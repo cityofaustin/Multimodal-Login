@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
-import OAuthUser from "./models/OAuthUser";
-import OAuthClient from "./models/OAuthClient";
-import SocialLogin from "./models/SocialLogin";
-import LoginTypeBase from "./models/LoginTypeBase";
-import PasswordLoginType from "./models/PasswordLoginType";
-import FaceLoginType from "./models/FaceLoginType";
+import OAuthUser from './models/OAuthUser';
+import OAuthClient from './models/OAuthClient';
+import SocialLogin from './models/SocialLogin';
+import LoginTypeBase from './models/LoginTypeBase';
+import PasswordLoginType from './models/PasswordLoginType';
+import FaceLoginType from './models/FaceLoginType';
 
-import crypto from "crypto";
+import crypto from 'crypto';
 
 const REQUIRED_PASSWORDS = 1;
 
@@ -33,7 +33,7 @@ class MongoDbClient {
     if (clients.length === 0) {
       let mypassClient = new OAuthClient();
       let grants = [];
-      grants.push("authorization_code");
+      grants.push('authorization_code');
       mypassClient.clientId = process.env.CLIENT_ID;
       mypassClient.redirectUris = process.env.REDIRECT_URI;
       mypassClient.grants = grants;
@@ -43,37 +43,30 @@ class MongoDbClient {
 
     let users = await OAuthUser.find({});
     if (users.length === 0) {
-      const ownerEmail = "wiyase1364@royandk.com";
-      const caseWorkerEmail = "joxef68600@tmail15.com";
+      const ownerEmail = 'wiyase1364@royandk.com';
+      const caseWorkerEmail = 'joxef68600@tmail15.com';
 
       let sally = {
-        username: "owner",
-        password: "owner",
-        faceTemplate: "owner",
+        username: 'owner',
+        password: 'owner',
+        faceTemplate: 'owner',
         email: ownerEmail,
         contactEmail: caseWorkerEmail,
-        phoneNumber: "5555555555",
+        phoneNumber: '5555555555',
       };
 
       let billy = {
-        username: "caseworker",
-        password: "caseworker",
-        faceTemplate: "caseworker",
+        username: 'caseworker',
+        password: 'caseworker',
+        faceTemplate: 'caseworker',
         email: caseWorkerEmail,
       };
 
-      let admin = {
-        username: "admin",
-        password: "admin",
-        faceTemplate: "admin",
-      };
-
-      await this.createNewOAuthUser(sally, "sally-oauth-123");
-      await this.createNewOAuthUser(billy, "billy-oauth-123");
-      await this.createNewOAuthUser(admin, "admin-oauth-123");
+      await this.createNewOAuthUser(sally, 'sally-oauth-123');
+      await this.createNewOAuthUser(billy, 'billy-oauth-123');
     }
 
-    console.log("Oauth Server Ready!");
+    console.log('Oauth Server Ready!');
   }
 
   async createNewOAuthUser(body, uuid = undefined) {
@@ -188,7 +181,7 @@ class MongoDbClient {
   async getAccountByCredentials(body) {
     let user = await OAuthUser.findOne({
       username: body.username,
-    }).populate("loginTypes");
+    }).populate('loginTypes');
 
     if (user === null || user === undefined) {
       return undefined;
@@ -198,7 +191,7 @@ class MongoDbClient {
 
     if (
       user.oneTimeCode !== undefined &&
-      "" + body.oneTimeCode === "" + user.oneTimeCode
+      '' + body.oneTimeCode === '' + user.oneTimeCode
     ) {
       user.oneTimeCode = undefined;
       await user.save();
@@ -221,7 +214,7 @@ class MongoDbClient {
     for (let loginType of user.loginTypes) {
       if (
         body.password &&
-        loginType.itemtype === "PasswordLoginType" &&
+        loginType.itemtype === 'PasswordLoginType' &&
         this.validSecret(
           body.password,
           loginType.passwordSalt,
@@ -233,7 +226,7 @@ class MongoDbClient {
 
       if (
         body.faceTemplate &&
-        loginType.itemtype === "FaceLoginType" &&
+        loginType.itemtype === 'FaceLoginType' &&
         this.validSecret(
           body.faceTemplate,
           loginType.faceGuidSalt,
@@ -262,16 +255,16 @@ class MongoDbClient {
     }
 
     var hash = crypto
-      .pbkdf2Sync(password, secretSalt, 10000, 512, "sha512")
-      .toString("hex");
+      .pbkdf2Sync(password, secretSalt, 10000, 512, 'sha512')
+      .toString('hex');
     return secretHash === hash;
   };
 
   getSecretSaltHash = function (password) {
-    const salt = crypto.randomBytes(16).toString("hex");
+    const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto
-      .pbkdf2Sync(password, salt, 10000, 512, "sha512")
-      .toString("hex");
+      .pbkdf2Sync(password, salt, 10000, 512, 'sha512')
+      .toString('hex');
 
     return { salt: salt, hash: hash };
   };

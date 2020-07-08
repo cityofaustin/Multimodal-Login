@@ -243,7 +243,7 @@ router.post(
     requireClientAuthentication: {
       // whether client needs to provide client_secret
       authorization_code: false,
-      accessTokenLifetime: 28800, // 8hr, default 1 hour
+      accessTokenLifetime: 172800, // 2days, default 1 hour
       refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
     },
   })

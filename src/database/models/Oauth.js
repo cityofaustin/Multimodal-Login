@@ -1,9 +1,9 @@
-import OAuthClientsModel from "./OAuthClient";
-import OAuthAuthorizationCodesModel from "./OAuthAuthorizationCode";
-import OAuthTokensModel from "./OAuthToken";
-import OAuthUsersModel from "./OAuthUser";
-import jwt from "jsonwebtoken";
-import ip from "ip";
+import OAuthClientsModel from './OAuthClient';
+import OAuthAuthorizationCodesModel from './OAuthAuthorizationCode';
+import OAuthTokensModel from './OAuthToken';
+import OAuthUsersModel from './OAuthUser';
+import jwt from 'jsonwebtoken';
+import ip from 'ip';
 
 const getAccessToken = async (bearerToken) => {
   const oathToken = await OAuthTokensModel.findOne({
@@ -25,8 +25,8 @@ const getAuthorizationCode = async (authorizationCode) => {
   const authCode = await OAuthAuthorizationCodesModel.findOne({
     authorizationCode,
   })
-    .populate("client")
-    .populate("user")
+    .populate('client')
+    .populate('user')
     .lean();
 
   return authCode;
@@ -69,7 +69,7 @@ const saveToken = async (token, client, user) => {
       sub: user._id, // subject, whom the token refers to
       oauthId: user.oauthId,
       // event_id: '',
-      token_use: "access",
+      token_use: 'access',
       scope: user.role,
       auth_time: parseInt(new Date().getTime() / 1000), // time when authetication occurred
       // TODO: change this to actuall origin it's running on
@@ -87,7 +87,7 @@ const saveToken = async (token, client, user) => {
 
   // `saveResult` is mongoose wrapper object, not doc itself. Calling `toJSON()` returns the doc.
   saveResult =
-    saveResult && typeof saveResult == "object"
+    saveResult && typeof saveResult == 'object'
       ? saveResult.toJSON()
       : saveResult;
 
@@ -97,9 +97,6 @@ const saveToken = async (token, client, user) => {
   // /oauth-server/lib/models/token-model.js complains if missing `client` and `user`. Creating missing properties.
   data.client = data.clientId;
   data.user = data.userId;
-
-  console.log(ip.address());
-  console.log(accessJWT);
 
   return data;
 };
@@ -120,14 +117,12 @@ const saveAuthorizationCode = async (code, client, user) => {
 
   let saveResult = await authCode.save();
   saveResult =
-    saveResult && typeof saveResult == "object"
+    saveResult && typeof saveResult == 'object'
       ? saveResult.toJSON()
       : saveResult;
   const data = new Object();
   for (const prop in saveResult) data[prop] = saveResult[prop];
 
-  console.log("saveAuthorizationCode");
-  console.log(data);
   return data;
 };
 
