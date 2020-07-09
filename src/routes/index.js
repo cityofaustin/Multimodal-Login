@@ -233,21 +233,46 @@ router.post(
   })
 );
 
+// router.post(
+//   '/token',
+//   (req, res, next) => {
+//     DebugControl.log.flow('Token');
+//     next();
+//   },
+//   oauthServer.token({
+//     requireClientAuthentication: {
+//       // whether client needs to provide client_secret
+//       authorization_code: false,
+//       accessTokenLifetime: 172800, // 2days, default 1 hour
+//       refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
+//     },
+//   })
+// ); // Sends back token
+
 router.post(
   '/token',
   (req, res, next) => {
     DebugControl.log.flow('Token');
     next();
   },
-  oauthServer.token({
-    requireClientAuthentication: {
-      // whether client needs to provide client_secret
-      authorization_code: false,
-      accessTokenLifetime: 172800, // 2days, default 1 hour
-      refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
-    },
-  })
+  tokenHandler()
 ); // Sends back token
+
+function tokenHandler() {
+  try {
+    return oauthServer.token({
+      requireClientAuthentication: {
+        // whether client needs to provide client_secret
+        authorization_code: false,
+        accessTokenLifetime: 172800, // 2days, default 1 hour
+        refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
+      },
+    });
+  } catch (err) {
+    console.log('AUTH Token Error!');
+    console.log(err);
+  }
+}
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
