@@ -255,12 +255,17 @@ router.post(
     DebugControl.log.flow('Token');
     next();
   },
-  tokenHandler()
+  tokenHandler(),
+  (req, res, next) => {
+    DebugControl.log.flow('After');
+    next();
+  }
 ); // Sends back token
 
 function tokenHandler() {
+  let response;
   try {
-    return oauthServer.token({
+    response = oauthServer.token({
       requireClientAuthentication: {
         // whether client needs to provide client_secret
         authorization_code: false,
@@ -272,6 +277,7 @@ function tokenHandler() {
     console.log('AUTH Token Error!');
     console.log(err);
   }
+  return response;
 }
 
 function getRandomInt(min, max) {
