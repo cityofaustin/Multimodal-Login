@@ -1,11 +1,5 @@
-cd /~
-mkdir CIRCLE-CI-OAUTH-SERVER || echo Directory Exists, Continuing...
+cd ~/PROD/MYPASS-OAUTH/multimodal-login
 
-
-cd CIRCLE-CI-OAUTH-SERVER
-git clone https://github.com/cityofaustin/multimodal-login || echo Already Cloned, Continuing...
-
-cd multimodal-login
 git pull
 
 npm install
@@ -17,8 +11,10 @@ cp ../.env ./
 cp ../package.json ./
 npm install --production
 
-forever stop 0
-# NOTE: going to run manually to test it first.
-forever start -c "node app.js" ./
+
+cd ~/PROD/MYPASS-OAUTH/multimodal-login
+
+pm2 stop oauth
+pm2 start --name oauth npm -- start
 
 echo ~~FINISHED~~
