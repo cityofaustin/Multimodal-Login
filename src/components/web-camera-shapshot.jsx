@@ -1,7 +1,30 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
+import cvservice from '../services/CvService';
+import Worker from '../workers/example.worker.js';
 
-// NOTE: would like to do this/sort of used this as a reference at least for the web camera snapshot:
+// if (process.env.BROWSER) {
+
+import('../workers/opencv-4-3-0.js')
+  .then(rawModule => {
+    eval.call(null, rawModule.default);
+    cv['onRuntimeInitialized'] = () => {
+      let mat = new cv.Mat();
+      console.log(mat.size());
+      mat.delete();
+    };
+  });
+// }
+
+const runWorker = async () => {
+  const worker = new Worker();
+  const message = await new Promise((resolve, reject) => {
+    worker.addEventListener('message', event => resolve(event.data), false);
+    worker.addEventListener('error', reject, false);
+  })
+  return message;
+};
+
 // ref: https://aralroca.com/blog/opencv-in-the-web
 // We'll limit the processing size to 200px.
 const maxVideoSize = 200;
@@ -35,8 +58,51 @@ class WebCameraShapshot extends Component {
 
   async load() {
     const videoLoaded = await this.setupCamera();
+    await cvservice.load();
+    videoLoaded.addEventListener('play', () => {
+      this.timerCallback();
+    }, false);
     videoLoaded.play();
+
     return videoLoaded;
+  }
+
+  timerCallback() {
+    if (this.videoElement.paused || this.videoElement.ended) {
+      return;
+    }
+    this.computeFrame();
+    let self = this;
+    setTimeout(function() {
+        self.timerCallback();
+      }, 1000);
+  }
+
+  async computeFrame() {
+    const ctx = this.canvasEl.getContext('2d');
+    ctx.canvas.width  = maxVideoSize;
+    ctx.canvas.height = maxVideoSize;
+    ctx.drawImage(this.videoElement, 0, 0, maxVideoSize, maxVideoSize);
+    // this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);
+    // let frame = this.ctx1.getImageData(0, 0, this.width, this.height);
+    // let l = frame.data.length / 4;
+
+    // for (let i = 0; i < l; i++) {
+    //   let r = frame.data[i * 4 + 0];
+    //   let g = frame.data[i * 4 + 1];
+    //   let b = frame.data[i * 4 + 2];
+    //   if (g > 100 && r > 100 && b < 43)
+    //     frame.data[i * 4 + 3] = 0;
+    // }
+    // this.ctx2.putImageData(frame, 0, 0);
+    const image = ctx.getImageData(0, 0, maxVideoSize, maxVideoSize);
+    const processedImage = await cvservice.imageProcessing(image);
+    // Render the processed image to the canvas
+    const imageData = processedImage.data.payload;
+    ctx.canvas.width  = imageData.width;
+    ctx.canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
+    return;
   }
 
   async setupCamera() {
@@ -71,18 +137,30 @@ class WebCameraShapshot extends Component {
    * the video to pass this image on our service.
    */
   onClick = async () => {
+    // debugger;
+
     const {handleSnapshot} = {...this.props};
     this.setState({ processing: true });
 
     const ctx = this.canvasEl.getContext('2d');
+    ctx.canvas.width  = maxVideoSize;
+    ctx.canvas.height = maxVideoSize;
     ctx.drawImage(this.videoElement, 0, 0, maxVideoSize, maxVideoSize);
     const image = ctx.getImageData(0, 0, maxVideoSize, maxVideoSize);
+    // const keyPair = await runWorker();
+    // console.log(keyPair);
+    // console.log("!");
     // Load the model
-    // await cv.load()
+    // console.log("!");
+
     // Processing image
-    // const processedImage = await cv.imageProcessing(image)
+    const processedImage = await cvservice.imageProcessing(image);
+    // debugger;
     // Render the processed image to the canvas
-    // ctx.putImageData(processedImage.data.payload, 0, 0)
+    const imageData = processedImage.data.payload;
+    ctx.canvas.width  = imageData.width;
+    ctx.canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
     const getCanvasBlob = (canvas) => {
       return new Promise((resolve, reject) => {
         return canvas.toBlob((blob) => {
@@ -120,6 +198,7 @@ class WebCameraShapshot extends Component {
         }}
       >
         <video
+          style={{display: "none"}}
           className="video"
           playsInline
           ref={(videoElement) => {
