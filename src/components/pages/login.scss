@@ -1,12 +1,18 @@
 @import "../variables.scss";
 
-main {
+body {
+  background-image: linear-gradient($mid-blue 42%, white 42%, white 64%, $mid-blue 64%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#main {
     width: 100%;
     // min-height: 100%;
     // flex: 1;
     .username-container {
         min-height: 100vh;
-        background-color: $mid-blue;
+        // background-color: $mid-blue;
         display: flex;
         flex-direction: column;
         align-items: center;

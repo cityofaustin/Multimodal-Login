@@ -1,73 +1,82 @@
 @import "../variables.scss";
 
-main {
-    position: absolute;
-    top: 0;
-    opacity: 0;
-    width: 100%;
-    .welcome-container {
-        min-height: 100vh;
+body {
+  background-image: linear-gradient($mid-blue 42%, white 42%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#main {
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  .welcome-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .section {
+      margin: 18px;
+      width: 290px;
+      .title {
+        font-size: 30px;
+        font-weight: 500;
+        // color: #000;
+        color: #ffffff;
+        margin-bottom: 6px;
+      }
+      .subtitle {
+        color: #ffffff;
+        opacity: 0.69;
+        // color: #000;
+        // opacity: 0.45;
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 49px;
+      }
+
+      .sub-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-
-        .section {
-            margin: 18px;
-            width: 290px;
-            .title {
-                font-size: 30px;
-                font-weight: 500;
-                color: #000;
-                margin-bottom: 6px;
-            }
-            .subtitle {
-                opacity: 0.45;
-                font-size: 20px;
-                font-weight: 500;
-                color: #000;
-                margin-bottom: 49px;
-            }
-
-            .sub-section {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                .already {
-                    margin-top: 33.7px;
-                    font-size: 15px;
-                    font-weight: 500;
-                    color: $mid-blue;
-                }
-    
-                .or {
-                    font-size: 15px;
-                    font-weight: 500;
-                    color: #9a9a9a;
-                }
-    
-                input[type="button"],
-                input[type="submit"] {
-                    width: 210px;
-                    height: 50px;
-                    border-radius: 9px;
-                    font-size: 25px;
-                    font-weight: 500;
-                    text-align: center;
-                    color: #ffffff;
-                    font-family: Montserrat;
-                    margin: 6px 0 3px 0;
-                    cursor: pointer;
-                }
-
-                .login {
-                    background-color: $mid-blue;
-                }
-
-                .sign-up {
-                    background-color: #9a9a9a;
-                }
-            }
+        .already {
+          margin-top: 33.7px;
+          font-size: 15px;
+          font-weight: 500;
+          color: $mid-blue;
         }
+
+        .or {
+          font-size: 15px;
+          font-weight: 500;
+          color: #9a9a9a;
+        }
+
+        input[type="button"],
+        input[type="submit"] {
+          width: 210px;
+          height: 50px;
+          border-radius: 9px;
+          font-size: 25px;
+          font-weight: 500;
+          text-align: center;
+          color: #ffffff;
+          font-family: Montserrat;
+          margin: 6px 0 3px 0;
+          cursor: pointer;
+        }
+
+        .login {
+          background-color: $mid-blue;
+        }
+
+        .sign-up {
+          background-color: #9a9a9a;
+        }
+      }
     }
+  }
 }

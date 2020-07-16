@@ -1,0 +1,93 @@
+@import "./variables.scss";
+
+body {
+  background-image: linear-gradient($mid-blue 42%, white 42%, white 64%, $azure2 64%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#main {
+  width: 100%;
+  .container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .section {
+      margin: 18px;
+      width: 290px;
+      .title {
+        font-size: 30px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .subtitle {
+        color: #fff;
+        opacity: 0.69;
+        // color: #000;
+        // opacity: 0.45;
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+      .owner {
+        cursor: pointer;
+        color: $mid-blue;
+      }
+      .helper {
+        cursor: pointer;
+        color: $azure2;
+      }
+      .card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+        border: solid 1px rgba(35, 98, 199, 0.3);
+        padding: 20px;
+        margin: 20px 0;
+        .role {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .role-name {
+            margin-left: 10px;
+            width: 86px;
+            font-size: 15px;
+            font-weight: bold;
+          }
+        }
+        .desc {
+          margin-top: 16px;
+          text-align: center;
+        }
+      }
+      .owner1 {
+        padding: 20px;
+        .card-title {
+          font-size: 20px;
+          font-weight: bold;
+          color: $mid-blue;
+          text-align: center;
+        }
+        .card-body {
+          padding: 0 0 0 16px;
+          .card-body-section {
+            margin-top: 26px;
+            display: flex;
+            align-items: center;
+            > div:nth-child(2) {
+              width: 154px;
+              padding-left: 20.5px;
+              color: #ababab;
+              font-size: 15px;
+              font-weight: 500;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}

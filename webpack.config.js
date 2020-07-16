@@ -73,6 +73,27 @@ const config = [
             },
           ],
         },
+        // {
+        //   test: /\.svg$/,
+        //   use: [
+        //     '@svgr/webpack', {
+        //       loader: 'file-loader',
+        //       options: {
+        //         name: 'public/[name].[ext]'
+        //       }
+        //     }]
+        // },
+        {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          issuer: {
+            test: /\.jsx?$/
+          },
+          use: ['babel-loader', '@svgr/webpack', 'url-loader']
+        },
+        {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader'
+        },
         {
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
           use: [

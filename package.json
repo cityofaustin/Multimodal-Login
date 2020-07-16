@@ -14,7 +14,8 @@
     "postbuild": "cp -r src/static/* dist/static",
     "webpack-production": "webpack -p",
     "babel-production": "NODE_ENV=production COMPILER_ENV=server npx babel --out-dir dist src",
-    "build:start": "npm run build && node dist/app.js"
+    "build:start": "npm run build && node dist/app.js",
+    "fe-start": "npx webpack-dev-server --mode=development --colors --config webpack.config.fe.js"
   },
   "repository": {
     "type": "git",
@@ -76,7 +77,11 @@
     "raw-loader": "^4.0.1",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "url-loader": "^4.1.0",
     "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-hot-middleware": "^2.25.0"
   }
 }

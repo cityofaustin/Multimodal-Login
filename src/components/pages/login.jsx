@@ -255,7 +255,7 @@ class Login extends React.Component {
             {hasFoundUser && this.renderLoginWithMethods()}
           </main>
         </Fragment>
-        <input
+        {/* <input
           type="button"
           value="Face Verify as Billy"
           onClick={() => {
@@ -264,7 +264,7 @@ class Login extends React.Component {
         />
         {faceVerify && (
           <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
-        )}
+        )} */}
       </Fragment>
     );
   }
