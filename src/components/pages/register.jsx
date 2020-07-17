@@ -6,6 +6,7 @@ import OwnerSvg from '../svg/OwnerSvg';
 import HelperSvg from '../svg/HelperSvg';
 import GoBackSvg from '../svg/GoBackSvg';
 import SimpleStepSvg from '../svg/SimpleStepSvg';
+import HelperTypeSvg from '../svg/HelperTypeSvg';
 
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
@@ -22,6 +23,7 @@ class Register extends Component {
       faceRegister: false,
       username: '',
       faceTemplate: undefined,
+      helperRoleType: undefined,
     };
   }
 
@@ -69,6 +71,11 @@ class Register extends Component {
         console.error(err.message);
       }
     }
+  };
+
+  isHelperRoleSelected = (_helperRoleType) => {
+    const { helperRoleType } = { ...this.state };
+    return _helperRoleType === helperRoleType;
   };
 
   renderRegister() {
@@ -238,15 +245,90 @@ class Register extends Component {
       <section className="container">
         <div className="section">
           <div className="title">Helper</div>
-          <div className="subtitle">What type of heelper are you?</div>
-          <div className="card owner1">
-            <div className="card-title">todo</div>
-            <div>
-              Lorem ipsum, or lipsum as it is sometimes known, is dummy text
-              used in laying out print, graphic or web designs. The passage is
-              attributed to an unknown typesetter in the 15th century who is
-              thought to have scrambled parts of Cicero's De Finibus Bonorum et
-              Malorum for use in a type specimen book.
+          <div className="subtitle">What type of helper are you?</div>
+          <div className="helper-type">
+            <div className="helper-row">
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Clinical Case Manager') && 'active'
+                }`}
+                onClick={() =>
+                  this.setState({ helperRoleType: 'Clinical Case Manager' })
+                }
+              >
+                <HelperTypeSvg helperType="Clinical Case Manager" />
+                <div className="type-name">Clinical Case Manager</div>
+              </div>
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Advocate') && 'active'
+                }`}
+                onClick={() => this.setState({ helperRoleType: 'Advocate' })}
+              >
+                <HelperTypeSvg helperType="Advocate" />
+                <div className="type-name">Advocate</div>
+              </div>
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Case Manager') && 'active'
+                }`}
+                onClick={() =>
+                  this.setState({ helperRoleType: 'Case Manager' })
+                }
+              >
+                <HelperTypeSvg helperType="Case Manager" />
+                <div className="type-name">Case Manager</div>
+              </div>
+            </div>
+            <div className="helper-row">
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Intern') && 'active'
+                }`}
+                onClick={() => this.setState({ helperRoleType: 'Intern' })}
+              >
+                <HelperTypeSvg helperType="Intern" />
+                <div className="type-name">Intern</div>
+              </div>
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Volunteer') && 'active'
+                }`}
+                onClick={() => this.setState({ helperRoleType: 'Volunteer' })}
+              >
+                <HelperTypeSvg helperType="Volunteer" />
+                <div className="type-name">Volunteer</div>
+              </div>
+              <div
+                className={`helper-item ${
+                  this.isHelperRoleSelected('Other') && 'active'
+                }`}
+                onClick={() => this.setState({ helperRoleType: 'Other' })}
+              >
+                <HelperTypeSvg helperType="Other" />
+                <div className="type-name">Other</div>
+              </div>
+            </div>
+          </div>
+          <div className="note">
+            Note: this role requires Admin authorization to finish your
+            registration
+          </div>
+          <div className="card helper1">
+            <div className="card-title">Are you a registered notary?</div>
+            <div className="card-body">
+              <div className="section1">
+                <div className="label">No, I'm not.</div>
+                <input className="checkbox" type="checkbox" />
+              </div>
+              <div className="label section2">
+                Yes, I'm licensed in the state of...
+              </div>
+              <div className="select-container">
+                <select>
+                  <option>Select</option>
+                </select>
+              </div>
             </div>
           </div>
           <div

@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import './GoBackSvg.scss';
+
+if (process.env.BROWSER) {
+  require('./GoBackSvg.scss');
+}
 
 export default class GoBackSvg extends Component {
   static defaultProps = {

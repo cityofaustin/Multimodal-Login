@@ -88,6 +88,74 @@ body {
           }
         }
       }
+      .helper1 {
+        border: solid 3px rgba(75, 169, 217, 0.48);
+        .card-title {
+          font-size: 15px;
+          font-weight: bold;
+          color: #4ba9d9;
+          margin-bottom: 12px;
+        }
+        .card-body {
+          .section1 {
+            display: flex;
+            margin-bottom: 12px;
+            .label {
+              margin-right: 12.5px;
+            }
+          }
+          .section2 {
+            margin-bottom: 12px;
+          }
+          .label {
+            font-size: 15px;
+            color: #9a9a9a;
+          }
+          .select-container {
+            display: flex;
+            justify-content: center;
+          }
+        }
+      }
+      .note {
+        font-size: 13px;
+        color: #4ba9d9;
+        text-align: center;
+      }
+      .helper-type {
+        .helper-row {
+          display: flex;
+          margin: 0 -7px 18px -7px;
+          .helper-item {
+            width: 96px;
+            height: 91px;
+            border-radius: 9px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 7px;
+            border: solid 3px #fff;
+            cursor: pointer;
+            &.active {
+              // // background-color: $azure2;
+              // .type-name {
+              //   // color: #fff;
+              // }
+              border: solid 3px rgba(75, 169, 217, 0.48);
+            }
+            .type-name {
+              padding-top: 7.4px;
+              font-size: 12px;
+              font-weight: bold;
+              color: $azure2;
+              text-align: center;
+            }
+          }
+        }
+      }
     }
   }
 }

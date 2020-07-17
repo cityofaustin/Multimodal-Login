@@ -6,9 +6,11 @@ body {
 
 input[type="submit"] {
   border: none;
+  -webkit-appearance: none;
 }
 
 input[type="button"] {
+  -webkit-appearance: none;
   border-radius: 9px;
   background-color: #2362c7;
   font-size: 25px;
