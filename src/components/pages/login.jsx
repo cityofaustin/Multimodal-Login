@@ -89,26 +89,26 @@ class Login extends React.Component {
 
   handleSnapshot = async (blob) => {
     const { userName1 } = { ...this.state };
-    if (blob) {
-      try {
-        const imgFile = new File([blob], 'imgFile.png', {
-          type: blob.type,
-          lastModified: Date.now(),
-        });
-        const input = '/verify/face';
-        const formdata = new FormData();
-        formdata.append('img', imgFile, 'imgFile');
-        formdata.append('username', userName1);
-        const init = {
-          method: 'POST',
-          body: formdata,
-        };
-        const response = await fetch(input, init);
-        console.log(response);
-      } catch (err) {
-        console.error(err.message);
-      }
-    }
+    // if (blob) {
+    //   try {
+    //     const imgFile = new File([blob], 'imgFile.png', {
+    //       type: blob.type,
+    //       lastModified: Date.now(),
+    //     });
+    //     const input = '/verify/face';
+    //     const formdata = new FormData();
+    //     formdata.append('img', imgFile, 'imgFile');
+    //     formdata.append('username', userName1);
+    //     const init = {
+    //       method: 'POST',
+    //       body: formdata,
+    //     };
+    //     const response = await fetch(input, init);
+    //     console.log(response);
+    //   } catch (err) {
+    //     console.error(err.message);
+    //   }
+    // }
   };
 
   renderUsernamePrompt() {
@@ -257,7 +257,7 @@ class Login extends React.Component {
         </Fragment>
         {/* <input
           type="button"
-          value="Face Verify as Billy"
+          value="Face Verify Test"
           onClick={() => {
             this.setState({ faceVerify: !faceVerify });
           }}

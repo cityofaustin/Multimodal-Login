@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import Register from './components/pages/register';
+import PalmTest from './components/pages/PalmTest';
 // import './index.scss';
 
 render(
-    <Register />,
+    <PalmTest />,
     document.getElementById('root')
 );

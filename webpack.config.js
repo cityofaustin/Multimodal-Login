@@ -1,17 +1,18 @@
-const webpack = require("webpack");
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const webpack = require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const production = process.env.NODE_ENV === "production";
+const production = process.env.NODE_ENV === 'production';
+const CopyPlugin = require('copy-webpack-plugin');
 
-const pages = ["index", "login", "register"];
+const pages = ['index', 'login', 'register'];
 
 const generateEntryPoints = (entry) => {
   return entry.reduce((obj, item) => {
     return {
       ...obj,
-      [item]: [path.resolve("src", "components", "entrypoints", `${item}.jsx`)],
+      [item]: [path.resolve('src', 'components', 'entrypoints', `${item}.jsx`)],
     };
   }, {});
 };
@@ -21,7 +22,7 @@ const generateHtml = (entry) => {
     return new HtmlWebpackPlugin({
       chunks: [i],
       filename: `../views/pages/${i}.ejs`,
-      template: path.join("src", "views", "pages", "template.ejs"),
+      template: path.join('src', 'views', 'pages', 'template.ejs'),
     });
   });
 };
@@ -34,41 +35,52 @@ const config = [
 
     output: {
       path: production
-        ? path.resolve(__dirname, "dist", "static", "public")
-        : path.resolve(__dirname, "src", "static", "public"),
-      filename: production ? "js/[chunkhash].js" : "js/[name].js",
-      publicPath: "/public",
+        ? path.resolve(__dirname, 'dist', 'static', 'public')
+        : path.resolve(__dirname, 'src', 'static', 'public'),
+      filename: production ? 'js/[chunkhash].js' : 'js/[name].js',
+      publicPath: '/public/',
+      globalObject: 'this'
     },
 
     module: {
       rules: [
         {
+          test: /\.worker\.js$/,
+          use: ['worker-loader', 'babel-loader'],
+          include: [path.join(__dirname, 'src/workers')],
+        },
+        {
+          test: /\.wasm$/,
+          loaders: ['base64-loader'],
+          type: 'javascript/auto',
+        },
+        {
           test: /\.(js|jsx)$/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
-              presets: ["@babel/preset-env", "@babel/preset-react"],
+              presets: ['@babel/preset-env', '@babel/preset-react'],
             },
           },
-          exclude: [/node_modules/, /static/],
+          exclude: [/node_modules/, /static/, /workers/],
         },
         {
           test: /\.ejs$/,
-          loader: "raw-loader",
+          loader: 'raw-loader',
         },
         {
           test: /\.s?css$/,
-          use: ["style-loader", "css-loader", "sass-loader"],
+          use: ['style-loader', 'css-loader', 'sass-loader'],
         },
         {
           test: /\.(jpg|jpeg|png|svg|gif)$/,
           use: [
             {
-              loader: "file-loader",
+              loader: 'file-loader',
               options: {
-                name: "[md5:hash:hex].[ext]",
-                publicPath: "/public/img",
-                outputPath: "img",
+                name: '[md5:hash:hex].[ext]',
+                publicPath: '/public/img',
+                outputPath: 'img',
               },
             },
           ],
@@ -98,10 +110,33 @@ const config = [
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
           use: [
             {
-              loader: "file-loader",
+              loader: 'file-loader',
               options: {
-                name: "[name].[ext]",
-                outputPath: "/fonts",
+                name: '[name].[ext]',
+                outputPath: '/fonts',
+              },
+            },
+          ],
+        },
+        // {
+        //   test: /opencv-4-3-0.js$/,
+        //   use: [
+        //     {
+        //       loader: 'raw-loader',
+        //       options: {
+        //         esModule: false,
+        //       },
+        //     },
+        //   ],
+        // },
+        {
+          test: /opencv-4-3-0.js|\.xml$/,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[name].[ext]',
+                outputPath: '/js',
               },
             },
           ],
@@ -122,24 +157,29 @@ const config = [
     },
 
     resolve: {
-      extensions: [".js", ".jsx", ".json", ".wasm", ".mjs", "*"],
+      extensions: ['.js', '.jsx', '.json', '.wasm', '.mjs', '*'],
     },
 
     optimization: {
       splitChunks: {
-        automaticNameDelimiter: ".",
+        automaticNameDelimiter: '.',
         cacheGroups: {
           react: {
-            chunks: "initial",
+            chunks: 'initial',
           },
         },
       },
     },
 
     plugins: [
+      // new CopyPlugin({
+      //   patterns: [
+      //     { from: 'assets/wasm', to: 'wasm' },
+      //   ],
+      // }),
       // https://stackoverflow.com/a/30355080/6907541
       new webpack.DefinePlugin({
-        "process.env": {
+        'process.env': {
           BROWSER: JSON.stringify(true),
         },
       }),
