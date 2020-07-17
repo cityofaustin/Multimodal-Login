@@ -353,7 +353,7 @@ class Register extends Component {
             <LogoSvg />
           </div>
           <main id="main" style={{ position: 'absolute', top: 0, opacity: 0 }}>
-            {this.renderOnboarding()}
+            {this.renderRegister()}
           </main>
         </Fragment>
       );
