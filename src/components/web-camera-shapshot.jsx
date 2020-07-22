@@ -5,23 +5,21 @@ import Worker from '../workers/example.worker.js';
 
 // if (process.env.BROWSER) {
 
-import('../workers/opencv-4-3-0.js')
-  .then(rawModule => {
-    eval.call(null, rawModule.default);
-    cv['onRuntimeInitialized'] = () => {
-      let mat = new cv.Mat();
-      console.log(mat.size());
-      mat.delete();
-    };
-  });
-// }
+// import('../workers/opencv-4-3-0.js').then((rawModule) => {
+//   eval.call(null, rawModule.default);
+//   cv['onRuntimeInitialized'] = () => {
+//     let mat = new cv.Mat();
+//     console.log(mat.size());
+//     mat.delete();
+//   };
+// });
 
 const runWorker = async () => {
   const worker = new Worker();
   const message = await new Promise((resolve, reject) => {
-    worker.addEventListener('message', event => resolve(event.data), false);
+    worker.addEventListener('message', (event) => resolve(event.data), false);
     worker.addEventListener('error', reject, false);
-  })
+  });
   return message;
 };
 
@@ -49,7 +47,7 @@ class WebCameraShapshot extends Component {
     const stream = this.videoElement.srcObject;
     const tracks = stream.getTracks();
 
-    tracks.forEach(function(track) {
+    tracks.forEach(function (track) {
       track.stop();
     });
 
@@ -59,9 +57,13 @@ class WebCameraShapshot extends Component {
   async load() {
     const videoLoaded = await this.setupCamera();
     await cvservice.load();
-    videoLoaded.addEventListener('play', () => {
-      this.timerCallback();
-    }, false);
+    videoLoaded.addEventListener(
+      'play',
+      () => {
+        this.timerCallback();
+      },
+      false
+    );
     videoLoaded.play();
 
     return videoLoaded;
@@ -73,14 +75,14 @@ class WebCameraShapshot extends Component {
     }
     this.computeFrame();
     let self = this;
-    setTimeout(function() {
-        self.timerCallback();
-      }, 1000);
+    setTimeout(function () {
+      self.timerCallback();
+    }, 1000);
   }
 
   async computeFrame() {
     const ctx = this.canvasEl.getContext('2d');
-    ctx.canvas.width  = maxVideoSize;
+    ctx.canvas.width = maxVideoSize;
     ctx.canvas.height = maxVideoSize;
     ctx.drawImage(this.videoElement, 0, 0, maxVideoSize, maxVideoSize);
     // this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);
@@ -99,7 +101,7 @@ class WebCameraShapshot extends Component {
     const processedImage = await cvservice.imageProcessing(image);
     // Render the processed image to the canvas
     const imageData = processedImage.data.payload;
-    ctx.canvas.width  = imageData.width;
+    ctx.canvas.width = imageData.width;
     ctx.canvas.height = imageData.height;
     ctx.putImageData(imageData, 0, 0);
     return;
@@ -139,11 +141,11 @@ class WebCameraShapshot extends Component {
   onClick = async () => {
     // debugger;
 
-    const {handleSnapshot} = {...this.props};
+    const { handleSnapshot } = { ...this.props };
     this.setState({ processing: true });
 
     const ctx = this.canvasEl.getContext('2d');
-    ctx.canvas.width  = maxVideoSize;
+    ctx.canvas.width = maxVideoSize;
     ctx.canvas.height = maxVideoSize;
     ctx.drawImage(this.videoElement, 0, 0, maxVideoSize, maxVideoSize);
     const image = ctx.getImageData(0, 0, maxVideoSize, maxVideoSize);
@@ -158,14 +160,14 @@ class WebCameraShapshot extends Component {
     // debugger;
     // Render the processed image to the canvas
     const imageData = processedImage.data.payload;
-    ctx.canvas.width  = imageData.width;
+    ctx.canvas.width = imageData.width;
     ctx.canvas.height = imageData.height;
     ctx.putImageData(imageData, 0, 0);
     const getCanvasBlob = (canvas) => {
       return new Promise((resolve, reject) => {
         return canvas.toBlob((blob) => {
           return resolve(blob);
-        })
+        });
       });
     };
     const blob = await getCanvasBlob(ctx.canvas);
@@ -198,7 +200,7 @@ class WebCameraShapshot extends Component {
         }}
       >
         <video
-          style={{display: "none"}}
+          style={{ display: 'none' }}
           className="video"
           playsInline
           ref={(videoElement) => {
@@ -225,11 +227,11 @@ class WebCameraShapshot extends Component {
 }
 
 WebCameraShapshot.defaultProps = {
-  handleSnaphot: () => {}
-}
+  handleSnaphot: () => {},
+};
 
 WebCameraShapshot.propTypes = {
-  handleSnaphot: PropTypes.func.isRequired
+  handleSnaphot: PropTypes.func.isRequired,
 };
 
 export default WebCameraShapshot;

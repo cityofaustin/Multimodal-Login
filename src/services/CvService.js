@@ -63,6 +63,10 @@ class CvService {
   imageProcessing(payload) {
     return this._dispatch({ msg: 'imageProcessing', payload })
   }
+
+  imageProcessing2(payload) {
+    return this._dispatch({ msg: 'imageProcessing2', payload })
+  }
 }
 
 // Export the same instant everywhere

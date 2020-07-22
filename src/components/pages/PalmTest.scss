@@ -1,9 +1,19 @@
 body {
   display: flex;
-  height: 100vh;
+  // height: 100vh;
+  background-image: none !important;
   background-color: #000;
   color: #aaa;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 16px;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  div {
+    padding-top: 10px;
+  }
 }

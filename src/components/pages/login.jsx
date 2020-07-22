@@ -5,6 +5,11 @@ import WebCameraShapshot from '../web-camera-shapshot';
 import CognitiveFaceService from '../../services/CognitiveFaceService';
 import UrlUtil from '../../util/url-util';
 import axios from 'axios';
+// import opencv from '../../workers/opencv-4-3-0.js';
+// import test from '../../fonts/Montserrat/Montserrat-Regular.ttf'
+
+// console.log(test);
+// console.log(opencv);
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541
@@ -255,7 +260,7 @@ class Login extends React.Component {
             {hasFoundUser && this.renderLoginWithMethods()}
           </main>
         </Fragment>
-        {/* <input
+        <input
           type="button"
           value="Face Verify Test"
           onClick={() => {
@@ -264,7 +269,7 @@ class Login extends React.Component {
         />
         {faceVerify && (
           <WebCameraShapshot handleSnapshot={this.handleSnapshot} />
-        )} */}
+        )}
       </Fragment>
     );
   }
