@@ -1,4 +1,7 @@
-import delay from '../util/delay';
+// import delay from '../util/delay';
+import finalLines from './finalLines';
+import matchedTemplate from './matchedTemplate';
+import { H1_45, H2_45 } from './gaussian';
 
 const publicPath = process.env.FE ? '' : '/public';
 if (process.env.BROWSER) {
@@ -27,44 +30,197 @@ if (process.env.BROWSER) {
   function imageProcessing2({ msg, payload }) {
     // Segmenting the hand and extracting the ROI
     // 1 Segment the hand using Skin-Color model algorithm
-    let segmentedImage = doPreprocessing(payload);
+    let rgbaImg = cv.matFromImageData(payload); // cv.Mat
+    let rgbImg = new cv.Mat();
+    cv.cvtColor(rgbaImg, rgbImg, cv.COLOR_RGBA2RGB);
+    cv.resize(rgbImg, rgbImg, new cv.Size(640, 480));
+    let segmentedImage = doPreprocessing(rgbImg);
 
     // 2 TODO: finding important points on the hand
     // Keypoints struct_keypoints = findKeypoints(segmentedImage);
-    // const keypoints = findKeypoints(segmentedImage);
+    const keypoints = findKeypoints(segmentedImage);
+    // putting in the expected ROI since having difficulty with this
+    // Rotating the input image
+    let rotAlpha = 0.3284040874548375;
+    let centerPoint = new cv.Point(rgbImg.cols / 2, rgbImg.rows / 2);
+    let rotMat = cv.getRotationMatrix2D(
+      centerPoint,
+      -rotAlpha * (180 / 3.1415),
+      1
+    );
+    // Mat rotMat = getRotationMatrix2D(centerPoint, -rotAlpha*(180 / 3.1415), 1.0);
+    // warpAffine(inputImage, inputImage, rotMat, inputImage.size());
+    cv.warpAffine(rgbImg, rgbImg, rotMat, rgbaImg.size()); //, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+    let roiMat = new cv.Mat();
+    // let rect = new cv.Rect(new cv.Point({x: 316, y: 227}), new cv.Point({x: 427, y: 337}))
+    // let rect = new cv.Rect(340, 205, 100, 120);
+    let rect = new cv.Rect(316, 227, 110, 111);
+    roiMat = rgbImg.roi(rect);
+    // cv.resize(roiMat, roiMat, new cv.Size(480, 480));
 
     // 3 TODO: finding bounding box for the palm
     // extractedRoi = calcSquareRoi(struct_keypoints);
 
     // TODO: Extracting features from the ROI
+    //Feature 128x128
     // TODO: Matching the extracted feature (1:N)
-
-    // detect faces.
-    // let faces = new cv.RectVector();
-    // console.log(cv.xmodules);
-
-    // classifier.detectMultiScale(gray, faces, 1.1, 3, 0);
-    // draw faces.
-    // for (let i = 0; i < faces.size(); ++i) {
-    //   let face = faces.get(i);
-    //   let point1 = new cv.Point(face.x, face.y);
-    //   let point2 = new cv.Point(face.x + face.width, face.y + face.height);
-    //   cv.rectangle(dst, point1, point2, [0, 255, 0, 255]);
-    // }
-    // let src = cv.Mat.eye(400, 400, 0);
-    // let dst = new cv.Mat();
-    // dst = result.roi(faces.get(0));
-    // cv.imshow('canvasOutput', dst);
-    // rgbImg.delete();
-    // debugger;
-    postMessage({ msg, payload: imageDataFromMat(segmentedImage) });
+    // matched feature 128x128
+    postMessage({ msg, payload: imageDataFromMat(roiMat) });
   }
 
-  function doPreprocessing(inputImage) {
-    let rgbaImg = cv.matFromImageData(inputImage); // cv.Mat
-    let rgbImg = new cv.Mat();
-    cv.cvtColor(rgbaImg, rgbImg, cv.COLOR_RGBA2RGB);
-    cv.resize(rgbImg, rgbImg, new cv.Size(640, 480));
+  function imageProcessing3({ msg, payload }) {
+    let finalLinesMat = new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(0));
+    let count = 0;
+    for (let dataItem of finalLines) {
+      finalLinesMat.data[count] = dataItem;
+      count++;
+    }
+    postMessage({ msg, payload: imageDataFromMat(finalLinesMat) });
+    let rgbaMat = cv.matFromImageData(payload); // cv.Mat
+    let roiAfterPreprocessing = doPreprocessingGrayscaleSm(rgbaMat);
+    let normalizedRoi = normalizeImage(roiAfterPreprocessing);
+    let finalLines2 = locatePrincipalLines(normalizedRoi);
+    // console.log(JSON.stringify(Object.keys(processedMat.data).map(key => processedMat.data[key])));
+    // postMessage({ msg, payload: imageDataFromMat(finalLines2) });
+  }
+
+  function imageProcessing4({ msg, payload }) {
+    let matchedImage = new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(0));
+
+    for (let p of matchedTemplate) {
+      matchedImage.ucharPtr(p[0], p[1])[0] = 255;
+    }
+    postMessage({ msg, payload: imageDataFromMat(matchedImage) });
+  }
+
+  function locatePrincipalLines(mat) {
+    // Directional line detector in 45 direction
+    let linesInDir45 = locatePrincipalLineInGivenDirection(
+      mat,
+      H1_45,
+      H2_45,
+      45
+    );
+    let lines = linesInDir45;
+    return lines;
+  }
+
+  function locatePrincipalLineInGivenDirection(mat, H1, H2, degree) {
+    // Defines the range of the first-order derivative's change detection
+    const firstDerivChangeWidth = 4;
+    // Defines the second-order derivative's treshold value
+    const secondDerivThresholdValue = 10;
+    let H1_rows = H1.length;
+    let H1_cols = H1[0].length;
+    // First derivative of the input image
+    let I_der = [];
+    // Second derivate of the input image
+    let I_der2 = [];
+    // Initialize first- and second-order derivatives
+    for (let i = 0; i < 128; ++i) {
+      let row = [];
+      for (let j = 0; j < 128; ++j) {
+        row.push(0.0);
+      }
+      I_der.push(row);
+      I_der2.push(row);
+    }
+
+    // Calculate first- and second-order derivatives
+    for (let i = Math.floor(H1_rows / 2); i < 128 - H1_rows / 2; i++) {
+      for (let j = Math.floor(H1_cols / 2); j < 128 - H1_cols / 2; j++) {
+        for (let _i = -Math.floor(H1_rows / 2); _i <= H1_rows / 2; _i++) {
+          for (let _j = -Math.floor(H1_cols / 2); _j <= +(H1_cols / 2); _j++) {
+            // I_der[i][j]  += (mat.at(i + _i, j + _j)) * H1[_i + (H1_rows / 2)][_j + (H1_cols / 2)];
+            // I_der2[i][j] += (mat.at(i + _i, j + _j)) * H2[_i + (H1_rows / 2)][_j + (H1_cols / 2)];
+            const matValue = mat.ucharPtr(i + _i, j + _j)[0];
+            const hRow = _i + Math.floor(H1_rows / 2);
+            const hCol = _j + Math.floor(H1_cols / 2);
+            // console.log(`${i} ${j} ${matValue} ${hRow} ${hCol}`);
+            I_der[i][j] += matValue * H1[hRow][hCol];
+            I_der2[i][j] += matValue * H2[hRow][hCol];
+          }
+        }
+      }
+    }
+
+    // Create binary image, this will contain the extracted principal lines in a given direction
+    // let thresholded = new cv.Mat(
+    //   ycbcrImg.rows,
+    //   ycbcrImg.cols,
+    //   cv.CV_8UC1,
+    //   new cv.Scalar(0)
+    // );
+    let binaryImage = new cv.Mat(
+      128,
+      128,
+      cv.CV_8UC1,
+      new cv.Scalar(0, 0, 0)
+    );
+
+    // Locating changes in first-order derivatives in 45 direction
+    if (degree == 45) {
+      // Traversing the matrix diagonal (bottom-left to top-right)
+      for (let i = 1; i < 2 * 128 - 2; ++i) {
+        let k = i < 128 ? 0 : i - 128 + 1;
+        for (let j = k + 1; j <= i - k; ++j) {
+          let derivChangeFound = false;
+          // Checking if the derivative's sign has changed by comparing #dw neighbors
+          for (let dw = 1; dw <= firstDerivChangeWidth; ++dw) {
+            if (isInsideTheBoundary(j - dw, i - j)) {
+              if (I_der[j][i - j] * I_der[j - dw][i - j] < 0) {
+                derivChangeFound = true;
+              }
+            }
+          }
+          /* If first-order derivative's sign has changed and the second-order derivative's value is greater
+				  than the threshold, then setting the current pixel to 255, otherwise to 0 */
+          if ((derivChangeFound || I_der[j][i - j] == 0) && I_der2[j][i - j] > secondDerivThresholdValue) {
+            binaryImage.ucharPtr(j, i - j)[0] = 255;
+          } else {
+            binaryImage.ucharPtr(j, i - j)[0] = 0;
+          }
+        }
+      }
+    }
+    return binaryImage;
+    // return mat;
+  }
+
+  function isInsideTheBoundary(i, j) {
+    if (i > 0 && i < 128 && j > 0 && j < 128) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function normalizeImage(mat) {
+    /* Applying CLAHE */
+    let tileGridSize = new cv.Size(8, 8);
+    let clahe = new cv.CLAHE(4, tileGridSize);
+    clahe.apply(mat, mat);
+
+    /* Applying a low-pass filter */
+    let ksize = new cv.Size(3, 3);
+    let anchor = new cv.Point(-1, -1);
+    cv.blur(mat, mat, ksize, anchor, cv.BORDER_DEFAULT);
+
+    return mat;
+  }
+
+  function doPreprocessingGrayscaleSm(mat) {
+    cv.cvtColor(mat, mat, cv.COLOR_RGBA2BGR);
+    // console.log(JSON.stringify(Object.keys(mat.data).map(key => mat.data[key])));
+    // Convert to grayscale
+    let grayscaleMat = new cv.Mat(mat.size(), cv.CV_8UC1);
+    cv.cvtColor(mat, grayscaleMat, cv.COLOR_BGR2GRAY);
+    // Resize it to 128x128
+    cv.resize(grayscaleMat, grayscaleMat, new cv.Size(128, 128));
+    return grayscaleMat;
+  }
+
+  function doPreprocessing(rgbImg) {
     // cv.cvtColor(rgbImg, rgbImg, cv.COLOR_BGR2HSV);
     let ycbcrImg = new cv.Mat(); // cv.Mat
     // Convert original image to YCbCr color space
@@ -112,26 +268,42 @@ if (process.env.BROWSER) {
           thresholded.ucharPtr(row, col)[2] = 255;
           // thresholded.data[row * col] = 255;
         }
-        if(row == 42 && col ==344) {
+        if (row == 42 && col == 344) {
           // debugger;
         }
-        if(row == 201 && col >= 605 && col < 611) {
+        if (row == 201 && col >= 605 && col < 611) {
           // debugger;
         }
       }
     }
     // cv.rectangle(thresholded, {x:489,y:99 }, {x:589,y:99}, [255, 255, 255, 255]);
-    return ycbcrImg;
+    return thresholded;
   }
 
   function findKeypoints(segmentedImage) {
-    console.log('finding keypoints');
-    let rect = new cv.Rect(0,0,segmentedImage.cols - 150,segmentedImage.rows);
+    // console.log('finding keypoints');
+    let rect = new cv.Rect(
+      0,
+      0,
+      segmentedImage.cols - 150,
+      segmentedImage.rows
+    );
     let leftSide = new cv.Mat();
     leftSide = segmentedImage.roi(rect);
     // Get boundary points, by applying boundary tracking alogirthm
-    console.log('getting boundary');
+    // console.log('getting boundary');
     let boundaryVector = getBoundary(leftSide);
+    // debugger;
+    for (let boundaryItem of boundaryVector) {
+      // debugger;
+      cv.circle(
+        leftSide,
+        { x: boundaryItem.x, y: boundaryItem.y },
+        3,
+        [120, 120, 120, 255],
+        -1
+      ); // for debugging
+    }
     // Find start and end points (vertically) at left side of the image
     let startPoint = new cv.Point(-1, -1);
     let endPoint = new cv.Point(-1, -1);
@@ -261,13 +433,13 @@ if (process.env.BROWSER) {
     // return keypoints;
   }
 
-  async function getBoundary(img) {
+  function getBoundary(img) {
     let boundaryVector = [];
 
     let startingPoint = new cv.Point(-1, -1);
     let size = img.size();
     for (let y = 0; y < size.height; ++y) {
-      if (img.ucharPtr(y, size.width-1)[0] === 255) {
+      if (img.ucharPtr(y, size.width - 1)[0] === 255) {
         startingPoint.x = size.width - 1;
         startingPoint.y = y;
         break;
@@ -284,13 +456,20 @@ if (process.env.BROWSER) {
     let dir = 5;
     // console.log(`${currentPoint.x},${currentPoint.y}`);
 
+    let count = 0;
     do {
       // console.log('we are here');
-      console.log(`${currentPoint.x},${currentPoint.y}`);
-      await delay(10);
+      // console.log(`${currentPoint.x},${currentPoint.y}`);
+      // await delay(10);
       currentPoint = getNextBoundaryPoint(img, dir, currentPoint);
       boundaryVector.push(currentPoint);
+      // cv.circle(img, {x:currentPoint.x,y:currentPoint.y }, 5, [100, 100, 100, 255], -1); // for debugging
+      // if(currentPoint.x === 335 && currentPoint.y === 65) {
+      if (count > 200) {
+        break; // this is where it gets stuck
+      }
       // console.log(`cp.x ${currentPoint.x} s.w-1 ${size.width-1}`);
+      count++;
     } while (currentPoint.x !== size.width - 1);
     return boundaryVector;
   }
@@ -470,6 +649,10 @@ if (process.env.BROWSER) {
         return imageProcessing(e.data);
       case 'imageProcessing2':
         return imageProcessing2(e.data);
+      case 'imageProcessing3':
+        return imageProcessing3(e.data);
+      case 'imageProcessing4':
+        return imageProcessing4(e.data);
       default:
         break;
     }

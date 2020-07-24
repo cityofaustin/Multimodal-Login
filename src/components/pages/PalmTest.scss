@@ -9,6 +9,20 @@ body {
   font-size: 16px;
 }
 
+.top-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-control {
+  display: flex;
+  align-items: center;
+  label {
+    padding-right: 10px;
+  }
+}
+
 .image-container {
   display: flex;
   flex-direction: column;
@@ -16,4 +30,23 @@ body {
   div {
     padding-top: 10px;
   }
+}
+
+.cv-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  .results {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.success {
+  color: #00FF00;
+}
+
+.fail {
+  color: #FF0000;
 }

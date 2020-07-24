@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "browser": { "fs": false, "path": false, "os": false},
+
   "scripts": {
     "webpack": "webpack --mode development --config webpack.config.js",
     "webpack:watch": "webpack --mode development --config webpack.config.js --watch",

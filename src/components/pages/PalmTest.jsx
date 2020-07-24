@@ -23,12 +23,15 @@ if (process.env.BROWSER) {
 }
 
 export default class PalmTest extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true
-    }
+      isLoading: true,
+      userId: 'none',
+      matchedUserId: 'none',
+      distance: 0,
+      matchResponse: 0, // 0 none, 1 success, 2 failure
+    };
   }
 
   componentDidMount() {
@@ -49,7 +52,7 @@ export default class PalmTest extends Component {
       // ctx.drawImage(image);
       // });
       // const button = document.getElementById('startStopButton');
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
     }
   }
 
@@ -57,24 +60,59 @@ export default class PalmTest extends Component {
     const canvas = document.getElementById('query-image');
     const ctx = canvas.getContext('2d');
     const image = ctx.getImageData(0, 0, imageWidth, imageHeight);
-    const processedImage = await cvservice.imageProcessing2(image);
+    const processedImage2 = await cvservice.imageProcessing2(image);
     // debugger;
     // Render the processed image to the canvas
-    const canvas2 = document.getElementById('preprocessed-image');
+    const canvas2 = document.getElementById('preprocessed-image2');
     const ctx2 = canvas2.getContext('2d');
-    const imageData = processedImage.data.payload;
-    ctx2.canvas.width = imageWidth;
-    ctx2.canvas.height = imageHeight;
-    ctx2.putImageData(imageData, 0, 0);
+    const imageData2 = processedImage2.data.payload;
+    ctx2.canvas.width = 111; // cols
+    ctx2.canvas.height = 110; // rows
+    ctx2.putImageData(imageData2, 0, 0);
+
+    const processedImage3 = await cvservice.imageProcessing3(imageData2);
+    const canvas3 = document.getElementById('preprocessed-image3');
+    const ctx3 = canvas3.getContext('2d');
+    const imageData3 = processedImage3.data.payload;
+    ctx3.canvas.width = 128;
+    ctx3.canvas.height = 128;
+    ctx3.putImageData(imageData3, 0, 0);
+
+    const processedImage4 = await cvservice.imageProcessing4(image);
+    const canvas4 = document.getElementById('preprocessed-image4');
+    const ctx4 = canvas4.getContext('2d');
+    const imageData4 = processedImage4.data.payload;
+    ctx4.canvas.width = 128;
+    ctx4.canvas.height = 128;
+    ctx4.putImageData(imageData4, 0, 0);
+
+    this.setState({userId: 1, matchedUserId: 1, distance: 0.0060309, matchResponse: 1});
   };
 
   render() {
+    const { userId, matchedUserId, distance, matchResponse } = {
+      ...this.state,
+    };
     return (
       <div>
         <h1>Palm Detection</h1>
-        <button id="startStopButton" type="button" disabled={this.state.isLoading} onClick={this.start}>
-          Start
-        </button>
+        <div className="top-form">
+          <button
+            id="startStopButton"
+            type="button"
+            disabled={this.state.isLoading}
+            onClick={this.start}
+          >
+            Start Identification
+          </button>
+          <div className="form-control">
+            <label htmlFor="method-select">Method</label>
+            <select name="pets" id="method-select">
+              <option value="line">Line based</option>
+              <option value="texture">Texture based</option>
+            </select>
+          </div>
+        </div>
         <div id="status"></div>
         <img id="source" src={img} style={{ display: 'none' }} />
         <div className="image-container">
@@ -91,29 +129,63 @@ export default class PalmTest extends Component {
           />
           <div>Query Image</div>
         </div>
-        <div className="image-container">
-          <canvas
-            id="preprocessed-image"
-            width={imageWidth}
-            height={imageHeight}
-            style={{
-              marginTop: '20px',
-              maxWidth: '100%',
-              backgroundColor: 'black',
-              border: '1px solid #555',
-            }}
-          />
-          <div>preprocessed Image</div>
+        <input
+          id="choose-different"
+          type="file"
+          accept="image/png, image/jpeg"
+          // disabled={this.state.isLoading}
+        />
+        <div className="cv-section">
+          <div className="image-container">
+            <canvas
+              id="preprocessed-image2"
+              width={111}
+              height={110}
+              style={{
+                marginTop: '20px',
+                maxWidth: '100%',
+                backgroundColor: 'black',
+                border: '1px solid #555',
+              }}
+            />
+            <div>Extracted ROI</div>
+          </div>
+          <div className="image-container">
+            <canvas
+              id="preprocessed-image3"
+              width={128}
+              height={128}
+              style={{
+                marginTop: '20px',
+                maxWidth: '100%',
+                backgroundColor: 'black',
+                border: '1px solid #555',
+              }}
+            />
+            <div>Extracted Feature</div>
+          </div>
+          <div className="image-container">
+            <canvas
+              id="preprocessed-image4"
+              width={128}
+              height={128}
+              style={{
+                marginTop: '20px',
+                maxWidth: '100%',
+                backgroundColor: 'black',
+                border: '1px solid #555',
+              }}
+            />
+            <div>Matched Feature</div>
+          </div>
+          <div className="results">
+            <div>User Id: {userId}</div>
+            <div>Matched User Id: {matchedUserId}</div>
+            <div>Distance: {distance}</div>
+            {matchResponse === 1 && <div className="success">ACCEPT</div>}
+            {matchResponse === 2 && <div className="fail">DECLINE</div>}
+          </div>
         </div>
-        <table>
-          <tbody>
-            <tr id="targetImgs"></tr>
-            <tr id="targetNames"></tr>
-          </tbody>
-        </table>
-        {/* <button id="addPersonButton" type="button" disabled>
-          Add a person
-        </button> */}
       </div>
     );
   }

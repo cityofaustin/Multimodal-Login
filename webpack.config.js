@@ -130,7 +130,7 @@ const config = [
         //   ],
         // },
         {
-          test: /opencv-4-3-0.js|\.xml$/,
+          test: /opencv-4-3-0.js|opencv-4-4-0.js|\.xml$/,
           use: [
             {
               loader: 'file-loader',
