@@ -1,7 +1,8 @@
 // import delay from '../util/delay';
 import finalLines from './finalLines';
 import matchedTemplate from './matchedTemplate';
-import { H1_45, H2_45 } from './gaussian';
+import { H1_0, H1_45, H1_90, H1_135, H2_0, H2_45, H2_90, H2_135 } from './gaussian';
+import storedFeatures from './palmlinedb.json';
 
 const publicPath = process.env.FE ? '' : '/public';
 if (process.env.BROWSER) {
@@ -80,28 +81,112 @@ if (process.env.BROWSER) {
     let roiAfterPreprocessing = doPreprocessingGrayscaleSm(rgbaMat);
     let normalizedRoi = normalizeImage(roiAfterPreprocessing);
     let finalLines2 = locatePrincipalLines(normalizedRoi);
-    // console.log(JSON.stringify(Object.keys(processedMat.data).map(key => processedMat.data[key])));
     // postMessage({ msg, payload: imageDataFromMat(finalLines2) });
   }
 
+  function printMat(mat) {
+    // NOTE: this is great for comparing the matrix data from the c++ code to see if it lines up
+    // correctly / is doing the same thing with the code here.  I use this site to compare
+    // http://www.jsondiff.com/ (you have to replace the semicolons with commas when
+    // doing 'cout << end << mat << endl;' in the c++ code in order for the outputs to be same).
+    console.log(JSON.stringify(Object.keys(mat.data).map(key => mat.data[key])));
+  }
+
   function imageProcessing4({ msg, payload }) {
+    const rgbaMat = cv.matFromImageData(payload);
+    const mat = doPreprocessingGrayscaleSm(rgbaMat);
+    const distanceTransImg = doDistanceTransformation(mat);
+    if(storedFeatures.length == 0) {
+      console.error("Error: database is empty");
+    }
+    let min = 2147483647.0; // max int
+    let min_id = 0;
+    let matchedIndex = -1;
+    let sum = 0;
+    // Calculate Chamfer distance
+    for (let i = 0; i < storedFeatures.length; i++){
+      sum = 0;
+      // array of points for this particular template
+      let temp = storedFeatures[i].featureData;
+      if(temp.length != 0){
+        for (let j = 0; j < temp.length; ++j){
+          // [0] is x and [1] is y
+          sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
+        }
+        sum = sum / (temp.length*255);
+        if (sum < min){
+            min = sum;
+            min_id = storedFeatures[i].userId;
+            matchedIndex = i;
+        }
+      }
+    }
+    // console.log(`sum 0.026889297385620917 matchedIndex 2 min 0.006030897207367796`);
+    // console.log(`sum ${sum} matchedIndex ${matchedIndex} min ${min}`);
     let matchedImage = new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(0));
 
-    for (let p of matchedTemplate) {
+    // for (let p of matchedTemplate) {
+    for (let p of storedFeatures[matchedIndex].featureData) {
       matchedImage.ucharPtr(p[0], p[1])[0] = 255;
     }
-    postMessage({ msg, payload: imageDataFromMat(matchedImage) });
+    postMessage({ msg, payload: {distance: min, userId: min_id, img: imageDataFromMat(matchedImage)} });
+  }
+
+  function doDistanceTransformation(img) {
+    // Two pass algorithm with two Euclidean kernel
+    let invImg = new cv.Mat();
+    cv.subtract(new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(255)), img, invImg);
+    // First pass from top left
+	  for (let x = 1; x < invImg.rows - 1; x++){
+      for (let y = 1; y < invImg.cols - 1; y++){
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2)) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2));
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x, y - 1)[0] + 1) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x, y - 1)[0] + Math.sqrt(2));
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2)) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2));
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y)[0] + 1) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y)[0] + 1);
+        }
+      }
+    }
+    // Second pass from bottom right
+    for (let x = invImg.rows - 2; x >= 1; x--){
+      for (let y = invImg.cols - 2; y >= 1; y--){
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y)[0] + 1) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y)[0] + 1);
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2)) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2));
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x, y + 1)[0] + 1) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x, y + 1)[0] + 1);
+        }
+        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2)) {
+          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2));
+        }
+      }
+    }
+    return invImg;
   }
 
   function locatePrincipalLines(mat) {
-    // Directional line detector in 45 direction
-    let linesInDir45 = locatePrincipalLineInGivenDirection(
-      mat,
-      H1_45,
-      H2_45,
-      45
-    );
-    let lines = linesInDir45;
+    // Locating principal lines in four directions
+    // NOTE: this doesn't seem to work correctly, the 45 is the only one that detects pixels
+    // it probably has to do with the initial image not matching correctly
+    let linesInDir0 = locatePrincipalLineInGivenDirection(mat,H1_0,H2_0,0);
+    let linesInDir90 = locatePrincipalLineInGivenDirection(mat,H1_90,H2_90,90);
+    let linesInDir45 = locatePrincipalLineInGivenDirection(mat,H1_45,H2_45,45);
+    let linesInDir135 = locatePrincipalLineInGivenDirection(mat,H1_135,H2_135,135);
+    const lines = new cv.Mat(128,128,cv.CV_8UC1,new cv.Scalar(0));
+    // pretty helpful guide
+    // https://kdr2.com/tech/main/1810-elewise-matrix-op-opencv.html
+    cv.bitwise_or(linesInDir45, linesInDir90, lines);
+    cv.bitwise_or(lines, linesInDir0, lines);
+    cv.bitwise_or(lines, linesInDir135, lines);
     return lines;
   }
 
@@ -131,12 +216,9 @@ if (process.env.BROWSER) {
       for (let j = Math.floor(H1_cols / 2); j < 128 - H1_cols / 2; j++) {
         for (let _i = -Math.floor(H1_rows / 2); _i <= H1_rows / 2; _i++) {
           for (let _j = -Math.floor(H1_cols / 2); _j <= +(H1_cols / 2); _j++) {
-            // I_der[i][j]  += (mat.at(i + _i, j + _j)) * H1[_i + (H1_rows / 2)][_j + (H1_cols / 2)];
-            // I_der2[i][j] += (mat.at(i + _i, j + _j)) * H2[_i + (H1_rows / 2)][_j + (H1_cols / 2)];
             const matValue = mat.ucharPtr(i + _i, j + _j)[0];
             const hRow = _i + Math.floor(H1_rows / 2);
             const hCol = _j + Math.floor(H1_cols / 2);
-            // console.log(`${i} ${j} ${matValue} ${hRow} ${hCol}`);
             I_der[i][j] += matValue * H1[hRow][hCol];
             I_der2[i][j] += matValue * H2[hRow][hCol];
           }
@@ -145,12 +227,6 @@ if (process.env.BROWSER) {
     }
 
     // Create binary image, this will contain the extracted principal lines in a given direction
-    // let thresholded = new cv.Mat(
-    //   ycbcrImg.rows,
-    //   ycbcrImg.cols,
-    //   cv.CV_8UC1,
-    //   new cv.Scalar(0)
-    // );
     let binaryImage = new cv.Mat(
       128,
       128,
@@ -183,8 +259,8 @@ if (process.env.BROWSER) {
         }
       }
     }
+    // console.log(JSON.stringify(Object.keys(binaryImage.data).map(key => binaryImage.data[key])));
     return binaryImage;
-    // return mat;
   }
 
   function isInsideTheBoundary(i, j) {

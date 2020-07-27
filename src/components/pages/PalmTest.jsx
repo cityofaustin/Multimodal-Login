@@ -31,6 +31,7 @@ export default class PalmTest extends Component {
       matchedUserId: 'none',
       distance: 0,
       matchResponse: 0, // 0 none, 1 success, 2 failure
+      methodType: 'line', // 'line' or 'texture'
     };
   }
 
@@ -57,6 +58,8 @@ export default class PalmTest extends Component {
   }
 
   start = async () => {
+    const {methodType} = {...this.state};
+    let {matchResponse} = {...this.state};
     const canvas = document.getElementById('query-image');
     const ctx = canvas.getContext('2d');
     const image = ctx.getImageData(0, 0, imageWidth, imageHeight);
@@ -78,15 +81,28 @@ export default class PalmTest extends Component {
     ctx3.canvas.height = 128;
     ctx3.putImageData(imageData3, 0, 0);
 
-    const processedImage4 = await cvservice.imageProcessing4(image);
+    let payload = await cvservice.imageProcessing4(imageData3);
+    payload = payload.data.payload;
     const canvas4 = document.getElementById('preprocessed-image4');
     const ctx4 = canvas4.getContext('2d');
-    const imageData4 = processedImage4.data.payload;
+    const imageData4 = payload.img;
     ctx4.canvas.width = 128;
     ctx4.canvas.height = 128;
     ctx4.putImageData(imageData4, 0, 0);
 
-    this.setState({userId: 1, matchedUserId: 1, distance: 0.0060309, matchResponse: 1});
+    if(methodType === 'line') {
+      matchResponse = (payload.distance < 0.011) ? 1 : 2;
+    } else {
+      // otherwise it's texture
+      matchResponse = (payload.distance < 0.137) ? 1 : 2;
+    }
+    this.setState({
+      userId: payload.userId,
+      matchedUserId: payload.userId,
+      // rounds to 7 decimals places
+      distance: Number(Math.round(payload.distance+'e7')+'e-7'),
+      matchResponse
+    });
   };
 
   render() {
@@ -109,7 +125,7 @@ export default class PalmTest extends Component {
             <label htmlFor="method-select">Method</label>
             <select name="pets" id="method-select">
               <option value="line">Line based</option>
-              <option value="texture">Texture based</option>
+              <option value="texture" disabled>Texture based</option>
             </select>
           </div>
         </div>
