@@ -11,7 +11,7 @@
     "test": "npx jest --config=jest.config.js",
     "prebuild": "rm -rf dist/*",
     "build": "npm run webpack-production && npm run babel-production",
-    "postbuild": "pwd && ls,
+    "postbuild": "pwd && ls",
     "webpack-production": "webpack -p",
     "babel-production": "NODE_ENV=production COMPILER_ENV=server npx babel --out-dir dist src",
     "build:start": "npm run build && node dist/app.js",
