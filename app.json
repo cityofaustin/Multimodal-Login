@@ -1,7 +1,7 @@
 {
   "name": "MyPass Oauth Multimodal Login",
   "description": "MyPass Oauth Multimodal Login Quickstart",
-  "repository": "https://github.com/cityofaustin/multimodal-login/heroku",
+  "repository": "https://github.com/cityofaustin/multimodal-login/tree/heroku",
   "addons": ["mongolab"],
 
   "env": {
