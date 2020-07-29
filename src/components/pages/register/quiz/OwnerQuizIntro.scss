@@ -1,0 +1,15 @@
+#section-3-owner {
+  .card {
+    height: 453px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    .card-subtitle {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: #ababab;
+    }
+  }
+}
