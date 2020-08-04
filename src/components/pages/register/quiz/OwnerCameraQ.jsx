@@ -3,17 +3,22 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import PasswordSvg from '../../../svg/PasswordSvg';
 import OptionSvg from '../../../svg/OptionSvg';
-import './OwnerPasswordQ.scss';
+import './OwnerCameraQ.scss';
 
-export default class OwnerPasswordQ extends Component {
+export default class OwnerCameraQ extends Component {
   static defaultProps = {
     handleGoForward: () => {},
     handleGoBack: () => {},
   };
 
   state = {
-    options: ['forgetPasswordOften', 'forgetPasswordRarely'],
-    selectedOption: undefined,
+    options: [
+      'cameraAccessNone',
+      'cameraAccessTablet',
+      'cameraAccessComputer',
+      'cameraAccessPhone',
+    ],
+    selectedOptions: [],
   };
 
   componentDidMount() {
@@ -31,32 +36,44 @@ export default class OwnerPasswordQ extends Component {
     }, 1);
   }
 
+  handleOptionSelect = (option) => {
+    const {options} = {...this.state};
+    let {selectedOptions} = {...this.state};
+    if(option === options[0] && selectedOptions.indexOf(option) < 0) { // select none
+      selectedOptions = [options[0]];
+    } else if(selectedOptions.indexOf(option) > -1) { // de select
+      selectedOptions.splice(selectedOptions.indexOf(option), 1);
+    } else { // select
+      if(selectedOptions.indexOf(options[0]) > -1) { // remove select none if selected
+        selectedOptions.splice(selectedOptions.indexOf(options[0]));
+      }
+      selectedOptions.push(option);
+    }
+    this.setState({ selectedOptions });
+  }
+
   render() {
-    const { options, selectedOption } = { ...this.state };
+    const { options, selectedOptions } = { ...this.state };
     return (
-      <div ref="section" id="section-4-owner" className="section">
+      <div ref="section" id="section-5-owner" className="section">
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
           <div className="card owner1">
             <div>
               <div className="card-title">
-                How often do you forget your passwords and have to reset them?
+                Do you have access to a device with a working camera?
               </div>
-            </div>
-            <div>
-              <PasswordSvg />
             </div>
             <div className="options">
               {options.map((option) => {
-                const svgType =
-                  option === options[0] ? 'meh' : 'smiley';
+                let svgType = option.substring(12, option.length).toLowerCase();
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() => this.setState({ selectedOption: option })}
-                    isSelected={selectedOption === option}
+                    handleClick={() => this.handleOptionSelect(option)}
+                    isSelected={selectedOptions.indexOf(option) > -1}
                   />
                 );
               })}
@@ -66,14 +83,14 @@ export default class OwnerPasswordQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 5)}
-                disabled={!selectedOption}
+                onClick={() => this.props.handleGoForward('owner', 6)}
+                disabled={selectedOptions.length < 1}
               />
             </div>
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 4)}
+            goBack={() => this.props.handleGoBack('owner', 5)}
           />
         </div>
       </div>

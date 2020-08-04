@@ -1,0 +1,39 @@
+.pill {
+  border-radius: 23px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.09);
+  width: 230px;
+  height: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 0 20px;
+  color: #a7a7a7;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.complete {
+  background-color: #5b91e8;
+  .option-display {
+    color: #ffffff;
+  }
+  .check-circle {
+    fill: #f2f2f2;
+  }
+  .check-line {
+    fill: #5b91e8;
+  }
+  .shield {
+    fill: #fff;
+  }
+  .password-svg path {
+    fill: #fff;
+  }
+  .palm-svg path {
+    fill: #fff;
+  }
+  .text-svg path {
+    fill: #fff;
+  }
+}

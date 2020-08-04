@@ -1,0 +1,15 @@
+#section-7-owner {
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 453px;
+    .options {
+      display: flex;
+      svg {
+        margin: 0 -4px;
+      }
+    }
+  }
+}

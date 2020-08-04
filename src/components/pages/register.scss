@@ -9,8 +9,8 @@ html, body {
 
 body {
   // https://stackoverflow.com/a/17499101/6907541
-  background-image: linear-gradient($mid-blue 50%, $azure2 50%);
-  // background-image: linear-gradient($mid-blue 50%, white 50%);
+  // background-image: linear-gradient($mid-blue 50%, $azure2 50%);
+  background-image: linear-gradient($mid-blue 50%, white 50%);
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
@@ -20,8 +20,8 @@ body {
   // z-index: -1;
   top: 35%;
   transition: transform 1.5s ease-out;
-  transform: translateX(0px);
-  // transform: translateX(-1080px);
+  // transform: translateX(0px);
+  transform: translateX(-3240px);
   will-change: transform;
   width: 100vw;
   overflow-x: visible;
@@ -29,6 +29,29 @@ body {
     overflow:auto;
   }
 }
+
+.progress-container {
+  background-color: #9e9e9e33;
+  // opacity: 0;
+  opacity: 1;
+  transition: opacity 1.5s ease-out;
+  will-change: opacity;
+}
+
+.progress-bar {
+  background-color: #f1f1f1aa;
+  height: 6px;
+  // width: 0%;
+  width: 100%;
+  transition: width 1.5s ease-out;
+  will-change: width;
+}
+
+input[type=button]:disabled {
+  background-color: #9a9a9a;
+  cursor: not-allowed;
+}
+
 // #top {
 //   background-color: red;
 //   height: 50vh;
@@ -83,6 +106,7 @@ body {
       .section-contents {
         padding: 40px 0;
         overflow-y: auto;
+        padding-right: 10px;
         // padding-bottom:100px;
       }
       .title {
@@ -141,14 +165,8 @@ body {
             display: none;
             position: absolute;
             bottom: 18px;
-            right: -42px;
-            // svg {
-
-            // }
+            right: -31px;
           }
-          // svg {
-
-          // }
         }
       }
       .card {

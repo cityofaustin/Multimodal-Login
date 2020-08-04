@@ -10,6 +10,12 @@ import HelperOverview from './register/HelperOverview';
 import OwnerEmail from './register/OwnerEmail';
 import OwnerQuizIntro from './register/quiz/OwnerQuizIntro';
 import OwnerPasswordQ from './register/quiz/OwnerPasswordQ';
+import OwnerCameraQ from './register/quiz/OwnerCameraQ';
+import OwnerLostPhoneQ from './register/quiz/OwnerLostPhoneQ';
+import OwnerPalmQ from './register/quiz/OwnerPalmQ';
+import OwnerSecurityQ from './register/quiz/OwnerSecurityQ';
+import OwnerLoginRecommend from './register/OwnerLoginRecommend';
+import LoginMethodSetup from './register/login-method-setup/LoginMethodSetup';
 
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
@@ -21,15 +27,17 @@ class Register extends Component {
   constructor() {
     super();
     this.state = {
-      selectedRole: undefined,
-      step: 0,
-      // selectedRole: 'owner',
-      // step: 4,
+      // selectedRole: undefined,
+      // step: 0,
+      selectedRole: 'owner',
+      step: 9,
       isAnimatingForward: false,
       isAnimatingBackward: false,
       faceRegister: false,
       username: '',
       faceTemplate: undefined,
+      totalSteps: 10,
+      securityItems: undefined,
     };
   }
 
@@ -85,7 +93,11 @@ class Register extends Component {
     window.location.href = '../';
   }
 
-  handleGoBack = async (selectedRole, step) => {
+  handleGoBack = async (selectedRole, step, data) => {
+    const { totalSteps } = { ...this.state };
+    if (data && data.securityItems) {
+      this.setState({ securityItems: data.securityItems });
+    }
     if (step === 0) {
       this.goBackToWelcome();
     }
@@ -96,10 +108,12 @@ class Register extends Component {
     const elObj = this.getElObj();
     if (step === 1) {
       elObj.body.style.backgroundImage = `linear-gradient(#2362c7 50%, #4ba9d9 50%)`;
+      elObj.progressContainer.style.opacity = 0;
     }
     elObj.wave.style.transform = `translateX(-${(step - 1) * 360}px)`;
     elObj[selectedRole][step].style.transform = 'translateX(360px)';
     elObj[selectedRole][step].style.opacity = 0;
+    elObj.progress.style.width = ((step - 1) * 100) / totalSteps + '%';
     await delay(1500);
     this.setState({
       selectedRole: step - 1 === 0 ? undefined : selectedRole,
@@ -109,17 +123,29 @@ class Register extends Component {
   };
 
   handleGoForward = async (selectedRole, step, data) => {
+    const { totalSteps } = { ...this.state };
+    let { loginMethod } = { ...this.state };
+    if (data && data.loginMethod) {
+      ({ loginMethod } = { ...data });
+    }
     const elObj = this.getElObj();
     if (step === 1) {
       elObj.body.style.backgroundImage =
         selectedRole === 'owner'
           ? 'linear-gradient(#2362c7 50%, white 50%)'
           : 'linear-gradient(#4ba9d9 50%, white 50%)';
+      elObj.progressContainer.style.opacity = 1;
     }
     elObj.wave.style.transform = `translateX(-${step * 360}px)`;
     elObj[selectedRole][step - 1].style.transform = 'translateX(-360px)';
     elObj[selectedRole][step - 1].style.opacity = '0';
-    this.setState({ step, selectedRole, isAnimatingForward: true });
+    elObj.progress.style.width = (step * 100) / totalSteps + '%';
+    this.setState({
+      step,
+      selectedRole,
+      isAnimatingForward: true,
+      loginMethod,
+    });
     await delay(1500);
     this.setState({ isAnimatingForward: false });
   };
@@ -128,6 +154,10 @@ class Register extends Component {
     return {
       body: document.body,
       wave: document.getElementsByClassName('wave-container')[0],
+      progress: document.getElementById('progress'),
+      progressContainer: document.getElementsByClassName(
+        'progress-container'
+      )[0],
       owner: [
         document.getElementById('section0'),
         document.getElementById('section-1-owner'),
@@ -135,6 +165,14 @@ class Register extends Component {
         document.getElementById('section-3-owner'),
         document.getElementById('section-4-owner'),
         document.getElementById('section-5-owner'),
+        document.getElementById('section-6-owner'),
+        document.getElementById('section-7-owner'),
+        document.getElementById('section-8-owner'),
+        document.getElementById('section-9-owner'),
+        document.getElementById('section-10-owner'),
+        document.getElementById('section-11-owner'),
+        document.getElementById('section-12-owner'),
+        document.getElementById('section-13-owner'),
       ],
       helper: [
         document.getElementById('section0'),
@@ -144,7 +182,14 @@ class Register extends Component {
   }
 
   renderOnboarding() {
-    const { step, selectedRole, isAnimatingForward, isAnimatingBackward } = {
+    const {
+      step,
+      selectedRole,
+      isAnimatingForward,
+      isAnimatingBackward,
+      loginMethod,
+      securityItems,
+    } = {
       ...this.state,
     };
     switch (selectedRole) {
@@ -242,6 +287,160 @@ class Register extends Component {
                 />
               );
             }
+          case 5:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerPasswordQ />
+                  <OwnerCameraQ position="right" />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerPasswordQ position="left" />
+                  <OwnerCameraQ />
+                </Fragment>
+              );
+            } else {
+              return (
+                <OwnerCameraQ
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                />
+              );
+            }
+          case 6:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerCameraQ />
+                  <OwnerLostPhoneQ position="right" />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerCameraQ position="left" />
+                  <OwnerLostPhoneQ />
+                </Fragment>
+              );
+            } else {
+              return (
+                <OwnerLostPhoneQ
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                />
+              );
+            }
+          case 7:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerLostPhoneQ />
+                  <OwnerPalmQ position="right" />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerLostPhoneQ position="left" />
+                  <OwnerPalmQ />
+                </Fragment>
+              );
+            } else {
+              return (
+                <OwnerPalmQ
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                />
+              );
+            }
+          case 8:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerPalmQ />
+                  <OwnerSecurityQ position="right" />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerPalmQ position="left" />
+                  <OwnerSecurityQ />
+                </Fragment>
+              );
+            } else {
+              return (
+                <OwnerSecurityQ
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                />
+              );
+            }
+          case 9:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerSecurityQ />
+                  <OwnerLoginRecommend
+                    position="right"
+                    securityItems={securityItems}
+                  />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerSecurityQ position="left" />
+                  <OwnerLoginRecommend securityItems={securityItems} />
+                </Fragment>
+              );
+            } else {
+              return (
+                <OwnerLoginRecommend
+                  securityItems={securityItems}
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                />
+              );
+            }
+          case 10:
+            if (isAnimatingForward) {
+              return (
+                <Fragment>
+                  <OwnerLoginRecommend securityItems={securityItems} />
+                  <LoginMethodSetup
+                    position="right"
+                    loginMethod={loginMethod}
+                    securityItems={securityItems}
+                  />
+                </Fragment>
+              );
+            } else if (isAnimatingBackward) {
+              return (
+                <Fragment>
+                  <OwnerLoginRecommend
+                    position="left"
+                    securityItems={securityItems}
+                  />
+                  <LoginMethodSetup
+                    loginMethod={loginMethod}
+                    securityItems={securityItems}
+                  />
+                </Fragment>
+              );
+            } else {
+              return (
+                <LoginMethodSetup
+                  handleGoBack={this.handleGoBack}
+                  handleGoForward={this.handleGoForward}
+                  loginMethod={loginMethod}
+                  securityItems={securityItems}
+                />
+              );
+            }
           default:
             return <Fragment />;
         }
@@ -285,11 +484,14 @@ class Register extends Component {
 
   render() {
     if (process.env.BROWSER) {
+      const { step } = { ...this.state };
       return (
         <Fragment>
-          {/* <div id="top"></div> */}
           <div id="splash">
             <LogoSvg />
+          </div>
+          <div className="progress-container">
+            <div id="progress" className="progress-bar"></div>
           </div>
           <main id="main" style={{ position: 'absolute', top: 0, opacity: 0 }}>
             <section className="wave-container">

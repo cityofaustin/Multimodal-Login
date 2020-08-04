@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
-import PasswordSvg from '../../../svg/PasswordSvg';
 import OptionSvg from '../../../svg/OptionSvg';
-import './OwnerPasswordQ.scss';
+import SecurityQuestionSvg from '../../../svg/SecurityQuestionSvg';
+import './OwnerSecurityQ.scss';
 
-export default class OwnerPasswordQ extends Component {
+export default class OwnerSecurityQ extends Component {
   static defaultProps = {
     handleGoForward: () => {},
     handleGoBack: () => {},
   };
 
   state = {
-    options: ['forgetPasswordOften', 'forgetPasswordRarely'],
+    options: ['securityNotGood', 'securityGood'],
     selectedOption: undefined,
   };
 
@@ -34,28 +34,31 @@ export default class OwnerPasswordQ extends Component {
   render() {
     const { options, selectedOption } = { ...this.state };
     return (
-      <div ref="section" id="section-4-owner" className="section">
+      <div ref="section" id="section-8-owner" className="section">
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
           <div className="card owner1">
             <div>
               <div className="card-title">
-                How often do you forget your passwords and have to reset them?
+                How good are you at answering security questions?
+              </div>
+              <div className="card-subtitle">
+                Example: "What's your mother's maiden name?
               </div>
             </div>
-            <div>
-              <PasswordSvg />
-            </div>
+            <SecurityQuestionSvg />
             <div className="options">
               {options.map((option) => {
                 const svgType =
-                  option === options[0] ? 'meh' : 'smiley';
+                  option === options[0] ? 'meh-security' : 'smiley-security';
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() => this.setState({ selectedOption: option })}
+                    handleClick={() =>
+                      this.setState({ selectedOption: option })
+                    }
                     isSelected={selectedOption === option}
                   />
                 );
@@ -66,14 +69,14 @@ export default class OwnerPasswordQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 5)}
+                onClick={() => this.props.handleGoForward('owner', 9)}
                 disabled={!selectedOption}
               />
             </div>
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 4)}
+            goBack={() => this.props.handleGoBack('owner', 8)}
           />
         </div>
       </div>

@@ -1,0 +1,34 @@
+#section-9-owner {
+  .section-contents {
+    .card {
+      height: 454px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      .excerpt1 {
+        color: #ababab;
+        font-size: 15px;
+        font-weight: 500;
+        text-align: center;
+      }
+      .excerpt2 {
+        color: #ababab;
+        font-size: 13px;
+        text-align: center;
+      }
+      .submit-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        div {
+          margin-top: 7px;
+          color: #90afe2;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
