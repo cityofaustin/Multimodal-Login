@@ -14,7 +14,6 @@ export default class OwnerLoginRecommend extends Component {
 
   state = {
     loginMethods: ['password', 'text', 'palm', 'securityQuestions'],
-    recommended: ['text', 'palm'],
   };
 
   componentDidMount() {
@@ -32,9 +31,42 @@ export default class OwnerLoginRecommend extends Component {
     }, 1);
   }
 
+  getRecommended = () => {
+    const {
+      forgetsPassword,
+      lostPhone,
+      scanningPalm,
+      answeringSecurityQuestions,
+    } = {
+      ...this.props.questions,
+    };
+    const recommended = [];
+    if (forgetsPassword === 'forgetPasswordRarely') {
+      recommended.push('password');
+    }
+    if (lostPhone !== 'noPhone') {
+      recommended.push('text');
+    }
+    if (scanningPalm === 'palmComfortable') {
+      recommended.push('palm');
+    }
+    if (answeringSecurityQuestions === 'securityGood') {
+      recommended.push('securityQuestions');
+    }
+    return recommended;
+  };
+
   isComplete = (loginMethod) => {
-    const {securityItems} = {...this.props};
-    switch(loginMethod) {
+    const { passwordItem, textItem, palmItem, securityItems } = {
+      ...this.props,
+    };
+    switch (loginMethod) {
+      case 'password':
+        return !!passwordItem;
+      case 'text':
+        return !!textItem;
+      case 'palm':
+        return !!palmItem;
       case 'securityQuestions':
         return !!securityItems;
       default:
@@ -43,17 +75,17 @@ export default class OwnerLoginRecommend extends Component {
   };
 
   areAnyComplete = () => {
-    const {loginMethods } = {...this.state};
-    for(const loginMethod of loginMethods) {
-      if(this.isComplete(loginMethod)) {
+    const { loginMethods } = { ...this.state };
+    for (const loginMethod of loginMethods) {
+      if (this.isComplete(loginMethod)) {
         return true;
       }
     }
     return false;
-  }
+  };
 
   render() {
-    const { loginMethods, recommended } = { ...this.state };
+    const { loginMethods } = { ...this.state };
     return (
       <div ref="section" id="section-9-owner" className="section">
         <div className="section-contents">
@@ -66,14 +98,17 @@ export default class OwnerLoginRecommend extends Component {
                 you
               </div>
             </div>
-            {recommended.map((loginMethod) => (
+            {this.getRecommended().map((loginMethod) => (
               <div
                 key={loginMethod}
                 onClick={() =>
                   this.props.handleGoForward('owner', 10, { loginMethod })
                 }
               >
-                <LoginOption loginMethod={loginMethod} isComplete={this.isComplete(loginMethod)} />
+                <LoginOption
+                  loginMethod={loginMethod}
+                  isComplete={this.isComplete(loginMethod)}
+                />
               </div>
             ))}
             <div>
@@ -81,7 +116,9 @@ export default class OwnerLoginRecommend extends Component {
               <div className="excerpt2">(not recommended for you)</div>
             </div>
             {loginMethods
-              .filter((loginMethod) => recommended.indexOf(loginMethod) < 0)
+              .filter(
+                (loginMethod) => this.getRecommended().indexOf(loginMethod) < 0
+              )
               .map((loginMethod) => (
                 <div
                   key={loginMethod}
@@ -89,7 +126,10 @@ export default class OwnerLoginRecommend extends Component {
                     this.props.handleGoForward('owner', 10, { loginMethod })
                   }
                 >
-                  <LoginOption loginMethod={loginMethod} isComplete={this.isComplete(loginMethod)} />
+                  <LoginOption
+                    loginMethod={loginMethod}
+                    isComplete={this.isComplete(loginMethod)}
+                  />
                 </div>
               ))}
             <div className="submit-section">

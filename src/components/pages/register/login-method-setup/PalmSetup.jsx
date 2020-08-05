@@ -4,12 +4,16 @@ import PalmNotDetectedSvg from '../../../svg/PalmNotDetectedSvg';
 import './PalmSetup.scss';
 
 export default class PalmSetup extends Component {
-  state = {
-    palmTemplate: undefined,
-  };
+  constructor(props) {
+    super(props);
+    const palmTemplate = props.palmItem ? props.palmItem.palmTemplate : undefined;
+    this.state = {
+      palmTemplate
+    }
+  }
 
   render() {
-    const {palmTemplate} = { ...this.state };
+    const { palmTemplate } = { ...this.state };
     return (
       <div id="palm-setup" className="card owner1">
         <div className="card-content">
@@ -27,14 +31,19 @@ export default class PalmSetup extends Component {
             <input
               type="button"
               value="Open Camera"
-              onClick={() => this.setState({palmTemplate: "123"})}
+              // TODO:
+              onClick={() => this.setState({ palmTemplate: '123' })}
             />
           )}
           {palmTemplate && (
             <input
               type="button"
               value="Set Palm"
-              onClick={() => this.props.handleGoBack('owner', 10)}
+              onClick={() =>
+                this.props.handleGoBack('owner', 10, {
+                  palmItem: { palmTemplate },
+                })
+              }
             />
           )}
           <div className="how">How does this work?</div>

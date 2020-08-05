@@ -27,10 +27,12 @@ export default class OptionSvg extends Component {
     switch (this.props.svgType) {
       case 'meh':
         return meh();
+      case 'no-phone':
+        return noPhone;
       case 'meh-phone':
         return meh('-48.451', 'Once or more ');
       case 'meh-security':
-        return meh('-43.303', 'I\'m not good');
+        return meh('-43.303', "I'm not good");
       case 'meh-palm':
         return mehPalm;
       case 'smiley':
@@ -38,7 +40,7 @@ export default class OptionSvg extends Component {
       case 'smiley-phone':
         return smiley('-19.981', 'Never');
       case 'smiley-security':
-        return smiley('-29.848', 'I\'m good');
+        return smiley('-29.848', "I'm good");
       case 'smiley-palm':
         return smileyPalm;
       case 'none':
@@ -244,6 +246,106 @@ const smiley = (x = '-21.443', text = 'Rarely') => (
           {text}
         </tspan>
       </text>
+    </g>
+  </Fragment>
+);
+
+const noPhone = (
+  <Fragment>
+    <defs>
+      <filter
+        id="Rectangle_1284"
+        x="0"
+        y="0"
+        width="128"
+        height="128"
+        filterUnits="userSpaceOnUse"
+      >
+        <feOffset dy="3" input="SourceAlpha" />
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feFlood floodOpacity="0.161" />
+        <feComposite operator="in" in2="blur" />
+        <feComposite in="SourceGraphic" />
+      </filter>
+    </defs>
+    <g
+      id="Component_161_37"
+      data-name="Component 161 – 37"
+      transform="translate(9 6)"
+    >
+      <g transform="matrix(1, 0, 0, 1, -9, -6)" filter="url(#Rectangle_1284)">
+        <rect
+          id="Rectangle_1284-2"
+          data-name="Rectangle 1284"
+          width="110"
+          height="110"
+          rx="26"
+          transform="translate(9 6)"
+          fill="#fff"
+        />
+      </g>
+      <text
+        id="I_don_t_have_a_phone"
+        data-name="I don't have
+ a phone"
+        transform="translate(54.929 81.103)"
+        fill="#ababab"
+        fontSize="13"
+        fontFamily="Montserrat-Bold, Montserrat"
+        fontWeight="700"
+      >
+        <tspan x="-39.708" y="0">
+          I don&apos;t have
+        </tspan>
+        {/* <tspan x="-29.594" y="16" xml:space="preserve"> */}
+        <tspan x="-29.594" y="16">
+          a phone
+        </tspan>
+      </text>
+      <g
+        id="Group_2429"
+        data-name="Group 2429"
+        transform="translate(-109 -214)"
+      >
+        <g
+          id="noun_Phone_1375627_1_"
+          data-name="noun_Phone_1375627 (1)"
+          transform="translate(151.207 229)"
+        >
+          <path
+            id="Path_1909"
+            data-name="Path 1909"
+            d="M30.316,958.363a3.292,3.292,0,0,0-2.318.877,3.114,3.114,0,0,0-1,2.216v39.187a3.114,3.114,0,0,0,1,2.216,3.293,3.293,0,0,0,2.318.877H49.107a3.293,3.293,0,0,0,2.318-.877,3.114,3.114,0,0,0,1-2.216V961.455a3.113,3.113,0,0,0-1-2.217,3.293,3.293,0,0,0-2.319-.877H30.316Zm6.079,2.056h6.626a.516.516,0,1,1,0,1.031H36.395a.516.516,0,1,1,0-1.031Zm-7.19,3.094H50.211v33H29.2Zm10.5,34.55a2.066,2.066,0,1,1-2.211,2.056,2.141,2.141,0,0,1,2.216-2.054Z"
+            transform="translate(-27 -958.36)"
+            fill="#ababab"
+            stroke="#fff"
+            strokeWidth="0.2"
+          />
+        </g>
+        <g
+          id="Group_2388"
+          data-name="Group 2388"
+          transform="translate(154.293 242.067)"
+        >
+          <g
+            id="Ellipse_688"
+            data-name="Ellipse 688"
+            transform="translate(1.706 0.933)"
+            fill="#ababab"
+            stroke="#707070"
+            strokeWidth="1"
+          >
+            <ellipse cx="8" cy="8.5" rx="8" ry="8.5" stroke="none" />
+            <ellipse cx="8" cy="8.5" rx="7.5" ry="8" fill="none" />
+          </g>
+          <path
+            id="noun_Question_670398"
+            d="M12.454,3a9.454,9.454,0,1,0,9.454,9.454A9.454,9.454,0,0,0,12.454,3Zm-.129,15.674a1.082,1.082,0,1,1,1.082-1.082A1.082,1.082,0,0,1,12.326,18.674Zm1.183-5.254s-.107.038-.107.1v.859a1.077,1.077,0,1,1-2.154,0v-.859a2.277,2.277,0,0,1,1.571-2.142,1.529,1.529,0,0,0,1.044-1.5,1.571,1.571,0,0,0-1.547-1.489,1.525,1.525,0,0,0-1.37.869A1.077,1.077,0,1,1,9,8.323,3.667,3.667,0,0,1,12.3,6.235h.022a3.717,3.717,0,0,1,3.693,3.579,3.671,3.671,0,0,1-2.5,3.6Z"
+            transform="translate(-3 -3)"
+            fill="#fff"
+          />
+        </g>
+      </g>
     </g>
   </Fragment>
 );

@@ -4,10 +4,15 @@ import delay from '../../../../util/delay';
 import KeycodeInputSvg from '../../../svg/KeycodeInputSvg';
 
 export default class TextSetup extends Component {
-  state = {
-    phoneNumber: '',
-    keycode: '',
-  };
+  constructor(props) {
+    super(props);
+    const phoneNumber = props.textItem ? props.textItem.phoneNumber : '';
+    const keycode = props.textItem ? props.textItem.keycode : '';
+    this.state = {
+      phoneNumber,
+      keycode
+    }
+  }
 
   async sendKeycode() {
     const keycodeSentEl = document.getElementById('keycode-sent');
@@ -78,7 +83,7 @@ export default class TextSetup extends Component {
             style={{ width: '210px' }}
             type="button"
             value="Link Phone"
-            onClick={() => this.props.handleGoBack('owner', 10)}
+            onClick={() => this.props.handleGoBack('owner', 10, {textItem: {phoneNumber, keycode}})}
             disabled={!phoneNumber || !keycode}
           />
           <div className="how">How does this work?</div>

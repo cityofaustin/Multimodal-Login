@@ -7,8 +7,13 @@
     height: 453px;
     .options {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       svg {
         margin: 0 -4px;
+      }
+      svg:first-child {
+        width: 200px;
       }
     }
   }

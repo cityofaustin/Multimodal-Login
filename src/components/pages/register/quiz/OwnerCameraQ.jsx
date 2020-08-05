@@ -11,15 +11,20 @@ export default class OwnerCameraQ extends Component {
     handleGoBack: () => {},
   };
 
-  state = {
-    options: [
-      'cameraAccessNone',
-      'cameraAccessTablet',
-      'cameraAccessComputer',
-      'cameraAccessPhone',
-    ],
-    selectedOptions: [],
-  };
+  constructor(props) {
+    super(props);
+    const { devicesWithCamera } = props.questions;
+    const selectedOptions = devicesWithCamera ? devicesWithCamera : [];
+    this.state = {
+      options: [
+        'cameraAccessNone',
+        'cameraAccessTablet',
+        'cameraAccessComputer',
+        'cameraAccessPhone',
+      ],
+      selectedOptions,
+    };
+  }
 
   componentDidMount() {
     handleIOSBrowser();
@@ -83,7 +88,14 @@ export default class OwnerCameraQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 6)}
+                onClick={() => {
+                  const q = this.props.questions;
+                  q.devicesWithCamera = selectedOptions;
+                  if(q.devicesWithCamera.indexOf('cameraAccessNone') > -1) {
+                    q.scanningPalm = undefined;
+                  }
+                  this.props.handleGoForward('owner', 6, { questions: q });
+                }}
                 disabled={selectedOptions.length < 1}
               />
             </div>

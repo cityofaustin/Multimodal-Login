@@ -65,7 +65,7 @@ export default class OwnerEmail extends Component {
                 type="button"
                 value="Next"
                 disabled={email.length <= 0}
-                onClick={() => this.props.handleGoForward('owner', 3)}
+                onClick={() => this.props.handleGoForward('owner', 3, {email})}
               />
               <div>I don't have an e-mail</div>
             </div>

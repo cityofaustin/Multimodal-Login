@@ -11,10 +11,15 @@ export default class OwnerPasswordQ extends Component {
     handleGoBack: () => {},
   };
 
-  state = {
-    options: ['forgetPasswordOften', 'forgetPasswordRarely'],
-    selectedOption: undefined,
-  };
+  constructor(props) {
+    super(props);
+    const { forgetsPassword } = props.questions;
+    const selectedOption = forgetsPassword ? forgetsPassword : undefined;
+    this.state = {
+      options: ['forgetPasswordOften', 'forgetPasswordRarely'],
+      selectedOption,
+    }
+  }
 
   componentDidMount() {
     handleIOSBrowser();
@@ -66,7 +71,11 @@ export default class OwnerPasswordQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 5)}
+                onClick={() => {
+                  const q = this.props.questions;
+                  q.forgetsPassword = selectedOption;
+                  this.props.handleGoForward('owner', 5, { questions: q });
+                }}
                 disabled={!selectedOption}
               />
             </div>

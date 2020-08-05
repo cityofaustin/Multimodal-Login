@@ -27,16 +27,28 @@ class Register extends Component {
   constructor() {
     super();
     this.state = {
-      // selectedRole: undefined,
-      // step: 0,
-      selectedRole: 'owner',
-      step: 9,
+      selectedRole: undefined,
+      step: 0,
+      // selectedRole: 'owner',
+      // step: 4,
       isAnimatingForward: false,
       isAnimatingBackward: false,
       faceRegister: false,
-      username: '',
+      // username: '',
       faceTemplate: undefined,
       totalSteps: 10,
+      email: undefined,
+      username: undefined,
+      questions: {
+        forgetsPassword: undefined,
+        devicesWithCamera: undefined,
+        lostPhone: undefined,
+        scanningPalm: undefined,
+        answeringSecurityQuestions: undefined,
+      },
+      passwordItem: undefined,
+      textItem: undefined,
+      palmItem: undefined,
       securityItems: undefined,
     };
   }
@@ -94,9 +106,10 @@ class Register extends Component {
   }
 
   handleGoBack = async (selectedRole, step, data) => {
-    const { totalSteps } = { ...this.state };
-    if (data && data.securityItems) {
-      this.setState({ securityItems: data.securityItems });
+    const { totalSteps, questions } = { ...this.state };
+    if (data && Object.keys(data)) {
+      const key = Object.keys(data)[0];
+      this.setState({ [key]: data[key] });
     }
     if (step === 0) {
       this.goBackToWelcome();
@@ -110,9 +123,14 @@ class Register extends Component {
       elObj.body.style.backgroundImage = `linear-gradient(#2362c7 50%, #4ba9d9 50%)`;
       elObj.progressContainer.style.opacity = 0;
     }
-    elObj.wave.style.transform = `translateX(-${(step - 1) * 360}px)`;
-    elObj[selectedRole][step].style.transform = 'translateX(360px)';
+    let skipDistance = 360;
+    elObj[selectedRole][step].style.transform = `translateX(${skipDistance}px)`;
     elObj[selectedRole][step].style.opacity = 0;
+    if (step === 8 && this.skipPalm(questions)) {
+      // skip palm question since no camera
+      step--;
+    }
+    elObj.wave.style.transform = `translateX(-${(step - 1) * 360}px)`;
     elObj.progress.style.width = ((step - 1) * 100) / totalSteps + '%';
     await delay(1500);
     this.setState({
@@ -122,12 +140,26 @@ class Register extends Component {
     });
   };
 
+  skipPalm(questions) {
+    return (
+      questions.devicesWithCamera &&
+      questions.devicesWithCamera.indexOf('cameraAccessNone') > -1
+    );
+  }
+
   handleGoForward = async (selectedRole, step, data) => {
     const { totalSteps } = { ...this.state };
-    let { loginMethod } = { ...this.state };
-    if (data && data.loginMethod) {
-      ({ loginMethod } = { ...data });
+    let { email, questions, loginMethod } = { ...this.state };
+    if (data && data.email) {
+      ({ email } = data);
     }
+    if (data && data.questions) {
+      ({ questions } = data);
+    }
+    if (data && data.loginMethod) {
+      ({ loginMethod } = data);
+    }
+    await delay(100);
     const elObj = this.getElObj();
     if (step === 1) {
       elObj.body.style.backgroundImage =
@@ -136,14 +168,20 @@ class Register extends Component {
           : 'linear-gradient(#4ba9d9 50%, white 50%)';
       elObj.progressContainer.style.opacity = 1;
     }
-    elObj.wave.style.transform = `translateX(-${step * 360}px)`;
     elObj[selectedRole][step - 1].style.transform = 'translateX(-360px)';
     elObj[selectedRole][step - 1].style.opacity = '0';
+    if (step === 7 && this.skipPalm(questions)) {
+      // skip palm question since no camera
+      step++;
+    }
+    elObj.wave.style.transform = `translateX(-${step * 360}px)`;
     elObj.progress.style.width = (step * 100) / totalSteps + '%';
     this.setState({
       step,
       selectedRole,
       isAnimatingForward: true,
+      email,
+      questions,
       loginMethod,
     });
     await delay(1500);
@@ -187,11 +225,16 @@ class Register extends Component {
       selectedRole,
       isAnimatingForward,
       isAnimatingBackward,
+      questions,
       loginMethod,
+      passwordItem,
+      textItem,
+      palmItem,
       securityItems,
     } = {
       ...this.state,
     };
+    const skipPalm = this.skipPalm(questions);
     switch (selectedRole) {
       case 'owner':
         switch (step) {
@@ -269,19 +312,20 @@ class Register extends Component {
               return (
                 <Fragment>
                   <OwnerQuizIntro />
-                  <OwnerPasswordQ position="right" />
+                  <OwnerPasswordQ questions={questions} position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
                   <OwnerQuizIntro position="left" />
-                  <OwnerPasswordQ />
+                  <OwnerPasswordQ questions={questions} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerPasswordQ
+                  questions={questions}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -291,20 +335,21 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerPasswordQ />
-                  <OwnerCameraQ position="right" />
+                  <OwnerPasswordQ questions={questions} />
+                  <OwnerCameraQ questions={questions} position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerPasswordQ position="left" />
-                  <OwnerCameraQ />
+                  <OwnerPasswordQ questions={questions} position="left" />
+                  <OwnerCameraQ questions={questions} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerCameraQ
+                  questions={questions}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -314,20 +359,21 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerCameraQ />
-                  <OwnerLostPhoneQ position="right" />
+                  <OwnerCameraQ questions={questions} />
+                  <OwnerLostPhoneQ questions={questions} position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerCameraQ position="left" />
-                  <OwnerLostPhoneQ />
+                  <OwnerCameraQ questions={questions} position="left" />
+                  <OwnerLostPhoneQ questions={questions} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerLostPhoneQ
+                  questions={questions}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -337,20 +383,21 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerLostPhoneQ />
-                  <OwnerPalmQ position="right" />
+                  <OwnerLostPhoneQ questions={questions} />
+                  <OwnerPalmQ questions={questions} position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerLostPhoneQ position="left" />
-                  <OwnerPalmQ />
+                  <OwnerLostPhoneQ questions={questions} position="left" />
+                  <OwnerPalmQ questions={questions} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerPalmQ
+                  questions={questions}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -358,22 +405,37 @@ class Register extends Component {
             }
           case 8:
             if (isAnimatingForward) {
-              return (
-                <Fragment>
-                  <OwnerPalmQ />
-                  <OwnerSecurityQ position="right" />
-                </Fragment>
-              );
+              if (skipPalm) {
+                return (
+                  <Fragment>
+                    <OwnerLostPhoneQ questions={questions} />
+                    <OwnerSecurityQ questions={questions} position="right" />
+                  </Fragment>
+                );
+              } else {
+                return (
+                  <Fragment>
+                    <OwnerPalmQ questions={questions} />
+                    <OwnerSecurityQ questions={questions} position="right" />
+                  </Fragment>
+                );
+              }
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerPalmQ position="left" />
-                  <OwnerSecurityQ />
+                  {this.skipPalm(questions) && (
+                    <OwnerLostPhoneQ questions={questions} position="left" />
+                  )}
+                  {!this.skipPalm(questions) && (
+                    <OwnerPalmQ questions={questions} position="left" />
+                  )}
+                  <OwnerSecurityQ questions={questions} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerSecurityQ
+                  questions={questions}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -383,9 +445,13 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerSecurityQ />
+                  <OwnerSecurityQ questions={questions} />
                   <OwnerLoginRecommend
                     position="right"
+                    questions={questions}
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
                     securityItems={securityItems}
                   />
                 </Fragment>
@@ -393,13 +459,23 @@ class Register extends Component {
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerSecurityQ position="left" />
-                  <OwnerLoginRecommend securityItems={securityItems} />
+                  <OwnerSecurityQ questions={questions} position="left" />
+                  <OwnerLoginRecommend
+                    questions={questions}
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
+                    securityItems={securityItems}
+                  />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerLoginRecommend
+                  questions={questions}
+                  passwordItem={passwordItem}
+                  textItem={textItem}
+                  palmItem={palmItem}
                   securityItems={securityItems}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
@@ -410,10 +486,19 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerLoginRecommend securityItems={securityItems} />
+                  <OwnerLoginRecommend
+                    questions={questions}
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
+                    securityItems={securityItems}
+                  />
                   <LoginMethodSetup
                     position="right"
                     loginMethod={loginMethod}
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
                     securityItems={securityItems}
                   />
                 </Fragment>
@@ -422,11 +507,18 @@ class Register extends Component {
               return (
                 <Fragment>
                   <OwnerLoginRecommend
+                    questions={questions}
                     position="left"
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
                     securityItems={securityItems}
                   />
                   <LoginMethodSetup
                     loginMethod={loginMethod}
+                    passwordItem={passwordItem}
+                    textItem={textItem}
+                    palmItem={palmItem}
                     securityItems={securityItems}
                   />
                 </Fragment>
@@ -437,6 +529,9 @@ class Register extends Component {
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                   loginMethod={loginMethod}
+                  passwordItem={passwordItem}
+                  textItem={textItem}
+                  palmItem={palmItem}
                   securityItems={securityItems}
                 />
               );

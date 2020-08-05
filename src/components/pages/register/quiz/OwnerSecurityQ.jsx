@@ -11,10 +11,17 @@ export default class OwnerSecurityQ extends Component {
     handleGoBack: () => {},
   };
 
-  state = {
-    options: ['securityNotGood', 'securityGood'],
-    selectedOption: undefined,
-  };
+  constructor(props) {
+    super(props);
+    const { answeringSecurityQuestions } = props.questions;
+    const selectedOption = answeringSecurityQuestions
+      ? answeringSecurityQuestions
+      : undefined;
+    this.state = {
+      options: ['securityNotGood', 'securityGood'],
+      selectedOption,
+    };
+  }
 
   componentDidMount() {
     handleIOSBrowser();
@@ -69,7 +76,11 @@ export default class OwnerSecurityQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 9)}
+                onClick={() => {
+                  const q = this.props.questions;
+                  q.answeringSecurityQuestions = selectedOption;
+                  this.props.handleGoForward('owner', 9, { questions: q });
+                }}
                 disabled={!selectedOption}
               />
             </div>

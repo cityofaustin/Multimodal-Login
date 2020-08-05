@@ -11,10 +11,15 @@ export default class OwnerLostPhoneQ extends Component {
     handleGoBack: () => {},
   };
 
-  state = {
-    options: ['lostPhoneOnceOrMore', 'lostPhoneNever'],
-    selectedOption: undefined,
-  };
+  constructor(props) {
+    super(props);
+    const { lostPhone } = props.questions;
+    const selectedOption = lostPhone ? lostPhone : undefined;
+    this.state = {
+      options: ['noPhone', 'lostPhoneOnceOrMore', 'lostPhoneNever'],
+      selectedOption,
+    };
+  }
 
   componentDidMount() {
     handleIOSBrowser();
@@ -34,7 +39,11 @@ export default class OwnerLostPhoneQ extends Component {
   render() {
     const { options, selectedOption } = { ...this.state };
     return (
-      <div ref="section" id="section-6-owner" className="section">
+      <div
+        ref="section"
+        id="section-6-owner"
+        className={`section ${this.props.displayNone ? 'display-none' : ''}`}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
@@ -45,15 +54,18 @@ export default class OwnerLostPhoneQ extends Component {
                 your phone?
               </div>
             </div>
-            <HasPhoneSvg />
+            {/* <HasPhoneSvg /> */}
             <div className="options">
-              {options.map((option) => {
-                const svgType = option === options[0] ? 'meh-phone' : 'smiley-phone';
+              {options.map((option, i) => {
+                let svgType = i < 2 ? 'meh-phone' : 'smiley-phone';
+                svgType = i < 1 ? 'no-phone' : svgType;
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() => this.setState({ selectedOption: option })}
+                    handleClick={() =>
+                      this.setState({ selectedOption: option })
+                    }
                     isSelected={selectedOption === option}
                   />
                 );
@@ -64,7 +76,11 @@ export default class OwnerLostPhoneQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 7)}
+                onClick={() => {
+                  const q = this.props.questions;
+                  q.lostPhone = selectedOption;
+                  this.props.handleGoForward('owner', 7, { questions: q });
+                }}
                 disabled={!selectedOption}
               />
             </div>

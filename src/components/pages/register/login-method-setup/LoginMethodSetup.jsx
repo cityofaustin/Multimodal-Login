@@ -23,39 +23,59 @@ export default class LoginMethodSetup extends Component {
   }
 
   render() {
-    const { loginMethod, position } = { ...this.props };
+    const {
+      passwordItem,
+      textItem,
+      palmItem,
+      securityItems,
+      loginMethod,
+      position,
+      handleGoBack,
+    } = { ...this.props };
     let positionClass = 'section-center';
-    positionClass = (position) ? `section-${position}` : positionClass;
+    positionClass = position ? `section-${position}` : positionClass;
     return (
-      <div ref="section" id="section-10-owner" className={`section ${positionClass}`}>
+      <div
+        ref="section"
+        id="section-10-owner"
+        className={`section ${positionClass}`}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
           {loginMethod === 'password' && (
             <PasswordSetup
-              handleGoBack={() => this.props.handleGoBack('owner', 10)}
+              passwordItem={passwordItem}
+              handleGoBack={(selectedRole, step, data) =>
+                handleGoBack(selectedRole, step, data)
+              }
             />
           )}
           {loginMethod === 'palm' && (
             <PalmSetup
-              handleGoBack={() => this.props.handleGoBack('owner', 10)}
+              palmItem={palmItem}
+              handleGoBack={(selectedRole, step, data) =>
+                handleGoBack(selectedRole, step, data)
+              }
             />
           )}
           {loginMethod === 'text' && (
             <TextSetup
-              handleGoBack={() => this.props.handleGoBack('owner', 10)}
+              textItem={textItem}
+              handleGoBack={(selectedRole, step, data) =>
+                handleGoBack(selectedRole, step, data)
+              }
             />
           )}
           {loginMethod === 'securityQuestions' && (
             <SecurityQuestionSetup
-              securityItems={this.props.securityItems}
-              handleGoBack={(selectedRole, step, data) => this.props.handleGoBack(selectedRole, step, data)}
+              securityItems={securityItems}
+              handleGoBack={(selectedRole, step, data) =>
+                handleGoBack(selectedRole, step, data)
+              }
             />
           )}
-          <GoBackSvg
-            color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 10)}
-          />
+          <GoBackSvg color="#2362c7" goBack={() => handleGoBack('owner', 10)} />
         </div>
       </div>
     );

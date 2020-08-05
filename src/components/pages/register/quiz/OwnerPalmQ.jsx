@@ -9,12 +9,18 @@ export default class OwnerPalmQ extends Component {
   static defaultProps = {
     handleGoForward: () => {},
     handleGoBack: () => {},
+    displayNone: false,
   };
 
-  state = {
-    options: ['palmNotComfortable', 'palmComfortable'],
-    selectedOption: undefined,
-  };
+  constructor(props) {
+    super(props);
+    const { scanningPalm } = props.questions;
+    const selectedOption = scanningPalm ? scanningPalm : undefined;
+    this.state = {
+      options: ['palmNotComfortable', 'palmComfortable'],
+      selectedOption,
+    };
+  }
 
   componentDidMount() {
     handleIOSBrowser();
@@ -34,7 +40,11 @@ export default class OwnerPalmQ extends Component {
   render() {
     const { options, selectedOption } = { ...this.state };
     return (
-      <div ref="section" id="section-7-owner" className="section">
+      <div
+        ref="section"
+        id="section-7-owner"
+        className={`section ${this.props.displayNone ? 'display-none' : ''}`}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
@@ -66,7 +76,11 @@ export default class OwnerPalmQ extends Component {
                 style={{ width: '210px' }}
                 type="button"
                 value="Next"
-                onClick={() => this.props.handleGoForward('owner', 8)}
+                onClick={() => {
+                  const q = this.props.questions;
+                  q.scanningPalm = selectedOption;
+                  this.props.handleGoForward('owner', 8, { questions: q });
+                }}
                 disabled={!selectedOption}
               />
             </div>
