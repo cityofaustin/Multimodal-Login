@@ -3,6 +3,7 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import './OwnerQuizIntro.scss';
 import AuthQuestionSvg from '../../../svg/AuthQuestionSvg';
+import { animateIn, getSectionClassName } from '../../../../util/animation-util';
 
 export default class OwnerQuizIntro extends Component {
   static defaultProps = {
@@ -10,26 +11,14 @@ export default class OwnerQuizIntro extends Component {
     handleGoBack: () => {},
   };
 
-  state = {};
-
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   render() {
     return (
-      <div ref="section" id="section-3-owner" className="section">
+      <div ref="section" id="section-3-owner" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>

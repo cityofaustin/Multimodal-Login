@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import OptionSvg from '../../../svg/OptionSvg';
-import HasPhoneSvg from '../../../svg/HasPhoneSvg';
+// import HasPhoneSvg from '../../../svg/HasPhoneSvg';
 import './OwnerLostPhoneQ.scss';
+import { animateIn, getSectionClassName } from '../../../../util/animation-util';
 
 export default class OwnerLostPhoneQ extends Component {
   static defaultProps = {
@@ -23,17 +24,7 @@ export default class OwnerLostPhoneQ extends Component {
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   render() {
@@ -42,7 +33,7 @@ export default class OwnerLostPhoneQ extends Component {
       <div
         ref="section"
         id="section-6-owner"
-        className={`section ${this.props.displayNone ? 'display-none' : ''}`}
+        className={getSectionClassName(this.props.position)}
       >
         <div className="section-contents">
           <div className="title">Document Owner</div>

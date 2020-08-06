@@ -30,15 +30,13 @@ class Register extends Component {
       selectedRole: undefined,
       step: 0,
       // selectedRole: 'owner',
-      // step: 4,
+      // step: 2,
       isAnimatingForward: false,
       isAnimatingBackward: false,
       faceRegister: false,
-      // username: '',
       faceTemplate: undefined,
       totalSteps: 10,
-      email: undefined,
-      username: undefined,
+      emailItem: undefined,
       questions: {
         forgetsPassword: undefined,
         devicesWithCamera: undefined,
@@ -149,9 +147,9 @@ class Register extends Component {
 
   handleGoForward = async (selectedRole, step, data) => {
     const { totalSteps } = { ...this.state };
-    let { email, questions, loginMethod } = { ...this.state };
-    if (data && data.email) {
-      ({ email } = data);
+    let { emailItem, questions, loginMethod } = { ...this.state };
+    if (data && data.emailItem) {
+      ({ emailItem } = data);
     }
     if (data && data.questions) {
       ({ questions } = data);
@@ -180,7 +178,7 @@ class Register extends Component {
       step,
       selectedRole,
       isAnimatingForward: true,
-      email,
+      emailItem,
       questions,
       loginMethod,
     });
@@ -225,6 +223,7 @@ class Register extends Component {
       selectedRole,
       isAnimatingForward,
       isAnimatingBackward,
+      emailItem,
       questions,
       loginMethod,
       passwordItem,
@@ -266,19 +265,20 @@ class Register extends Component {
               return (
                 <Fragment>
                   <OwnerOverview />
-                  <OwnerEmail position="right" />
+                  <OwnerEmail emailItem={emailItem} position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
                   <OwnerOverview position="left" />
-                  <OwnerEmail />
+                  <OwnerEmail emailItem={emailItem} />
                 </Fragment>
               );
             } else {
               return (
                 <OwnerEmail
+                  emailItem={emailItem}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
                 />
@@ -288,14 +288,17 @@ class Register extends Component {
             if (isAnimatingForward) {
               return (
                 <Fragment>
-                  <OwnerEmail />
+                  <OwnerEmail emailItem={emailItem} />
                   <OwnerQuizIntro position="right" />
                 </Fragment>
               );
             } else if (isAnimatingBackward) {
               return (
                 <Fragment>
-                  <OwnerEmail position="left" />
+                  <OwnerEmail
+                    emailItem={emailItem}
+                    position="left"
+                  />
                   <OwnerQuizIntro />
                 </Fragment>
               );

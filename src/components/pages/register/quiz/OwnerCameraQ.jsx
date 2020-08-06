@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
-import PasswordSvg from '../../../svg/PasswordSvg';
+// import PasswordSvg from '../../../svg/PasswordSvg';
 import OptionSvg from '../../../svg/OptionSvg';
 import './OwnerCameraQ.scss';
+import { animateIn, getSectionClassName } from '../../../../util/animation-util';
 
 export default class OwnerCameraQ extends Component {
   static defaultProps = {
@@ -28,17 +29,7 @@ export default class OwnerCameraQ extends Component {
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   handleOptionSelect = (option) => {
@@ -60,7 +51,7 @@ export default class OwnerCameraQ extends Component {
   render() {
     const { options, selectedOptions } = { ...this.state };
     return (
-      <div ref="section" id="section-5-owner" className="section">
+      <div ref="section" id="section-5-owner" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>

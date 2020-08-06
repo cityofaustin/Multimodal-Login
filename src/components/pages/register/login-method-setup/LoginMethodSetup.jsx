@@ -7,6 +7,8 @@ import PalmSetup from './PalmSetup';
 import TextSetup from './TextSetup';
 import SecurityQuestionSetup from './SecurityQuestionsSetup';
 import delay from '../../../../util/delay';
+import { animateIn, getSectionClassName } from '../../../../util/animation-util';
+
 
 export default class LoginMethodSetup extends Component {
   static defaultProps = {
@@ -17,9 +19,7 @@ export default class LoginMethodSetup extends Component {
 
   async componentDidMount() {
     handleIOSBrowser();
-    await delay(50);
-    this.refs.section.style.transform = 'translateX(0)';
-    this.refs.section.style.opacity = '1';
+    animateIn(this.refs.section);
   }
 
   render() {
@@ -29,16 +29,13 @@ export default class LoginMethodSetup extends Component {
       palmItem,
       securityItems,
       loginMethod,
-      position,
       handleGoBack,
     } = { ...this.props };
-    let positionClass = 'section-center';
-    positionClass = position ? `section-${position}` : positionClass;
     return (
       <div
         ref="section"
         id="section-10-owner"
-        className={`section ${positionClass}`}
+        className={getSectionClassName(this.props.position)}
       >
         <div className="section-contents">
           <div className="title">Document Owner</div>

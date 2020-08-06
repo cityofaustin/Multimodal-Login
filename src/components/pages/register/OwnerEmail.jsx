@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { handleIOSBrowser } from '../../../util/browser-util';
 import GoBackSvg from '../../svg/GoBackSvg';
 import './OwnerEmail.scss';
+import { animateIn, getSectionClassName } from '../../../util/animation-util';
 
 export default class OwnerEmail extends Component {
   static defaultProps = {
@@ -9,53 +10,73 @@ export default class OwnerEmail extends Component {
     handleGoBack: () => {},
   };
 
-  state = {
-    email: '',
-  };
+  constructor(props) {
+    super(props);
+    const email =
+      props.emailItem && props.emailItem.email ? props.emailItem.email : '';
+    const username =
+      props.emailItem && props.emailItem.username
+        ? props.emailItem.username
+        : '';
+    const useEmail = props.emailItem ? !!props.emailItem.useEmail : true;
+    this.state = {
+      email,
+      username,
+      useEmail,
+    };
+  }
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   render() {
-    const { email } = { ...this.state };
+    const { email, username, useEmail } = { ...this.state };
     return (
-      <div ref="section" id="section-2-owner" className="section">
+      <div ref="section" id="section-2-owner" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">Ok. Let's get started.</div>
           <div className="card owner1">
             <div>
               <div className="card-title">
-                What is your
-                <br />
-                e-mail account?
+                {useEmail ? (
+                  <Fragment>
+                    What is your
+                    <br />
+                    e-mail account?
+                  </Fragment>
+                ) : (
+                  'What username would you like to use to login?'
+                )}
               </div>
-              <div className="card-subtitle">
-                You can use this to sign and to recover your account in case you
-                get locked out of it.
-              </div>
+              {useEmail && (
+                <div className="card-subtitle">
+                  You can use this to sign and to recover your account in case
+                  you get locked out of it.
+                </div>
+              )}
             </div>
             <div className="email-section">
               <div className="card-body">
                 <div className="card-body-section">
-                  <div>E-mail</div>
-                  <input
-                    type="text"
-                    value={email}
-                    onChange={(e) => this.setState({ email: e.target.value })}
-                  />
+                  <div>{useEmail ? 'E-mail' : 'Username'}</div>
+                  {useEmail ? (
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => this.setState({ email: e.target.value })}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) =>
+                        this.setState({ username: e.target.value })
+                      }
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -65,9 +86,15 @@ export default class OwnerEmail extends Component {
                 type="button"
                 value="Next"
                 disabled={email.length <= 0}
-                onClick={() => this.props.handleGoForward('owner', 3, {email})}
+                onClick={() =>
+                  this.props.handleGoForward('owner', 3, {
+                    emailItem: { email, username, useEmail },
+                  })
+                }
               />
-              <div>I don't have an e-mail</div>
+              <div onClick={() => this.setState({ useEmail: !useEmail })}>
+                {useEmail ? "I don't have an e-mail" : 'I rather use e-mail'}
+              </div>
             </div>
           </div>
           <GoBackSvg

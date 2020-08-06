@@ -5,6 +5,7 @@ import InfoSvg from '../../svg/InfoSvg';
 import InfoBubbleSvg from '../../svg/InfoBubbleSvg';
 import GoBackSvg from '../../svg/GoBackSvg';
 import { handleIOSBrowser } from '../../../util/browser-util';
+import { animateIn, getSectionClassName } from '../../../util/animation-util';
 
 export default class RoleSelect extends Component {
   static defaultProps = {
@@ -14,22 +15,12 @@ export default class RoleSelect extends Component {
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 100);
+    animateIn(this.refs.section);
   }
 
   render() {
     return (
-      <div ref="section" id="section0" className="section">
+      <div ref="section" id="section0" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Sign-up</div>
           <div className="subtitle">What would you like to do?</div>

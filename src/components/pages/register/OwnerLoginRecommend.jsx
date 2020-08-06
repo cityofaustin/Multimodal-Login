@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { handleIOSBrowser } from '../../../util/browser-util';
 import GoBackSvg from '../../svg/GoBackSvg';
-import OptionSvg from '../../svg/OptionSvg';
-import HasPhoneSvg from '../../svg/HasPhoneSvg';
+// import OptionSvg from '../../svg/OptionSvg';
+// import HasPhoneSvg from '../../svg/HasPhoneSvg';
 import './OwnerLoginRecommend.scss';
 import LoginOption from './LoginOption';
+import { animateIn, getSectionClassName } from '../../../util/animation-util';
+
 
 export default class OwnerLoginRecommend extends Component {
   static defaultProps = {
@@ -18,17 +20,7 @@ export default class OwnerLoginRecommend extends Component {
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   getRecommended = () => {
@@ -87,7 +79,7 @@ export default class OwnerLoginRecommend extends Component {
   render() {
     const { loginMethods } = { ...this.state };
     return (
-      <div ref="section" id="section-9-owner" className="section">
+      <div ref="section" id="section-9-owner" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>

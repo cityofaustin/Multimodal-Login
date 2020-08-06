@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import SimpleStepSvg from '../../svg/SimpleStepSvg';
+// import SimpleStepSvg from '../../svg/SimpleStepSvg';
 import GoBackSvg from '../../svg/GoBackSvg';
 import { handleIOSBrowser } from '../../../util/browser-util';
 import UploadDocSvg from '../../svg/UploadDocSvg';
 import StoreDocSvg from '../../svg/StoreDocSvg';
 import ShareDocSvg from '../../svg/ShareDocSvg';
+import { animateIn, getSectionClassName } from '../../../util/animation-util';
 
 export default class OwnerOverview extends Component {
   static defaultProps = {
@@ -14,17 +15,7 @@ export default class OwnerOverview extends Component {
 
   componentDidMount() {
     handleIOSBrowser();
-    if (this.props.position === 'right') {
-      this.refs.section.classList.add('section-right');
-    } else if (this.props.position === 'left') {
-      this.refs.section.classList.add('section-left');
-    } else {
-      this.refs.section.classList.add('section-center');
-    }
-    setTimeout(() => {
-      this.refs.section.style.transform = 'translateX(0)';
-      this.refs.section.style.opacity = '1';
-    }, 1);
+    animateIn(this.refs.section);
   }
 
   handleGoBack = () => {
@@ -33,7 +24,7 @@ export default class OwnerOverview extends Component {
 
   render() {
     return (
-      <div ref="section" id="section-1-owner" className="section">
+      <div ref="section" id="section-1-owner" className={getSectionClassName(this.props.position)}>
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">As an owner you can...</div>
