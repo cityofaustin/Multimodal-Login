@@ -1,7 +1,8 @@
 #section-9-owner {
   .section-contents {
     .card {
-      height: 454px;
+      min-height: 495px;
+      height: fit-content;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -27,6 +28,23 @@
           font-size: 15px;
           font-weight: 600;
           cursor: pointer;
+        }
+      }
+    }
+    .why-card {
+      .why-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #92a8df;
+      }
+      .why-item {
+        margin-top: 9px;
+        .why-item-title {
+          margin-bottom: 10px;
+          font-size: 14px;
+          font-weight: bold;
+          color: #2362c7;
+          text-align: center;
         }
       }
     }

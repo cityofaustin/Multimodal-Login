@@ -30,7 +30,7 @@ class Register extends Component {
       selectedRole: undefined,
       step: 0,
       // selectedRole: 'owner',
-      // step: 2,
+      // step: 9,
       isAnimatingForward: false,
       isAnimatingBackward: false,
       faceRegister: false,
