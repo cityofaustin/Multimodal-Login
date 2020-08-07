@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './TextSetup.scss';
 import delay from '../../../../util/delay';
 import KeycodeInputSvg from '../../../svg/KeycodeInputSvg';
+import HowSvg from '../../../svg/HowSvg';
+import TextExampleSvg from '../../../svg/TextExampleSvg';
 
 export default class TextSetup extends Component {
   constructor(props) {
@@ -10,8 +12,8 @@ export default class TextSetup extends Component {
     const keycode = props.textItem ? props.textItem.keycode : '';
     this.state = {
       phoneNumber,
-      keycode
-    }
+      keycode,
+    };
   }
 
   async sendKeycode() {
@@ -21,8 +23,9 @@ export default class TextSetup extends Component {
     keycodeSentEl.style.opacity = 0;
   }
 
-  render() {
+  renderTextCard() {
     const { phoneNumber, keycode } = { ...this.state };
+    const { toggleDisplayHow } = { ...this.props };
     return (
       <div id="text-setup" className="card owner1">
         <div className="card-content">
@@ -83,12 +86,36 @@ export default class TextSetup extends Component {
             style={{ width: '210px' }}
             type="button"
             value="Link Phone"
-            onClick={() => this.props.handleGoBack('owner', 10, {textItem: {phoneNumber, keycode}})}
+            onClick={() =>
+              this.props.handleGoBack('owner', 10, {
+                textItem: { phoneNumber, keycode },
+              })
+            }
             disabled={!phoneNumber || !keycode}
           />
-          <div className="how">How does this work?</div>
+          <div className="how" onClick={toggleDisplayHow}>
+            How does this work?
+          </div>
         </div>
       </div>
     );
+  }
+
+  renderHow() {
+    return (
+      <div className="how-container">
+        <HowSvg loginMethod="text" />
+        <div className="sec-excerpt">
+          Two-step verification is a simple way to authenticate a user by
+          sending a unique code to their mobile device.
+        </div>
+        <TextExampleSvg />
+      </div>
+    );
+  }
+
+  render() {
+    const { isDisplayHow } = { ...this.props };
+    return !isDisplayHow ? this.renderTextCard() : this.renderHow();
   }
 }

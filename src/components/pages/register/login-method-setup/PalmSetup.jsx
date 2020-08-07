@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 import PalmDetectedSvg from '../../../svg/PalmDetectedSvg';
 import PalmNotDetectedSvg from '../../../svg/PalmNotDetectedSvg';
 import './PalmSetup.scss';
+import HowSvg from '../../../svg/HowSvg';
+import PalmExampleSvg from '../../../svg/PalmExampleSvg';
 
 export default class PalmSetup extends Component {
   constructor(props) {
     super(props);
-    const palmTemplate = props.palmItem ? props.palmItem.palmTemplate : undefined;
+    const palmTemplate = props.palmItem
+      ? props.palmItem.palmTemplate
+      : undefined;
     this.state = {
-      palmTemplate
-    }
+      palmTemplate,
+    };
   }
 
-  render() {
+  renderPalmCard() {
     const { palmTemplate } = { ...this.state };
     return (
       <div id="palm-setup" className="card owner1">
@@ -50,5 +54,23 @@ export default class PalmSetup extends Component {
         </div>
       </div>
     );
+  }
+
+  renderHow() {
+    return (
+      <div className="how-container">
+        <HowSvg loginMethod="palm" />
+        <div className="sec-excerpt">
+          Palm recognition is a technology that records your unique palm print
+          and utilizes it to login to your account using your device's camera.{' '}
+        </div>
+        <PalmExampleSvg />
+      </div>
+    );
+  }
+
+  render() {
+    const { isDisplayHow } = { ...this.props };
+    return !isDisplayHow ? this.renderPalmCard() : this.renderHow();
   }
 }

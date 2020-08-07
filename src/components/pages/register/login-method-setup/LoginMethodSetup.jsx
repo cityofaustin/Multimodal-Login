@@ -6,7 +6,7 @@ import PasswordSetup from './PasswordSetup';
 import PalmSetup from './PalmSetup';
 import TextSetup from './TextSetup';
 import SecurityQuestionSetup from './SecurityQuestionsSetup';
-import delay from '../../../../util/delay';
+// import delay from '../../../../util/delay';
 import {
   animateIn,
   getSectionClassName,
@@ -39,10 +39,16 @@ export default class LoginMethodSetup extends Component {
     let title = 'Document Owner';
     let subtitle = 'More ways to login';
     if (!!isDisplayHow) {
+      subtitle = 'In a nutshell';
       switch (loginMethod) {
         case 'securityQuestions':
           title = 'What are Security Questions?';
-          subtitle = 'In a nutshell';
+          break;
+        case 'text':
+          title = 'What is Text Login?';
+          break;
+        case 'palm':
+          title = 'What is Palm Recognition';
           break;
       }
     }
@@ -86,6 +92,8 @@ export default class LoginMethodSetup extends Component {
               handleGoBack={(selectedRole, step, data) =>
                 handleGoBack(selectedRole, step, data)
               }
+              toggleDisplayHow={this.toggleDisplayHow}
+              isDisplayHow={isDisplayHow}
             />
           )}
           {loginMethod === 'text' && (
@@ -94,6 +102,8 @@ export default class LoginMethodSetup extends Component {
               handleGoBack={(selectedRole, step, data) =>
                 handleGoBack(selectedRole, step, data)
               }
+              toggleDisplayHow={this.toggleDisplayHow}
+              isDisplayHow={isDisplayHow}
             />
           )}
           {loginMethod === 'securityQuestions' && (

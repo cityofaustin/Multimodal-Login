@@ -93,10 +93,10 @@ export default class SecurityQuestionSetup extends Component {
   renderHow() {
     return (
       <div className="how-container">
-        <HowSvg />
+        <HowSvg loginMethod="securityAnswers" />
         <div className="sec-excerpt">
-          If you loose access to your account, you may obtain login credits by
-          answering the security questions you registered at sign-up.
+          Two-step verification is a simple way to authenticate a user by
+          sending a unique code to their mobile device.
         </div>
         <SecurityExampleSvg />
       </div>
