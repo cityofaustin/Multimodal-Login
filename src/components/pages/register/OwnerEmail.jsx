@@ -34,7 +34,11 @@ export default class OwnerEmail extends Component {
   render() {
     const { email, username, useEmail } = { ...this.state };
     return (
-      <div ref="section" id="section-2-owner" className={getSectionClassName(this.props.position)}>
+      <div
+        ref="section"
+        id="section-2-owner"
+        className={getSectionClassName(this.props.position)}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">Ok. Let's get started.</div>
@@ -85,7 +89,10 @@ export default class OwnerEmail extends Component {
                 style={{ width: '210px', marginTop: '27px' }}
                 type="button"
                 value="Next"
-                disabled={email.length <= 0}
+                disabled={
+                  (useEmail && email.length <= 0) ||
+                  (!useEmail && username.length <= 0)
+                }
                 onClick={() =>
                   this.props.handleGoForward('owner', 3, {
                     emailItem: { email, username, useEmail },

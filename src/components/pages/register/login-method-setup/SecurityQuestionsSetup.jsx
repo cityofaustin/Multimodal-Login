@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import './SecurityQuestionsSetup.scss';
 import MSelect from '../../../common/MSelect';
+import HowSvg from '../../../svg/HowSvg';
+import SecurityExampleSvg from '../../../svg/SecurityExampleSvg';
 
 export default class SecurityQuestionSetup extends Component {
   constructor(props) {
@@ -25,8 +27,9 @@ export default class SecurityQuestionSetup extends Component {
     };
   }
 
-  render() {
+  renderSecurityCard() {
     const { securityItems } = { ...this.state };
+    const { toggleDisplayHow } = { ...this.props };
     return (
       <div id="security-questions-setup" className="card owner1">
         <div className="card-content">
@@ -41,7 +44,9 @@ export default class SecurityQuestionSetup extends Component {
                 <div className="card-body-section1">
                   <label>Question #{i + 1}</label>
                   <MSelect
-                    value={this.getOptions().find(option => option.value === securityItem.question)}
+                    value={this.getOptions().find(
+                      (option) => option.value === securityItem.question
+                    )}
                     options={this.getOptions()}
                     isSearcheable={false}
                     onChange={(e) => {
@@ -78,9 +83,29 @@ export default class SecurityQuestionSetup extends Component {
             disabled={this.isDisabled()}
           />
         </div>
-        <div className="how">How does this work?</div>
+        <div className="how" onClick={toggleDisplayHow}>
+          How does this work?
+        </div>
       </div>
     );
+  }
+
+  renderHow() {
+    return (
+      <div className="how-container">
+        <HowSvg />
+        <div className="sec-excerpt">
+          If you loose access to your account, you may obtain login credits by
+          answering the security questions you registered at sign-up.
+        </div>
+        <SecurityExampleSvg />
+      </div>
+    );
+  }
+
+  render() {
+    const { isDisplayHow } = { ...this.props };
+    return !isDisplayHow ? this.renderSecurityCard() : this.renderHow();
   }
 
   isDisabled = () => {
