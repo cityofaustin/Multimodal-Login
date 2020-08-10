@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import './SecurityQuestionsSetup.scss';
 import MSelect from '../../../common/MSelect';
 import HowSvg from '../../../svg/HowSvg';
 import SecurityExampleSvg from '../../../svg/SecurityExampleSvg';
-
+if (process.env.BROWSER) {
+  import('./SecurityQuestionsSetup.scss');
+}
 export default class SecurityQuestionSetup extends Component {
   constructor(props) {
     super(props);

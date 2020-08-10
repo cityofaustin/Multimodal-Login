@@ -3,8 +3,13 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import PasswordSvg from '../../../svg/PasswordSvg';
 import OptionSvg from '../../../svg/OptionSvg';
-import './OwnerPasswordQ.scss';
-import { animateIn, getSectionClassName } from '../../../../util/animation-util';
+import {
+  animateIn,
+  getSectionClassName,
+} from '../../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./OwnerPasswordQ.scss');
+}
 
 export default class OwnerPasswordQ extends Component {
   static defaultProps = {
@@ -19,7 +24,7 @@ export default class OwnerPasswordQ extends Component {
     this.state = {
       options: ['forgetPasswordOften', 'forgetPasswordRarely'],
       selectedOption,
-    }
+    };
   }
 
   componentDidMount() {
@@ -30,7 +35,11 @@ export default class OwnerPasswordQ extends Component {
   render() {
     const { options, selectedOption } = { ...this.state };
     return (
-      <div ref="section" id="section-4-owner" className={getSectionClassName(this.props.position)}>
+      <div
+        ref="section"
+        id="section-4-owner"
+        className={getSectionClassName(this.props.position)}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
@@ -45,13 +54,14 @@ export default class OwnerPasswordQ extends Component {
             </div>
             <div className="options">
               {options.map((option) => {
-                const svgType =
-                  option === options[0] ? 'meh' : 'smiley';
+                const svgType = option === options[0] ? 'meh' : 'smiley';
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() => this.setState({ selectedOption: option })}
+                    handleClick={() =>
+                      this.setState({ selectedOption: option })
+                    }
                     isSelected={selectedOption === option}
                   />
                 );

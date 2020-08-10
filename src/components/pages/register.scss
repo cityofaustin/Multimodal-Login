@@ -47,7 +47,7 @@ body {
   will-change: width;
 }
 
-input[type=button]:disabled {
+input[type=button]:disabled, input[type=submit]:disabled {
   background-color: #9a9a9a;
   cursor: not-allowed;
 }

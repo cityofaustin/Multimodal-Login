@@ -3,8 +3,13 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import OptionSvg from '../../../svg/OptionSvg';
 import PalmInfoSvg from '../../../svg/PalmInfoSvg';
-import './OwnerPalmQ.scss';
-import { animateIn, getSectionClassName } from '../../../../util/animation-util';
+import {
+  animateIn,
+  getSectionClassName,
+} from '../../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./OwnerPalmQ.scss');
+}
 
 export default class OwnerPalmQ extends Component {
   static defaultProps = {

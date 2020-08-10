@@ -3,8 +3,13 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import OptionSvg from '../../../svg/OptionSvg';
 import SecurityQuestionSvg from '../../../svg/SecurityQuestionSvg';
-import './OwnerSecurityQ.scss';
-import { animateIn, getSectionClassName } from '../../../../util/animation-util';
+import {
+  animateIn,
+  getSectionClassName,
+} from '../../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./OwnerSecurityQ.scss');
+}
 
 export default class OwnerSecurityQ extends Component {
   static defaultProps = {
@@ -32,7 +37,11 @@ export default class OwnerSecurityQ extends Component {
   render() {
     const { options, selectedOption } = { ...this.state };
     return (
-      <div ref="section" id="section-8-owner" className={getSectionClassName(this.props.position)}>
+      <div
+        ref="section"
+        id="section-8-owner"
+        className={getSectionClassName(this.props.position)}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>

@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
-import './LoginMethodSetup.scss';
 import PasswordSetup from './PasswordSetup';
 import PalmSetup from './PalmSetup';
 import TextSetup from './TextSetup';
@@ -11,6 +10,9 @@ import {
   animateIn,
   getSectionClassName,
 } from '../../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./LoginMethodSetup.scss');
+}
 
 export default class LoginMethodSetup extends Component {
   static defaultProps = {

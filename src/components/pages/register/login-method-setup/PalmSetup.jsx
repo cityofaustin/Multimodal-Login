@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PalmDetectedSvg from '../../../svg/PalmDetectedSvg';
 import PalmNotDetectedSvg from '../../../svg/PalmNotDetectedSvg';
-import './PalmSetup.scss';
 import HowSvg from '../../../svg/HowSvg';
 import PalmExampleSvg from '../../../svg/PalmExampleSvg';
-
+if (process.env.BROWSER) {
+  import('./PalmSetup.scss');
+}
 export default class PalmSetup extends Component {
   constructor(props) {
     super(props);

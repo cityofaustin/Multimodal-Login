@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import './TextSetup.scss';
 import delay from '../../../../util/delay';
 import KeycodeInputSvg from '../../../svg/KeycodeInputSvg';
 import HowSvg from '../../../svg/HowSvg';
 import TextExampleSvg from '../../../svg/TextExampleSvg';
+if (process.env.BROWSER) {
+  import('./TextSetup.scss');
+}
 
 export default class TextSetup extends Component {
   constructor(props) {

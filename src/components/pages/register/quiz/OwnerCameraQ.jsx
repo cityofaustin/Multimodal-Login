@@ -3,8 +3,13 @@ import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 // import PasswordSvg from '../../../svg/PasswordSvg';
 import OptionSvg from '../../../svg/OptionSvg';
-import './OwnerCameraQ.scss';
-import { animateIn, getSectionClassName } from '../../../../util/animation-util';
+import {
+  animateIn,
+  getSectionClassName,
+} from '../../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./OwnerCameraQ.scss');
+}
 
 export default class OwnerCameraQ extends Component {
   static defaultProps = {
@@ -33,25 +38,33 @@ export default class OwnerCameraQ extends Component {
   }
 
   handleOptionSelect = (option) => {
-    const {options} = {...this.state};
-    let {selectedOptions} = {...this.state};
-    if(option === options[0] && selectedOptions.indexOf(option) < 0) { // select none
+    const { options } = { ...this.state };
+    let { selectedOptions } = { ...this.state };
+    if (option === options[0] && selectedOptions.indexOf(option) < 0) {
+      // select none
       selectedOptions = [options[0]];
-    } else if(selectedOptions.indexOf(option) > -1) { // de select
+    } else if (selectedOptions.indexOf(option) > -1) {
+      // de select
       selectedOptions.splice(selectedOptions.indexOf(option), 1);
-    } else { // select
-      if(selectedOptions.indexOf(options[0]) > -1) { // remove select none if selected
+    } else {
+      // select
+      if (selectedOptions.indexOf(options[0]) > -1) {
+        // remove select none if selected
         selectedOptions.splice(selectedOptions.indexOf(options[0]));
       }
       selectedOptions.push(option);
     }
     this.setState({ selectedOptions });
-  }
+  };
 
   render() {
     const { options, selectedOptions } = { ...this.state };
     return (
-      <div ref="section" id="section-5-owner" className={getSectionClassName(this.props.position)}>
+      <div
+        ref="section"
+        id="section-5-owner"
+        className={getSectionClassName(this.props.position)}
+      >
         <div className="section-contents">
           <div className="title">Document Owner</div>
           <div className="subtitle">More ways to login</div>
@@ -82,7 +95,7 @@ export default class OwnerCameraQ extends Component {
                 onClick={() => {
                   const q = this.props.questions;
                   q.devicesWithCamera = selectedOptions;
-                  if(q.devicesWithCamera.indexOf('cameraAccessNone') > -1) {
+                  if (q.devicesWithCamera.indexOf('cameraAccessNone') > -1) {
                     q.scanningPalm = undefined;
                   }
                   this.props.handleGoForward('owner', 6, { questions: q });

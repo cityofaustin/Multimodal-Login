@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../util/browser-util';
-import GoBackSvg from '../../svg/GoBackSvg';
+import React, { Component, Fragment } from "react";
+import { handleIOSBrowser } from "../../../util/browser-util";
+import GoBackSvg from "../../svg/GoBackSvg";
 // import OptionSvg from '../../svg/OptionSvg';
 // import HasPhoneSvg from '../../svg/HasPhoneSvg';
-import './OwnerLoginRecommend.scss';
-import LoginOption from './LoginOption';
-import { animateIn, getSectionClassName } from '../../../util/animation-util';
-import AnsweredItemSvg from '../../svg/AnsweredItemSvg';
-
+import LoginOption from "./LoginOption";
+import { animateIn, getSectionClassName } from "../../../util/animation-util";
+import AnsweredItemSvg from "../../svg/AnsweredItemSvg";
+import UrlUtil from "../../../util/url-util";
+if (process.env.BROWSER) {
+  import("./OwnerLoginRecommend.scss");
+}
 export default class OwnerLoginRecommend extends Component {
   static defaultProps = {
     handleGoForward: () => {},
@@ -15,15 +17,15 @@ export default class OwnerLoginRecommend extends Component {
   };
 
   answerTitles = {
-    password: 'How often do you completely forget your passwords?',
+    password: "How often do you completely forget your passwords?",
     text:
-      'In the last five years, how many times have you permanently lost your phone? ',
-    palm: 'How comfortable are you using your camera to scan your palm?',
-    securityQuestions: 'How good are you at answering security questions?',
+      "In the last five years, how many times have you permanently lost your phone? ",
+    palm: "How comfortable are you using your camera to scan your palm?",
+    securityQuestions: "How good are you at answering security questions?",
   };
 
   state = {
-    loginMethods: ['password', 'text', 'palm', 'securityQuestions'],
+    loginMethods: ["password", "text", "palm", "securityQuestions"],
     isDisplayWhy: false,
   };
 
@@ -42,17 +44,17 @@ export default class OwnerLoginRecommend extends Component {
       ...this.props.questions,
     };
     const recommended = [];
-    if (forgetsPassword === 'forgetPasswordRarely') {
-      recommended.push('password');
+    if (forgetsPassword === "forgetPasswordRarely") {
+      recommended.push("password");
     }
-    if (lostPhone !== 'noPhone') {
-      recommended.push('text');
+    if (lostPhone !== "noPhone") {
+      recommended.push("text");
     }
-    if (scanningPalm === 'palmComfortable') {
-      recommended.push('palm');
+    if (scanningPalm === "palmComfortable") {
+      recommended.push("palm");
     }
-    if (answeringSecurityQuestions === 'securityGood') {
-      recommended.push('securityQuestions');
+    if (answeringSecurityQuestions === "securityGood") {
+      recommended.push("securityQuestions");
     }
     return recommended;
   };
@@ -62,13 +64,13 @@ export default class OwnerLoginRecommend extends Component {
       ...this.props,
     };
     switch (loginMethod) {
-      case 'password':
+      case "password":
         return !!passwordItem;
-      case 'text':
+      case "text":
         return !!textItem;
-      case 'palm':
+      case "palm":
         return !!palmItem;
-      case 'securityQuestions':
+      case "securityQuestions":
         return !!securityItems;
       default:
         return false;
@@ -90,6 +92,61 @@ export default class OwnerLoginRecommend extends Component {
     return recommendedLoginMethods.indexOf(loginMethod) > -1;
   };
 
+  renderRegisterForm() {
+    const { emailItem, palmItem, passwordItem, securityItems, textItem } = {
+      ...this.props,
+    };
+    return (
+      <form method="POST" action="/register">
+        {emailItem && (
+          <Fragment>
+            <span>username length {emailItem.username.length}</span>
+            {emailItem.username.length > 0 && <input type="hidden" name="username" value={emailItem.username} /> }
+            {emailItem.email.length > 0 && <input type="hidden" name="email" value={emailItem.email} /> }
+          </Fragment>
+        )}
+        {passwordItem && (
+          <input type="hidden" name="password" value={passwordItem.password} />
+        )}
+        {palmItem && (
+          <input type="hidden" name="palmTemplate" value={palmItem.palmTemplate} />
+        )}
+        {textItem && (
+          <input type="hidden" name="textItem" value={textItem.phoneNumber} />
+        )}
+        {securityItems && (
+          <input type="hidden" name="securityQuestions" value={JSON.stringify(securityItems)} />
+        )}
+        <input
+          id="client_id"
+          name="client_id"
+          type="hidden"
+          value={UrlUtil.getQueryVariable("client_id")}
+        />
+        <input
+          id="response_type"
+          name="response_type"
+          type="hidden"
+          value={UrlUtil.getQueryVariable("response_type")}
+        />
+        <input
+          id="redirect_url"
+          name="redirect_url"
+          type="hidden"
+          value={UrlUtil.getQueryVariable("redirect_url")}
+        />
+        <input id="scope" name="scope" type="hidden" value="" />
+        <input id="state" name="state" type="hidden" value="" />
+        <input
+          style={{ width: "210px" }}
+          type="submit"
+          value="Finish"
+          disabled={!this.areAnyComplete()}
+        />
+      </form>
+    );
+  }
+
   renderSectionContents() {
     const { loginMethods, isDisplayWhy } = { ...this.state };
     return (
@@ -107,7 +164,7 @@ export default class OwnerLoginRecommend extends Component {
             <div
               key={loginMethod}
               onClick={() =>
-                this.props.handleGoForward('owner', 10, { loginMethod })
+                this.props.handleGoForward("owner", 10, { loginMethod })
               }
             >
               <LoginOption
@@ -128,7 +185,7 @@ export default class OwnerLoginRecommend extends Component {
               <div
                 key={loginMethod}
                 onClick={() =>
-                  this.props.handleGoForward('owner', 10, { loginMethod })
+                  this.props.handleGoForward("owner", 10, { loginMethod })
                 }
               >
                 <LoginOption
@@ -138,14 +195,7 @@ export default class OwnerLoginRecommend extends Component {
               </div>
             ))}
           <div className="submit-section">
-            <input
-              style={{ width: '210px' }}
-              type="button"
-              value="Finish"
-              // TODO:
-              onClick={() => {}}
-              disabled={!this.areAnyComplete()}
-            />
+            {this.renderRegisterForm()}
             <div onClick={() => this.setState({ isDisplayWhy: !isDisplayWhy })}>
               Why did you pick this for me?
             </div>
@@ -153,7 +203,7 @@ export default class OwnerLoginRecommend extends Component {
         </div>
         <GoBackSvg
           color="#2362c7"
-          goBack={() => this.props.handleGoBack('owner', 9)}
+          goBack={() => this.props.handleGoBack("owner", 9)}
         />
       </div>
     );

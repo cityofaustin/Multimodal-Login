@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import './OptionSvg.scss';
+if (process.env.BROWSER) {
+  import('./OptionSvg.scss');
+}
 
 export default class OptionSvg extends Component {
   static defaultProps = {

@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { handleIOSBrowser } from '../../../util/browser-util';
 import GoBackSvg from '../../svg/GoBackSvg';
-import './OwnerEmail.scss';
 import { animateIn, getSectionClassName } from '../../../util/animation-util';
+if (process.env.BROWSER) {
+  import('./OwnerEmail.scss');
+}
 
 export default class OwnerEmail extends Component {
   static defaultProps = {

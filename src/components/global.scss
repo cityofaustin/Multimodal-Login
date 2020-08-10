@@ -9,7 +9,7 @@ input[type="submit"] {
   -webkit-appearance: none;
 }
 
-input[type="button"] {
+input[type="button"], input[type="submit"] {
   -webkit-appearance: none;
   border-radius: 9px;
   background-color: #2362c7;

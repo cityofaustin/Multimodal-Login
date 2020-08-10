@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import './LoginOption.scss';
+if (process.env.BROWSER) {
+  import('./LoginOption.scss');
+}
 
 export default class LoginOption extends Component {
   static defaultProps = {

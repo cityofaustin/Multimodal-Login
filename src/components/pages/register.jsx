@@ -451,6 +451,7 @@ class Register extends Component {
                   <OwnerSecurityQ questions={questions} />
                   <OwnerLoginRecommend
                     position="right"
+                    emailItem={emailItem}
                     questions={questions}
                     passwordItem={passwordItem}
                     textItem={textItem}
@@ -464,6 +465,7 @@ class Register extends Component {
                 <Fragment>
                   <OwnerSecurityQ questions={questions} position="left" />
                   <OwnerLoginRecommend
+                    emailItem={emailItem}
                     questions={questions}
                     passwordItem={passwordItem}
                     textItem={textItem}
@@ -475,6 +477,7 @@ class Register extends Component {
             } else {
               return (
                 <OwnerLoginRecommend
+                  emailItem={emailItem}
                   questions={questions}
                   passwordItem={passwordItem}
                   textItem={textItem}
@@ -490,6 +493,7 @@ class Register extends Component {
               return (
                 <Fragment>
                   <OwnerLoginRecommend
+                    emailItem={emailItem}
                     questions={questions}
                     passwordItem={passwordItem}
                     textItem={textItem}
@@ -510,6 +514,7 @@ class Register extends Component {
               return (
                 <Fragment>
                   <OwnerLoginRecommend
+                    emailItem={emailItem}
                     questions={questions}
                     position="left"
                     passwordItem={passwordItem}
