@@ -1,0 +1,22 @@
+#section-8-owner {
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 453px;
+    .card-subtitle {
+      padding-top: 4px;
+      color: #cecece;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .options {
+      display: flex;
+      svg {
+        margin: 0 -4px;
+      }
+    }
+  }
+}

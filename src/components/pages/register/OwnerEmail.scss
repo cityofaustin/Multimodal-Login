@@ -1,0 +1,52 @@
+#section-2-owner {
+  .section-contents{
+    .card {
+      height: 454px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .email-section {
+        .card-body-section {
+          align-items: flex-start !important;
+          display: flex;
+          flex-direction: column;
+          div {
+            font-size: 18px;
+            color: #484848;
+            margin-bottom: 2px;
+          }
+          input[type=text], input[type=email] {
+            width: 210px;
+            height: 35px;
+            border-radius: 8px;
+            border: solid 1px rgba(112, 112, 112, 0.27);
+            background-color: #e8f0fe;
+            padding-left: 14px;
+            font-size: 15px;
+            color: rgba(72, 72, 72, 0.77);
+          }
+        }
+      }
+      .submit-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        div {
+          margin-top: 7px;
+          color: #90afe2;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+      }
+      .card-title {
+        font-size: 25px !important;
+      }
+      .card-subtitle {
+        font-size: 13px;
+        color: #CECECE;
+        text-align: center;
+      }
+    }
+  }
+}

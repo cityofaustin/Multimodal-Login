@@ -1,0 +1,44 @@
+#security-questions-setup {
+  .card-body-section1 {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    width: 100%;
+    margin-top: 11px;
+  }
+  .answer-section {
+    margin-top: 5px;
+    input[type="text"] {
+      // transform: scale(2);
+      // transform-origin: 0 50%;
+      width: 232px;
+      height: 35px;
+      line-height:35px;
+      border-radius: 8px;
+      border: solid 1px rgba(112, 112, 112, 0.27);
+      background-color: #e8f0fe;
+      padding-left: 14px;
+      font-size: 15px;
+      color: rgba(72, 72, 72, 0.77);
+      // padding-top: 6px;
+      // padding-bottom: 6px;
+    }
+  }
+  .excerpt1 {
+    margin-top: -10px;
+    text-align: center;
+    font-size: 15px;
+    color: rgba(72, 72, 72, 0.77);
+    padding-bottom: 7px;
+  }
+  .submit-section {
+    margin-top: 27px;
+  }
+  .how {
+    padding-top: 5px;
+    font-size: 15px;
+    color: #9a9a9a;
+    text-align: center;
+    cursor: pointer;
+  }
+}

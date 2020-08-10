@@ -157,7 +157,6 @@ class CognitiveFaceService {
       );
       console.log(JSON.stringify(responseCreatePersonGroup));
     }
-    // FIXME: need to store a face cognition personId in the oathuser object.
     // TODO grab oathusers by username
     // let matchedUser = await common.dbClient.findUserByUserName(username);
     // console.log(matchedUser);

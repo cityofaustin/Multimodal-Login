@@ -1,9 +1,15 @@
 @import "../variables.scss";
 
 body {
-  background-image: linear-gradient($mid-blue 42%, white 42%);
+  background-image: linear-gradient($mid-blue 50%, white 50%);
   background-size: 100% 100%;
   background-repeat: no-repeat;
+}
+
+.wave-container {
+  position: absolute;
+  z-index: -1;
+  top: 35%;
 }
 
 #main {

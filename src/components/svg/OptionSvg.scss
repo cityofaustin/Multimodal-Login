@@ -1,0 +1,48 @@
+.options {
+  svg {
+    cursor: pointer;
+  }
+}
+svg {
+  &.selected {
+    text {fill: #fff}
+    #Component_161_1 { // meh
+      rect {fill: #D95868;}
+      #Ellipse_676 {fill: #fff}
+      #Ellipse_679 {fill: #D95868;stroke: #D95868;}
+      #Ellipse_680 {fill: #D95868;stroke: #D95868;}
+      #Path_1851 {stroke: #D95868;}
+    }
+    #Component_161_14 { // smiley
+      rect {fill: #32A736;}
+      #Ellipse_676 {fill: #fff}
+      #Ellipse_679 {fill: #32A736;stroke: #32A736;}
+      #Ellipse_680 {fill: #32A736;stroke: #32A736;}
+      #Path_1853 {fill: #32A736;}
+    }
+    #Component_161_31 { // none
+      rect {fill: #D95868;}
+      #noun_Stop_1877355 {fill: #fff;stroke: #fff;}
+    }
+    #Component_161_1a { // tablet
+      rect {fill: #32A736;}
+      #noun_Tablet_867078 {fill: #fff}
+    }
+    #Component_161_3 { // computer
+      rect {fill: #32A736;}
+      #Path_1913 {fill: #fff}
+      #Path_1914 {fill: #fff}
+    }
+    #Component_161_4 { // phone
+      rect {fill: #32A736;}
+      #Path_1909 {fill: #fff;stroke: #fff;}
+    }
+    // no phone
+    #Component_161_37 {
+      rect {fill: #D95868;}
+      #Path_1909 {fill: #fff}
+      #noun_Question_670398 {fill: #D95868}
+      #Ellipse_688{ fill: #fff }
+    }
+  }
+}

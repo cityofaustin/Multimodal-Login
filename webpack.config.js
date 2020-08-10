@@ -37,7 +37,7 @@ const config = [
         ? path.resolve(__dirname, "dist", "static", "public")
         : path.resolve(__dirname, "src", "static", "public"),
       filename: production ? "js/[chunkhash].js" : "js/[name].js",
-      publicPath: "/public",
+      publicPath: "/public/",
     },
 
     module: {

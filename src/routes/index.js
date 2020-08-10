@@ -5,13 +5,13 @@ import oauthServer from '../services/OathService';
 import { renderToString } from 'react-dom/server';
 import Index from '../components/pages/index';
 import Login from '../components/pages/login';
-import Register from '../components/pages/register';
+// import Register from '../components/pages/register';
 import React from 'react';
 import CognitiveFaceService from '../services/CognitiveFaceService';
-import StringUtil from '../util/StringUtil';
-import path from 'path';
+// import StringUtil from '../util/StringUtil';
+// import path from 'path';
 import fs from 'fs';
-import { ConnectionStates } from 'mongoose';
+// import { ConnectionStates } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import axiox from 'axios';
 const Schema = require('./middleware/schema');
@@ -55,10 +55,46 @@ router.post(
   celebrate({
     body: Schema.userRegisterSchema,
   }),
-  async (req, res) => {
-    let newUser = await common.dbClient.createNewOAuthUser(req.body);
-    return res.json({ newUser: newUser });
-  }
+  async (req, res, next) => {
+    // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    // console.log(req.body);
+    // return res.json({req: req.body});
+    await common.dbClient.createNewOAuthUser(req.body);
+    // return res.json({ newUser: newUser });
+    const accountMatched = await common.dbClient.getAccountByCredentials(
+      req.body
+    );
+
+    if (accountMatched) {
+      req.body.user = accountMatched;
+      return next();
+    }
+
+    const params = [
+      'client_id',
+      'redirect_uri',
+      'response_type',
+      'grant_type',
+      'state', // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+      'scope',
+    ]
+      .map((a) => `${a}=${req.body[a]}`)
+      .join('&');
+    return res.redirect(`/oauth?success=false&${params}`);
+  },
+  (req, res, next) => {
+    // sends us to our redirect with an authorization code in our url
+    return next();
+  },
+  oauthServer.authorize({
+    authenticateHandler: {
+      handle: (req) => {
+        return req.body.user;
+      },
+    },
+    allowEmptyState: true,
+    authorizationCodeLifetime: 600, // 10min, default 5 minutes
+  })
 );
 
 router.post('/request-social-login-code', async (req, res) => {
@@ -193,16 +229,16 @@ router.post(
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url
-    DebugControl.log.flow('Authorization');
+    // DebugControl.log.flow('Authorization');
     return next();
   },
   oauthServer.authorize({
     authenticateHandler: {
       handle: (req) => {
-        DebugControl.log.functionName('Authenticate Handler');
-        DebugControl.log.parameters(
-          Object.keys(req.body).map((k) => ({ name: k, value: req.body[k] }))
-        );
+        // DebugControl.log.functionName('Authenticate Handler');
+        // DebugControl.log.parameters(
+        //   Object.keys(req.body).map((k) => ({ name: k, value: req.body[k] }))
+        // );
         return req.body.user;
       },
     },

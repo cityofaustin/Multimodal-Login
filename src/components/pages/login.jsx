@@ -202,8 +202,6 @@ class Login extends React.Component {
                 />
               </div>
 
-              {/* FIXME: should be set from the query string but this works for now. */}
-
               <input
                 id="client_id"
                 name="client_id"
