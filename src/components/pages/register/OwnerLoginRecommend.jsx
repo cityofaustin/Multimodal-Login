@@ -168,8 +168,10 @@ export default class OwnerLoginRecommend extends Component {
         <div className="card owner1">
           <div>
             <div className="card-title">
-              Based on your answers, we found the following login solution for
-              you
+              {this.getRecommended().length < 1 &&
+                "We couldn't find the perfect login solution for you, but here are some options"}
+              {this.getRecommended().length > 0 &&
+                "Based on your answers, we found the following login solution for you"}
             </div>
           </div>
           {this.getRecommended().map((loginMethod) => (
@@ -186,17 +188,18 @@ export default class OwnerLoginRecommend extends Component {
               />
             </div>
           ))}
-          <div>
-            <div className="excerpt1">Other login methods</div>
-            <div className="excerpt2">(not recommended for you)</div>
-          </div>
+          {this.getRecommended().length < 4 && (
+            <div>
+              <div className="excerpt1">Other login methods</div>
+              {/* <div className="excerpt2">(not recommended for you)</div> */}
+            </div>
+          )}
           {loginMethods
             .filter(
               (loginMethod) => this.getRecommended().indexOf(loginMethod) < 0
             )
             .map((loginMethod) => (
               <div
-                className="recommended"
                 key={loginMethod}
                 onClick={() =>
                   this.props.handleGoForward("owner", 10, { loginMethod })

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 export default class HowSvg extends Component {
   static defaultProps = {
-    loginMethod: 'securityAnswers',
+    loginMethod: "securityAnswers",
   };
 
   render() {
@@ -71,6 +71,7 @@ const howSvg = {
   text: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
       width="141"
       height="141"
       viewBox="0 0 141 141"
@@ -92,28 +93,46 @@ const howSvg = {
         </filter>
       </defs>
       <g
-        id="Group_2446"
-        data-name="Group 2446"
+        id="Group_2495"
+        data-name="Group 2495"
         transform="translate(-110 -142)"
       >
-        <g transform="matrix(1, 0, 0, 1, 110, 142)" filter="url(#Ellipse_499)">
-          <circle
-            id="Ellipse_499-2"
-            data-name="Ellipse 499"
-            cx="61.5"
-            cy="61.5"
-            r="61.5"
-            transform="translate(9 6)"
-            fill="#fff"
-          />
+        <g id="Group_2497" data-name="Group 2497">
+          <g
+            transform="matrix(1, 0, 0, 1, 110, 142)"
+            filter="url(#Ellipse_499)"
+          >
+            <circle
+              id="Ellipse_499-2"
+              data-name="Ellipse 499"
+              cx="61.5"
+              cy="61.5"
+              r="61.5"
+              transform="translate(9 6)"
+              fill="#fff"
+            />
+          </g>
+          <g id="Group_2496" data-name="Group 2496">
+            <path
+              id="noun_Key_677345_1_"
+              data-name="noun_Key_677345 (1)"
+              d="M31.944,45.28l2.928,2.928a3.313,3.313,0,0,0,2.465,1.02H40.8v2.928a3.975,3.975,0,0,0,3.975,3.975h2.928v3.458a3.5,3.5,0,0,0,1,2.438l2.3,2.3a3.246,3.246,0,0,0,2.292.941h9.13a2.856,2.856,0,0,0,2.849-2.849h0V53.29a3.24,3.24,0,0,0-.954-2.306L45.28,31.944A21.767,21.767,0,1,0,31.944,45.28ZM12.167,12.154A17.789,17.789,0,0,1,41.133,31.665a1.988,1.988,0,0,0,.424,2.18L61.294,53.588v7.705H53.588l-1.941-1.941V54.668a2.557,2.557,0,0,0-2.557-2.557H44.777v-4.3a2.557,2.557,0,0,0-2.557-2.557H37.542l-3.7-3.7a1.988,1.988,0,0,0-2.18-.424,17.789,17.789,0,0,1-19.5-28.966Z"
+              transform="translate(143.026 176.026)"
+              fill="#2362c7"
+            />
+            <g
+              id="Ellipse_690"
+              data-name="Ellipse 690"
+              transform="translate(156 189)"
+              fill="#fff"
+              stroke="#2362c7"
+              strokeWidth="4"
+            >
+              <circle cx="7.5" cy="7.5" r="7.5" stroke="none" />
+              <circle cx="7.5" cy="7.5" r="5.5" fill="none" />
+            </g>
+          </g>
         </g>
-        <path
-          id="_5ec800093f708f495e5c94dd_noun_Key_677345"
-          data-name="5ec800093f708f495e5c94dd_noun_Key_677345"
-          d="M32.736,46.438l3.009,3.009a3.4,3.4,0,0,0,2.532,1.048h3.56V53.5a4.084,4.084,0,0,0,4.084,4.084h3.009V61.14a3.594,3.594,0,0,0,1.028,2.5l2.362,2.362a3.335,3.335,0,0,0,2.355.967h9.379a2.934,2.934,0,0,0,2.927-2.927h0V54.667A3.328,3.328,0,0,0,66,52.3L46.438,32.736a22.363,22.363,0,1,0-13.7,13.7ZM12.419,12.405A18.276,18.276,0,0,1,42.177,32.451a2.042,2.042,0,0,0,.436,2.239L62.89,54.974V62.89H54.974L52.979,60.9V56.083a2.627,2.627,0,0,0-2.627-2.627H45.921V49.038a2.627,2.627,0,0,0-2.627-2.627H38.488l-3.8-3.8a2.042,2.042,0,0,0-2.239-.436A18.276,18.276,0,0,1,12.412,12.419Zm8.549,16.057a7.487,7.487,0,1,0-7.487-7.487A7.487,7.487,0,0,0,20.968,28.462Zm0-10.836a1.41,1.41,0,1,1,0-.007Z"
-          transform="translate(142.027 175.027)"
-          fill="#2362c7"
-        />
       </g>
     </svg>
   ),
