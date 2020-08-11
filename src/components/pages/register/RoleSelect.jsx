@@ -25,6 +25,7 @@ export default class RoleSelect extends Component {
           <div className="title">Sign-up</div>
           <div className="subtitle">What would you like to do?</div>
           <div
+            style={{margin: "92px 0"}}
             className="card owner owner-choice"
             onClick={() => this.props.handleGoForward('owner', 1)}
           >
@@ -33,7 +34,7 @@ export default class RoleSelect extends Component {
             </div>
             <div className="desc-title">I'd like to store my documents</div>
           </div>
-          <div
+          {/* <div
             className="card helper helper-choice"
             onClick={() => this.props.handleGoForward('helper', 1)}
           >
@@ -43,8 +44,8 @@ export default class RoleSelect extends Component {
             <div className="desc-title">
               I want to help others with their documents
             </div>
-          </div>
-          <div className="bottom-section">
+          </div> */}
+          {/* <div className="bottom-section">
             <div className="bottom-label">What if I want to do both?</div>
             <div className="info">
               <div className="bubble">
@@ -52,7 +53,7 @@ export default class RoleSelect extends Component {
               </div>
               <InfoSvg />
             </div>
-          </div>
+          </div> */}
           <GoBackSvg goBack={() => this.props.handleGoBack('', 0)} />
         </div>
       </div>
