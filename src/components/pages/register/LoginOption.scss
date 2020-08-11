@@ -13,27 +13,45 @@
   cursor: pointer;
 }
 
+.recommended {
+  .pill {
+    color: #2362C7;
+    .shield {
+      fill: #2362C7;
+    }
+    .password-svg path {
+      fill: #2362C7;
+    }
+    .palm-svg path {
+      fill: #2362C7;
+    }
+    .text-svg path {
+      fill: #2362C7;
+    }
+  }
+}
+
 .complete {
   background-color: #5b91e8;
   .option-display {
-    color: #ffffff;
+    color: #ffffff!important;
   }
   .check-circle {
-    fill: #f2f2f2;
+    fill: #f2f2f2!important;
   }
   .check-line {
-    fill: #5b91e8;
+    fill: #5b91e8!important;
   }
   .shield {
-    fill: #fff;
+    fill: #fff!important;
   }
   .password-svg path {
-    fill: #fff;
+    fill: #fff!important;
   }
   .palm-svg path {
-    fill: #fff;
+    fill: #fff!important;
   }
   .text-svg path {
-    fill: #fff;
+    fill: #fff!important;
   }
 }

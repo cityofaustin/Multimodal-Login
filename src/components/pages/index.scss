@@ -9,7 +9,12 @@ body {
 .wave-container {
   position: absolute;
   z-index: -1;
-  top: 35%;
+  top: calc(50% - 145px);
+  width: 100vw;
+  overflow-x: visible;
+  svg {
+    overflow:auto;
+  }
 }
 
 #main {

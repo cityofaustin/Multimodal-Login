@@ -100,22 +100,34 @@ export default class OwnerLoginRecommend extends Component {
       <form method="POST" action="/register">
         {emailItem && (
           <Fragment>
-            <span>username length {emailItem.username.length}</span>
-            {emailItem.username.length > 0 && <input type="hidden" name="username" value={emailItem.username} /> }
-            {emailItem.email.length > 0 && <input type="hidden" name="email" value={emailItem.email} /> }
+            {/* <span>username length {emailItem.username.length}</span> */}
+            {emailItem.username.length > 0 && (
+              <input type="hidden" name="username" value={emailItem.username} />
+            )}
+            {emailItem.email.length > 0 && (
+              <input type="hidden" name="email" value={emailItem.email} />
+            )}
           </Fragment>
         )}
         {passwordItem && (
           <input type="hidden" name="password" value={passwordItem.password} />
         )}
         {palmItem && (
-          <input type="hidden" name="palmTemplate" value={palmItem.palmTemplate} />
+          <input
+            type="hidden"
+            name="palmTemplate"
+            value={palmItem.palmTemplate}
+          />
         )}
         {textItem && (
           <input type="hidden" name="textItem" value={textItem.phoneNumber} />
         )}
         {securityItems && (
-          <input type="hidden" name="securityQuestions" value={JSON.stringify(securityItems)} />
+          <input
+            type="hidden"
+            name="securityQuestions"
+            value={JSON.stringify(securityItems)}
+          />
         )}
         <input
           id="client_id"
@@ -162,6 +174,7 @@ export default class OwnerLoginRecommend extends Component {
           </div>
           {this.getRecommended().map((loginMethod) => (
             <div
+              className="recommended"
               key={loginMethod}
               onClick={() =>
                 this.props.handleGoForward("owner", 10, { loginMethod })
@@ -183,6 +196,7 @@ export default class OwnerLoginRecommend extends Component {
             )
             .map((loginMethod) => (
               <div
+                className="recommended"
                 key={loginMethod}
                 onClick={() =>
                   this.props.handleGoForward("owner", 10, { loginMethod })

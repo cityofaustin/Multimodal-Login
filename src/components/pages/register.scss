@@ -18,7 +18,7 @@ body {
 .wave-container {
   position: absolute;
   // z-index: -1;
-  top: 33%;
+  top: calc(50% - 145px);
   transition: transform 1.5s ease-out;
   transform: translateX(0px);
   // transform: translateX(-3240px);
