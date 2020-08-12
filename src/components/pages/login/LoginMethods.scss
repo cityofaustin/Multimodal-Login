@@ -1,0 +1,58 @@
+@import "../variables.scss";
+
+.login-methods {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .login-method {
+    cursor: pointer;
+    margin-bottom: 30px;
+    .login-card {
+      width: 216px;
+      height: 445px;
+      justify-content: space-between;
+      .top-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .card-title {
+          font-size: 25px;
+          font-weight: bold;
+          color: $mid-blue;
+          margin-bottom: 12px;
+        }
+      }
+      .card-body {
+        .card-body-section1 {
+          // align-items: flex-start !important;
+          // display: flex;
+          // flex-direction: column;
+          div {
+            font-size: 18px;
+            color: #484848;
+            margin-bottom: 2px;
+          }
+          .excerpt {
+            margin-top: 13px;
+            font-size: 15px;
+            text-align: center;
+            color: #484848;
+            opacity: 0.77;
+          }
+        }
+      }
+    }
+  }
+}
+
+input[type="password"] {
+  width: 210px;
+  height: 35px;
+  line-height: 35px;
+  border-radius: 8px;
+  border: solid 1px rgba(112, 112, 112, 0.27);
+  background-color: #e8f0fe;
+  padding-left: 14px;
+  font-size: 30px;
+  color: rgba(72, 72, 72, 0.77);
+}

@@ -209,7 +209,7 @@ router.post(
     ]
       .map((a) => `${a}=${req.body[a]}`)
       .join('&');
-    return res.redirect(`/oauth?success=false&${params}`);
+    return res.redirect(`/login?success=false&${params}`);
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url

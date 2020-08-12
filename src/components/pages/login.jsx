@@ -5,6 +5,7 @@ import ContactSvg from "../svg/contact-svg";
 // import CognitiveFaceService from '../../services/CognitiveFaceService';
 import UrlUtil from "../../util/url-util";
 import axios from "axios";
+import LoginMethods from "./login/LoginMethods";
 
 let img;
 // https://stackoverflow.com/a/30355080/6907541
@@ -23,6 +24,12 @@ class Login extends React.Component {
       faceTemplate: "",
       oneTimeCode: "",
       loginMethods: undefined,
+      // loginMethods: [
+      //   "PasswordLoginType",
+      //   "SecurityQuestionsLoginType",
+      //   "PalmLoginType",
+      //   "TextLoginType",
+      // ],
       findUserError: "",
       requestLoginCode: false,
       faceVerify: false,
@@ -138,7 +145,19 @@ class Login extends React.Component {
                 value={username}
                 onChange={this.handleInputChange}
               />
-              <div className="error">{findUserError}</div>
+              <div className="error">
+                {findUserError.length > 0 && (
+                  <span>
+                    {findUserError}
+                    <br />
+                  </span>
+                )}
+                {UrlUtil.getQueryVariable("success") === "false" && (
+                  <Fragment>Failed login attempt</Fragment>
+                )}
+              </div>
+
+              {/* <div className="error">{findUserError}</div> */}
               <input
                 className="find-user"
                 type="submit"
@@ -245,7 +264,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { loginMethods } = { ...this.state };
+    const { loginMethods, username } = { ...this.state };
     return (
       <Fragment>
         <Fragment>
@@ -263,7 +282,9 @@ class Login extends React.Component {
           </div>
           <main id="main" style={{ position: "absolute", top: 0, opacity: 0 }}>
             {!loginMethods && this.renderUsernamePrompt()}
-            {loginMethods && this.renderLoginWithMethods()}
+            {loginMethods && (
+              <LoginMethods loginMethods={loginMethods} username={username} />
+            )}
           </main>
         </Fragment>
       </Fragment>
