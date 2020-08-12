@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import OAuthUser from "./models/OAuthUser";
 import OAuthClient from "./models/OAuthClient";
 import SocialLogin from "./models/SocialLogin";
-// import LoginTypeBase from './models/login-type/LoginTypeBase';
+import LoginTypeBase from './models/login-type/LoginTypeBase';
 import PasswordLoginType from "./models/login-type/PasswordLoginType";
 import FaceLoginType from "./models/login-type/FaceLoginType";
 import PalmLoginType from "./models/login-type/PalmLoginType";
@@ -114,17 +114,17 @@ class MongoDbClient {
 
     if (body.securityQuestions !== undefined) {
       const securityQuestionsLoginType = new SecurityQuestionsLoginType();
-      securityQuestionsLoginType.securityQuestions = JSON.parse(body.securityQuestions).map(
-        (securityQuestion) => {
-          const question = securityQuestion.question;
-          const saltHash = this.getSecretSaltHash(securityQuestion.answer);
-          return {
-            question,
-            answerSalt: saltHash.salt,
-            answerHash: saltHash.hash,
-          };
-        }
-      );
+      securityQuestionsLoginType.securityQuestions = JSON.parse(
+        body.securityQuestions
+      ).map((securityQuestion) => {
+        const question = securityQuestion.question;
+        const saltHash = this.getSecretSaltHash(securityQuestion.answer);
+        return {
+          question,
+          answerSalt: saltHash.salt,
+          answerHash: saltHash.hash,
+        };
+      });
       // console.log(securityQuestionsLoginType.securityQuestions);
       await securityQuestionsLoginType.save();
       user.loginTypes.push(securityQuestionsLoginType);
@@ -186,16 +186,21 @@ class MongoDbClient {
     return user;
   }
 
-  async saveUser(user) {
-    await user.save();
-    return user;
+  async getLoginMethodsByUsernameOrEmail(usernameOrEmail) {
+    let loginMethods;
+    let user = await OAuthUser
+    .findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    })
+    .populate("loginTypes");
+    if(user) {
+      loginMethods = user.loginTypes.map(loginType => loginType.itemtype);
+    }
+    return {loginMethods};
   }
 
-  async findUserByUserName(userName) {
-    let user = await OAuthUser.findOne({
-      username: userName,
-    });
-
+  async saveUser(user) {
+    await user.save();
     return user;
   }
 

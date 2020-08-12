@@ -1,9 +1,15 @@
 @import "../variables.scss";
 
 body {
-  background-image: linear-gradient($mid-blue 42%, white 42%, white 64%, $mid-blue 64%);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  background-color: $mid-blue;
+  // background-image: linear-gradient($mid-blue 42%, white 42%, white 64%, $mid-blue 64%);
+  // background-size: 100% 100%;
+  // background-repeat: no-repeat;
+}
+
+input[type=button]:disabled, input[type=submit]:disabled {
+  background-color: #9a9a9a!important;
+  cursor: not-allowed;
 }
 
 #main {
@@ -55,10 +61,11 @@ body {
                     margin-top: 21px;
                     font-size: 13px;
                     color: rgba(72, 72, 72, 0.77);
+                    text-align: center;
                 }
                 .username-input {
-                    border-radius: 23px;
-                    border: solid 1px #ececec;
+                    border-radius: 6.5px;
+                    border: solid 1px #cecece;
                     margin-top: 6px;
                     // width: calc(100% - 50px);
                     font-size: 15px;

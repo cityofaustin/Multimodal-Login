@@ -19,6 +19,9 @@ const config = {
     filename: '[name].js'
   },
   devServer: {
+    proxy: {
+      "/api/*": "http://localhost:5001",
+    },
     port: 3002,
     // to get private IP addresses to work to test on emulators
     host: '0.0.0.0',

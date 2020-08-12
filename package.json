@@ -7,6 +7,7 @@
     "webpack": "webpack --mode development --config webpack.config.js",
     "webpack:watch": "webpack --mode development --config webpack.config.js --watch",
     "start": "npx babel-node src/app.js",
+    "build:babel": "babel src -d dist -s",
     "dev": "npx nodemon --ignore 'src/static/' --exec 'npm run webpack &&  COMPILER_ENV=server babel-node src/app.js'",
     "test": "npx jest --config=jest.config.js",
     "prebuild": "rm -rf dist/*",

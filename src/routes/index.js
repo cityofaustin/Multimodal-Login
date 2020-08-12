@@ -17,23 +17,11 @@ import axiox from 'axios';
 const Schema = require('./middleware/schema');
 const { celebrate } = require('celebrate');
 const smsUtil = require('../common/smsUtil');
+import api from "./api";
 
 const router = express.Router();
 
-router.route('/users/username/:username/matched').get(async (req, res) => {
-  const userName = req.params.username;
-  let user = await common.dbClient.findUserByUserName(userName);
-  if (user) {
-    return res.json({ matched: true });
-  } else {
-    return res.json({ matched: false });
-  }
-});
-
-// router.get("/users", async (req, res) => {
-//   let allUsers = await common.dbClient.getAllAuthAccounts();
-//   return res.json({ users: allUsers });
-// });
+router.use("/api", api);
 
 router.get('/', async (req, res) => {
   let reactComp = renderToString(React.createElement(Index));
@@ -56,11 +44,7 @@ router.post(
     body: Schema.userRegisterSchema,
   }),
   async (req, res, next) => {
-    // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    // console.log(req.body);
-    // return res.json({req: req.body});
     await common.dbClient.createNewOAuthUser(req.body);
-    // return res.json({ newUser: newUser });
     const accountMatched = await common.dbClient.getAccountByCredentials(
       req.body
     );
