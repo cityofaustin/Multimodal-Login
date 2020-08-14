@@ -78,6 +78,7 @@ const saveToken = async (token, client, user) => {
       jti: saveResult._id, // jwt id unique identifier for this token
       client_id: clearInterval.clientId,
       username: user.username,
+      phoneNumber: user.phoneNumber,
     },
     process.env.AUTH_SECRET
   );

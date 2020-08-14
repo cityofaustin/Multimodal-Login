@@ -120,7 +120,7 @@ export default class OwnerLoginRecommend extends Component {
           />
         )}
         {textItem && (
-          <input type="hidden" name="textItem" value={textItem.phoneNumber} />
+          <input type="hidden" name="text" value={textItem.phoneNumber} />
         )}
         {securityItems && (
           <input

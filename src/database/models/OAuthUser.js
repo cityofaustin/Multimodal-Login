@@ -7,7 +7,7 @@ var OAuthUserSchema = new mongoose.Schema({
     type: String,
     lowercase: true,
     unique: true,
-    match: [/^[a-zA-Z0-9]+$/, "is invalid"],
+    // match: [/^[a-zA-Z0-9]+$/, "is invalid"],
     index: true,
   },
   email: String,

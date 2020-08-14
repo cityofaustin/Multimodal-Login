@@ -20,15 +20,16 @@ class Login extends React.Component {
     super();
     this.state = {
       username: "",
+      // username: "adamtest",
       password: "",
       faceTemplate: "",
       oneTimeCode: "",
       loginMethods: undefined,
       // loginMethods: [
-      //   "PasswordLoginType",
-      //   "SecurityQuestionsLoginType",
-      //   "PalmLoginType",
-      //   "TextLoginType",
+        // "PasswordLoginType",
+        // "SecurityQuestionsLoginType",
+        // "PalmLoginType",
+        // "TextLoginType",
       // ],
       findUserError: "",
       requestLoginCode: false,
@@ -63,11 +64,7 @@ class Login extends React.Component {
       console.log("Error!");
       console.log(err);
     }
-
-    console.log(res);
-    let data = await res.data;
-    console.log(data);
-
+    await res.data;
     this.setState({ requestLoginCode: true });
   };
 

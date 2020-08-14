@@ -88,7 +88,6 @@ class Register extends Component {
         };
         const response = await fetch(input, init);
         const responseJSON = await response.json();
-        console.log(response);
         this.setState({
           faceTemplate: responseJSON.registerFaceResponse.personId,
           faceRegister: false,
@@ -100,7 +99,7 @@ class Register extends Component {
   };
 
   goBackToWelcome() {
-    window.location.href = '../';
+    window.location.href = '../' + location.search;
   }
 
   handleGoBack = async (selectedRole, step, data) => {

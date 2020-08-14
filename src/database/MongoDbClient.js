@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import OAuthUser from "./models/OAuthUser";
 import OAuthClient from "./models/OAuthClient";
 import SocialLogin from "./models/SocialLogin";
-import LoginTypeBase from './models/login-type/LoginTypeBase';
+import LoginTypeBase from "./models/login-type/LoginTypeBase";
 import PasswordLoginType from "./models/login-type/PasswordLoginType";
 import FaceLoginType from "./models/login-type/FaceLoginType";
 import PalmLoginType from "./models/login-type/PalmLoginType";
@@ -80,10 +80,11 @@ class MongoDbClient {
       user.oauthId = uuid;
     }
 
-    user.username = body.username;
+    user.username =
+      body.username && body.username.length > 0 ? body.username : body.email;
     user.email = body.email;
     // user.contactEmail = body.contactEmail;
-    // user.phoneNumber = body.phoneNumber;
+    user.phoneNumber = body.text;
 
     user.loginTypes = [];
 
@@ -180,23 +181,36 @@ class MongoDbClient {
   }
 
   async findUserByUserName(userName) {
-    let user = await OAuthUser.findOne({
-      username: userName,
-    });
-    return user;
+    if (userName) {
+      let user = await OAuthUser.findOne({
+        username: userName,
+      });
+      return user;
+    }
+    return undefined;
+  }
+
+  async findUserByUsernameOrEmail(usernameOrEmail) {
+    if (usernameOrEmail) {
+      let user = await OAuthUser.findOne({
+        $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      });
+      return user;
+    }
+    return undefined;
   }
 
   async getLoginMethodsByUsernameOrEmail(usernameOrEmail) {
     let loginMethods;
-    let user = await OAuthUser
-    .findOne({
-      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
-    })
-    .populate("loginTypes");
-    if(user) {
-      loginMethods = user.loginTypes.map(loginType => loginType.itemtype);
+    if (usernameOrEmail) {
+      let user = await OAuthUser.findOne({
+        $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      }).populate("loginTypes");
+      if (user) {
+        loginMethods = user.loginTypes.map((loginType) => loginType.itemtype);
+      }
     }
-    return {loginMethods};
+    return { loginMethods };
   }
 
   async saveUser(user) {
