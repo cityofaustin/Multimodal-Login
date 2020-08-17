@@ -5,22 +5,71 @@ import PasswordMethodLoginSvg from "../../svg/PasswordMethodLoginSvg";
 import KeycodeInputSvg from "../../svg/KeycodeInputSvg";
 import delay from "../../../util/delay";
 import TextMethodLoginSvg from "../../svg/TextMethodLoginSvg";
+import SecurityMethodLoginSvg from "../../svg/SecurityMethodLoginSvg copy";
+import MSelect from "../../common/MSelect";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
 }
 
 export default class LoginMethods extends Component {
-  state = {
-    username: "",
-    password: "",
-    faceTemplate: "",
-    oneTimeCode: "",
-    requestLoginCode: false,
-    faceVerify: false,
-    keycode: "",
-    selectedLoginMethod: "",
-    // selectedLoginMethod: "TextLoginType",
+  constructor(props) {
+    super(props);
+    const { securityQuestions } = { ...this.props };
+    let securityItems;
+    if (securityQuestions) {
+      securityItems = [];
+      if (securityQuestions.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          // They can pick 2 of 3 if they did 3
+          securityItems.push({ question: undefined, answer: "" });
+        }
+      } else {
+        for (const {} of securityQuestions) {
+          securityItems.push({ question: undefined, answer: "" });
+        }
+      }
+    }
+
+    this.state = {
+      username: "",
+      password: "",
+      faceTemplate: "",
+      oneTimeCode: "",
+      requestLoginCode: false,
+      faceVerify: false,
+      keycode: "",
+      selectedLoginMethod: "",
+      // selectedLoginMethod: "TextLoginType",
+      securityItems,
+    };
+  }
+
+  getOptions = () => {
+    const { securityItems } = { ...this.state };
+    return [
+      {
+        value: "streetNumGrewOn",
+        label: "What was the street number that you grew up on?",
+        isDisabled: securityItems.some(
+          (securityItem) => securityItem.question === "streetNumGrewOn"
+        ),
+      },
+      {
+        value: "cityGrewIn",
+        label: "In what town or city did you grow up in?",
+        isDisabled: securityItems.some(
+          (securityItem) => securityItem.question === "cityGrewIn"
+        ),
+      },
+      {
+        value: "primarySchool",
+        label: "What primary school did you go to?",
+        isDisabled: securityItems.some(
+          (securityItem) => securityItem.question === "primarySchool"
+        ),
+      },
+    ];
   };
 
   sendKeycode = async () => {
@@ -44,6 +93,17 @@ export default class LoginMethods extends Component {
     await delay(2000);
     keycodeSentEl.style.opacity = 0;
   };
+
+  isSecurityFilledOut() {
+    const { securityItems } = { ...this.state };
+    let isFilledOut = true;
+    for (const securityItem of securityItems) {
+      if (securityItem.answer.length <= 0 || !securityItem.question) {
+        isFilledOut = false;
+      }
+    }
+    return isFilledOut;
+  }
 
   renderHiddenInputs() {
     const { username } = { ...this.props };
@@ -75,7 +135,7 @@ export default class LoginMethods extends Component {
   }
 
   renderSelectedLoginMethod(loginMethod) {
-    const { password, keycode } = { ...this.state };
+    const { password, keycode, securityItems } = { ...this.state };
     switch (loginMethod) {
       case "PasswordLoginType":
         return (
@@ -165,6 +225,86 @@ export default class LoginMethods extends Component {
                   type="submit"
                   value="Login"
                   disabled={keycode.length < 1}
+                />
+                {this.renderHiddenInputs()}
+              </form>
+            </div>
+          </div>
+        );
+      case "SecurityQuestionsLoginType":
+        return (
+          <div id="section-1-owner">
+            <div className="section-contents">
+              <form
+                method="POST"
+                action="/authorize"
+                className="card login-card"
+              >
+                <div className="top-section">
+                  <div
+                    className="card-title"
+                    style={{ margin: "0 -18px 12px -18px" }}
+                  >
+                    Security Questions
+                  </div>
+                  <SecurityMethodLoginSvg />
+                </div>
+                <div className="question-container">
+                  {securityItems.map((securityItem, i) => {
+                    return (
+                      <Fragment key={i}>
+                        <div className="card-body-section1">
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <label>Question #{i + 1}</label>
+                          </div>
+                          <MSelect
+                            value={this.getOptions().find(
+                              (option) => option.value === securityItem.question
+                            )}
+                            options={this.getOptions()}
+                            isSearcheable={false}
+                            onChange={(e) => {
+                              securityItem.question = e.value;
+                              this.setState({ securityItems });
+                            }}
+                          />
+                        </div>
+                        <div className="answer-section">
+                          <div className="card-body-section1">
+                            <label>Answer</label>
+                            <input
+                              type="text"
+                              value={securityItem.answer}
+                              onChange={(e) => {
+                                securityItem.answer = e.target.value;
+                                this.setState({ securityItems });
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+                <div className="security-excerpt">
+                  Please clear the questions listed above to gain access to your
+                  account.
+                </div>
+                <input
+                  name="securityQuestions"
+                  type="hidden"
+                  value={JSON.stringify(securityItems)}
+                />
+                <input
+                  style={{ width: "210px" }}
+                  type="submit"
+                  value="Login"
+                  disabled={!this.isSecurityFilledOut()}
                 />
                 {this.renderHiddenInputs()}
               </form>

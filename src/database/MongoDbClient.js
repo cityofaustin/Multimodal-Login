@@ -200,17 +200,27 @@ class MongoDbClient {
     return undefined;
   }
 
-  async getLoginMethodsByUsernameOrEmail(usernameOrEmail) {
+  async getLoginInfoByUsernameOrEmail(usernameOrEmail) {
+    let loginInfo = {};
     let loginMethods;
+    let securityQuestions;
     if (usernameOrEmail) {
       let user = await OAuthUser.findOne({
         $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       }).populate("loginTypes");
       if (user) {
         loginMethods = user.loginTypes.map((loginType) => loginType.itemtype);
+        const securityQuestionLoginType = user.loginTypes.find(
+          (loginType) => loginType.itemtype === "SecurityQuestionsLoginType"
+        );
+        securityQuestions = securityQuestionLoginType.securityQuestions.map(
+          (securityQuestion) => securityQuestion.question
+        );
+        loginInfo.securityQuestions = securityQuestions;
+        loginInfo.loginMethods = loginMethods;
       }
     }
-    return { loginMethods };
+    return loginInfo;
   }
 
   async saveUser(user) {
@@ -291,6 +301,31 @@ class MongoDbClient {
         )
       ) {
         successfulLoginPasswords++;
+      }
+
+      if (
+        body.securityQuestions &&
+        loginType.itemtype === "SecurityQuestionsLoginType"
+      ) {
+        const securityQuestions = JSON.parse(body.securityQuestions);
+        let isValid = true;
+        for (const securityQuestion of securityQuestions) {
+          const match = loginType.securityQuestions.find(
+            (securityQuestionItem) =>
+              securityQuestionItem.question === securityQuestion.question
+          );
+          const isAnswerValid = this.validSecret(
+            securityQuestion.answer,
+            match.answerSalt,
+            match.answerHash
+          );
+          if (!isAnswerValid) {
+            isValid = false;
+          }
+        }
+        successfulLoginPasswords = isValid
+          ? successfulLoginPasswords + 1
+          : successfulLoginPasswords;
       }
     }
 

@@ -26,11 +26,13 @@ class Login extends React.Component {
       oneTimeCode: "",
       loginMethods: undefined,
       // loginMethods: [
-        // "PasswordLoginType",
-        // "SecurityQuestionsLoginType",
-        // "PalmLoginType",
-        // "TextLoginType",
+      // "PasswordLoginType",
+      // "SecurityQuestionsLoginType",
+      // "PalmLoginType",
+      // "TextLoginType",
       // ],
+      securityQuestions: undefined,
+      // securityQuestions: ["streetNumGrewOn", "cityGrewIn", "primarySchool"],
       findUserError: "",
       requestLoginCode: false,
       faceVerify: false,
@@ -72,8 +74,8 @@ class Login extends React.Component {
     e.preventDefault();
 
     const { username } = { ...this.state };
-    let { findUserError, loginMethods } = { ...this.state };
-    const input = "/api/users/find-by-username-or-email";
+    let { findUserError, loginMethods, securityQuestions } = { ...this.state };
+    const input = "/api/users/login-info";
     const init = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -84,10 +86,11 @@ class Login extends React.Component {
     if (response.loginMethods) {
       findUserError = "";
       loginMethods = response.loginMethods;
+      securityQuestions = response.securityQuestions;
     } else {
       findUserError = "No account found with that username";
     }
-    this.setState({ findUserError, loginMethods });
+    this.setState({ findUserError, loginMethods, securityQuestions });
   };
 
   handleInputChange = (e) => {
@@ -261,7 +264,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { loginMethods, username } = { ...this.state };
+    const { loginMethods, username, securityQuestions } = { ...this.state };
     return (
       <Fragment>
         <Fragment>
@@ -280,7 +283,11 @@ class Login extends React.Component {
           <main id="main" style={{ position: "absolute", top: 0, opacity: 0 }}>
             {!loginMethods && this.renderUsernamePrompt()}
             {loginMethods && (
-              <LoginMethods loginMethods={loginMethods} username={username} />
+              <LoginMethods
+                loginMethods={loginMethods}
+                username={username}
+                securityQuestions={securityQuestions}
+              />
             )}
           </main>
         </Fragment>

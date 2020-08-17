@@ -21,17 +21,17 @@ class UserController {
 
   initializeRoutes() {
     this.router.post(
-      this.path + "/find-by-username-or-email",
-      this.findByUsernameOrEmail
+      this.path + "/login-info",
+      this.getLoginInfoByUsernameOrEmail
     );
     this.router.post(this.path + "/send-text-otp", this.sendTextOTP);
   }
 
   // client
-  findByUsernameOrEmail = async (request, response) => {
+  getLoginInfoByUsernameOrEmail = async (request, response) => {
     try {
       const usernameOrEmail = request.body.usernameOrEmail;
-      let res = await common.dbClient.getLoginMethodsByUsernameOrEmail(
+      let res = await common.dbClient.getLoginInfoByUsernameOrEmail(
         usernameOrEmail
       );
       return response.json(res);
