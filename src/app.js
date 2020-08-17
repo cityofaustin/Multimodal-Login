@@ -14,6 +14,9 @@ import MongoDbClient from "./database/MongoDbClient";
 import ejs from "ejs";
 import path from "path";
 
+var fs = require("fs");
+var https = require("https");
+
 common.dbClient = dbClient;
 
 // https://stackoverflow.com/a/30355080/6907541
@@ -55,6 +58,31 @@ app.use(function (err, req, res, next) {
 });
 
 const port = 5001;
-app.listen(port, () =>
-  console.log(`app listening at http://localhost:${port}`)
-);
+let key;
+let cert;
+try {
+  key = fs.readFileSync("/home/ubuntu/STAGING/CERTS/server-key.pem");
+  cert = fs.readFileSync("/home/ubuntu/STAGING/CERTS/server-cert.pem");
+} catch (err) {
+  console.log("key or cert not available. Continuing... ");
+}
+
+if (key !== undefined && cert !== undefined) {
+  https
+    .createServer(
+      {
+        key: key,
+        cert: cert,
+      },
+      app
+    )
+    .listen(port, function () {
+      console.log(
+        `app listening at http://localhost:${port} with https key + cert`
+      );
+    });
+} else {
+  app.listen(port, () =>
+    console.log(`app listening at http://localhost:${port}`)
+  );
+}
