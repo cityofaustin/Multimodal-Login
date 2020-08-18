@@ -18,7 +18,7 @@ export default class LoginMethodSetup extends Component {
   static defaultProps = {
     handleGoForward: () => {},
     handleGoBack: () => {},
-    loginMethod: 'securityQuestions',
+    loginMethod: 'palm',
   };
 
   state = {

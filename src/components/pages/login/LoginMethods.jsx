@@ -5,7 +5,7 @@ import PasswordMethodLoginSvg from "../../svg/PasswordMethodLoginSvg";
 import KeycodeInputSvg from "../../svg/KeycodeInputSvg";
 import delay from "../../../util/delay";
 import TextMethodLoginSvg from "../../svg/TextMethodLoginSvg";
-import SecurityMethodLoginSvg from "../../svg/SecurityMethodLoginSvg copy";
+import SecurityMethodLoginSvg from "../../svg/SecurityMethodLoginSvg";
 import MSelect from "../../common/MSelect";
 
 if (process.env.BROWSER) {

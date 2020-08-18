@@ -1,4 +1,5 @@
 #palm-setup {
+  height: 587px;
   .how {
     padding-top: 5px;
     font-size: 15px;
@@ -10,6 +11,31 @@
     width: 210px;
     height: 50px;
     font-size: 20px;
+  }
+  .diagram-excerpt-1 {
+    text-align: center;
+    font-size: 15px;
+    color: #484848;
+    opacity: 0.77;
+  }
+  .diagram-section-1 {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .video {
+    background-color: #EDEDED;
+    width: 204px;
+    height: 314px;
+    border: 1px solid #707070;
+  }
+  .palm-template {
+    word-break: break-all;
+    display: block;
+    height: 100px;
+    overflow-y: scroll;
+    font-size: 20px;
+    color: #CECECE;
   }
 }
 
