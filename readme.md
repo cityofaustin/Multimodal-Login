@@ -10,7 +10,7 @@ The Trauma Accessible Login solution has 2 components
 
 #### 2. An onboarding workflow that helps users think through what methods of login will be most accessible to them.  
 
-<kbd><img src="/onboarding.png" align="middle" width="800" ></kbd>
+<kbd><img src="/docs/onboarding.png" align="middle" width="800" ></kbd>
 
 The intent of this login solution is that it be scalable to include as many login methods as can be helpful.  For our initial POC we included 5 separate methods:
 
