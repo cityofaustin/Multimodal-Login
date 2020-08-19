@@ -1,5 +1,26 @@
 #palm-setup {
   height: 587px;
+  min-height: 454px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .card-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2362c7;
+      text-align: center;
+      padding-bottom: 13px;
+    }
+    .excerpt {
+      text-align: center;
+      padding: 18px 0 8px 0;
+    }
+  }
   .how {
     padding-top: 5px;
     font-size: 15px;
@@ -7,7 +28,7 @@
     text-align: center;
     cursor: pointer;
   }
-  input[type=button] {
+  input[type="button"] {
     width: 210px;
     height: 50px;
     font-size: 20px;
@@ -24,7 +45,7 @@
     justify-content: space-evenly;
   }
   .video {
-    background-color: #EDEDED;
+    background-color: #ededed;
     width: 204px;
     height: 314px;
     border: 1px solid #707070;
@@ -35,8 +56,6 @@
     height: 100px;
     overflow-y: scroll;
     font-size: 20px;
-    color: #CECECE;
+    color: #cecece;
   }
 }
-
-

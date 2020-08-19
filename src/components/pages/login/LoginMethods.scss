@@ -5,7 +5,9 @@
   flex-direction: column;
   align-items: center;
   .login-method {
-    cursor: pointer;
+    .login-svg {
+      cursor: pointer;
+    }
     margin-bottom: 30px;
     .login-card {
       width: 216px;
@@ -105,6 +107,26 @@
           color: #3b3b3b;
         }
       }
+    }
+    .how-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+      .sec-excerpt {
+        text-align: center;
+        margin-bottom: 24px;
+        font-size: 18px;
+        color: #484848;
+        opacity: 0.77;
+      }
+    }
+    .how {
+      padding-top: 5px;
+      font-size: 15px;
+      color: #9a9a9a;
+      text-align: center;
+      cursor: pointer;
     }
   }
 }

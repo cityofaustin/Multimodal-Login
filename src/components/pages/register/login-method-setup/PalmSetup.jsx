@@ -10,6 +10,7 @@ import NoWifiSvg from "../../../svg/NoWifiSvg";
 import AirplaneModeHelpSvg from "../../../svg/AirplaneModeHelpSvg";
 import delay from "../../../../util/delay";
 import templateSample from "../../../../palmLines.json";
+import GoBackSvg from "../../../svg/GoBackSvg";
 
 if (process.env.BROWSER) {
   import("./PalmSetup.scss");
@@ -84,6 +85,7 @@ export default class PalmSetup extends Component {
   }
 
   renderTakePicture() {
+    const { isLogin, renderHiddenInputs } = { ...this.props };
     const { palmTemplate, currentStep, enableCamera, totalSteps } = {
       ...this.state,
     };
@@ -143,7 +145,7 @@ export default class PalmSetup extends Component {
               onClick={this.handleTakePicture}
             />
           )}
-          {palmTemplate && (
+          {palmTemplate && !isLogin && (
             <input
               type="button"
               value="Set Palm"
@@ -154,6 +156,17 @@ export default class PalmSetup extends Component {
               }
             />
           )}
+          {palmTemplate && isLogin && (
+            <form method="POST" action="/authorize">
+              <input name="palmTemplate" type="hidden" value={palmTemplate} />
+              {renderHiddenInputs()}
+              <input
+                style={{ width: "210px", fontSize: "22px" }}
+                type="submit"
+                value="Verify and Login"
+              />
+            </form>
+          )}
           <div className="how">How does this work?</div>
         </div>
       </div>
@@ -161,7 +174,8 @@ export default class PalmSetup extends Component {
   }
 
   renderPalmCard() {
-    const { palmTemplate, currentStep, totalSteps } = { ...this.state };
+    const { toggleDisplayHow } = { ...this.props };
+    const { currentStep, totalSteps } = { ...this.state };
     switch (currentStep) {
       case 1:
         return (
@@ -182,7 +196,11 @@ export default class PalmSetup extends Component {
                 value="Next"
                 onClick={() => this.setState({ currentStep: currentStep + 1 })}
               />
-              <div className="how">How does this work?</div>
+              {toggleDisplayHow && (
+                <div className="how" onClick={toggleDisplayHow}>
+                  How does this work?
+                </div>
+              )}
             </div>
           </div>
         );
@@ -215,7 +233,11 @@ export default class PalmSetup extends Component {
                 value="Next"
                 onClick={() => this.setState({ currentStep: currentStep + 1 })}
               />
-              <div className="how">How does this work?</div>
+              {toggleDisplayHow && (
+                <div className="how" onClick={toggleDisplayHow}>
+                  How does this work?
+                </div>
+              )}
             </div>
           </div>
         );
@@ -229,7 +251,8 @@ export default class PalmSetup extends Component {
   }
 
   renderHow() {
-    return (
+    const { isLogin, toggleDisplayHow } = { ...this.props };
+    const howSection = (
       <div className="how-container">
         <HowSvg loginMethod="palm" />
         <div className="sec-excerpt">
@@ -238,6 +261,16 @@ export default class PalmSetup extends Component {
         </div>
         <PalmExampleSvg />
       </div>
+    );
+    return isLogin ? (
+      <div>
+        <div className="card owner1">
+          {howSection}
+          <GoBackSvg color="#2362c7" goBack={() => toggleDisplayHow()} />
+        </div>
+      </div>
+    ) : (
+      howSection
     );
   }
 

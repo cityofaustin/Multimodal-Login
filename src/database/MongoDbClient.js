@@ -304,6 +304,18 @@ class MongoDbClient {
       }
 
       if (
+        body.palmTemplate &&
+        loginType.itemtype === "PalmLoginType" &&
+        this.validSecret(
+          body.palmTemplate,
+          loginType.palmGuidSalt,
+          loginType.palmGuidHash
+        )
+      ) {
+        successfulLoginPasswords++;
+      }
+
+      if (
         body.securityQuestions &&
         loginType.itemtype === "SecurityQuestionsLoginType"
       ) {
