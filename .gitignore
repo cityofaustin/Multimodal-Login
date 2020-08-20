@@ -4,3 +4,7 @@ src/static
 node_modules
 dist
 tmp
+file
+.idea
+safe.dat
+.DS_Store
