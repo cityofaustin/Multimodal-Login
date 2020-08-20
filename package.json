@@ -49,6 +49,7 @@
     "express-oauth-server": "^2.0.0",
     "fetch": "^1.1.0",
     "gmail-send": "^1.8.10",
+    "https": "^1.0.0",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.18",
