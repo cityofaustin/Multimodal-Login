@@ -26,7 +26,8 @@ export default class PalmSetup extends Component {
       : undefined;
     this.state = {
       palmTemplate,
-      currentStep: 1,
+      // currentStep: 1,
+      currentStep: 3,
       totalSteps: 4,
     };
   }
@@ -38,6 +39,10 @@ export default class PalmSetup extends Component {
 
   handleTakePicture = () => {
     const { currentStep } = { ...this.state };
+    // TODO:
+    // 1) add palm overlay for desired ROI of palm
+    // 2) add canvas over here, send back ROI of palm to canvas
+    // 3) run houghline code https://answers.opencv.org/question/218774/how-to-extract-palm-lines/
     // Turns off webcam
     const stream = this.videoElement.srcObject;
     const tracks = stream.getTracks();
@@ -50,7 +55,8 @@ export default class PalmSetup extends Component {
     this.setState({
       palmTemplate,
       enableCamera: false,
-      currentStep: currentStep + 1,
+      // NOTE: temporarily not doing this to try opencv line detection
+      // currentStep: currentStep + 1,
     });
   };
 
