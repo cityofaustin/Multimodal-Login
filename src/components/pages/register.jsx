@@ -27,10 +27,10 @@ class Register extends Component {
   constructor() {
     super();
     this.state = {
-      // selectedRole: undefined,
-      // step: 0,
-      selectedRole: 'owner',
-      step: 10,
+      selectedRole: undefined,
+      step: 0,
+      // selectedRole: 'owner',
+      // step: 10,
       isAnimatingForward: false,
       isAnimatingBackward: false,
       faceRegister: false,

@@ -99,9 +99,33 @@ class MongoDbClient {
 
     if (body.palmTemplate !== undefined) {
       const palmLoginType = new PalmLoginType();
+      // TODO: don't hash template as need original to compare.
       const saltHash = this.getSecretSaltHash(body.palmTemplate);
       palmLoginType.palmGuidSalt = saltHash.salt;
       palmLoginType.palmGuidHash = saltHash.hash;
+      // TODO:
+      // let min = 2147483647.0; // max int
+      // let min_id = 0;
+      // let matchedIndex = -1;
+      // let sum = 0;
+      // // Calculate Chamfer distance
+      // for (let i = 0; i < storedFeatures.length; i++) {
+      //   sum = 0;
+      //   // array of points for this particular template
+      //   let temp = storedFeatures[i].featureData;
+      //   if (temp.length != 0) {
+      //     for (let j = 0; j < temp.length; ++j) {
+      //       // [0] is x and [1] is y
+      //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
+      //     }
+      //     sum = sum / (temp.length * 255);
+      //     if (sum < min) {
+      //       min = sum;
+      //       min_id = storedFeatures[i].userId;
+      //       matchedIndex = i;
+      //     }
+      //   }
+      // }
       await palmLoginType.save();
       user.loginTypes.push(palmLoginType);
     }

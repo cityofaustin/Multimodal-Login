@@ -1,13 +1,22 @@
 // import delay from '../util/delay';
-import finalLines from './finalLines';
-import matchedTemplate from './matchedTemplate';
-import { H1_0, H1_45, H1_90, H1_135, H2_0, H2_45, H2_90, H2_135 } from './gaussian';
-import storedFeatures from './palmlinedb.json';
+import finalLines from "./finalLines";
+import matchedTemplate from "./matchedTemplate";
+import {
+  H1_0,
+  H1_45,
+  H1_90,
+  H1_135,
+  H2_0,
+  H2_45,
+  H2_90,
+  H2_135,
+} from "./gaussian";
+import storedFeatures from "./palmlinedb.json";
 
-const publicPath = process.env.FE ? '' : '/public';
+const publicPath = process.env.FE ? "" : "/public";
 if (process.env.BROWSER) {
-  import('./opencv-4-3-0.js');
-  import('./haarcascade_frontalface_default.xml');
+  import("./opencv-4-3-0.js");
+  import("./haarcascade_frontalface_default.xml");
 
   async function createFileFromUrl(path, url) {
     // Small function to make a remote file visible from emscripten module.
@@ -21,7 +30,7 @@ if (process.env.BROWSER) {
     }
     const buffer = await res.arrayBuffer();
     const data = new Uint8Array(buffer);
-    cv.FS_createDataFile('/', path, data, true, true, false);
+    cv.FS_createDataFile("/", path, data, true, true, false);
     console.log(`📦${url} downloaded. Mounted on /${path}`);
   }
 
@@ -61,12 +70,124 @@ if (process.env.BROWSER) {
 
     // 3 TODO: finding bounding box for the palm
     // extractedRoi = calcSquareRoi(struct_keypoints);
-
     // TODO: Extracting features from the ROI
     //Feature 128x128
     // TODO: Matching the extracted feature (1:N)
     // matched feature 128x128
     postMessage({ msg, payload: imageDataFromMat(roiMat) });
+  }
+
+  function imageProcessing3a({ msg, payload }) {
+    // ref: https://answers.opencv.org/question/218774/how-to-extract-palm-lines/
+    let rgbaMat = cv.matFromImageData(payload); // cv.Mat
+    let roiMat = new cv.Mat();
+    let x = 160; //	x coordinate of the vertex which is the top left corner of the rectangle.
+    let y = 320; //	y coordinate of the vertex which is the top left corner of the rectangle.
+    let width = 467-x-120; //	the width of the rectangle.
+    let height = 720-y-140; // the height of the rectangle.
+    let rect = new cv.Rect(x,y,width,height);
+    roiMat = rgbaMat.roi(rect);
+    // cv.resize(roiMat, roiMat, new cv.Size(128, 128));
+
+    let grayscaleMat = new cv.Mat(roiMat.size(), cv.CV_8UC1);
+    cv.cvtColor(roiMat, grayscaleMat, cv.COLOR_RGBA2GRAY);
+    // cv.cvtColor(grayscaleMat, grayscaleMat, cv.COLOR_RGB2YCrCb); // Convert original image to YCbCr color space
+    // cv.cvtColor(grayscaleMat, grayscaleMat, cv.COLOR_YCrCB2GRAY);
+    cv.equalizeHist(grayscaleMat, grayscaleMat);
+    const ksize = new cv.Size(9, 9); // blurring kernel size.
+    const sigmaX = 0; // Gaussian kernel standard deviation in X direction.
+    // Gaussian kernel standard deviation in Y direction; if sigmaY is zero,
+    // it is set to be equal to sigmaX, if both sigmas are zeros, they are
+    // computed from ksize.width and ksize.height, to fully control the result
+    // regardless of possible future modifications of all this semantics,
+    // it is recommended to specify all of ksize, sigmaX, and sigmaY.
+    const sigmaY = 0;
+    // pixel extrapolation method(see
+    // https://docs.opencv.org/3.4/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5).
+    const borderType = cv.BORDER_DEFAULT;
+    cv.GaussianBlur(
+      grayscaleMat,
+      grayscaleMat,
+      ksize,
+      sigmaX,
+      sigmaY,
+      borderType
+    );
+    const threshold1 = 40; // first threshold for the hysteresis procedure.
+    const threshold2 = 80; // second threshold for the hysteresis procedure.
+    const apertureSize = 3; // aperture size for the Sobel operator.
+    // specifies the equation for finding gradient magnitude. If it is True,
+    // it uses the equation mentioned above which is more accurate, otherwise it
+    // uses this function: Edge_Gradient(G)=|Gx|+|Gy|.
+    const l2gradient = false;
+    cv.Canny(
+      grayscaleMat,
+      grayscaleMat,
+      threshold1,
+      threshold2,
+      apertureSize,
+      l2gradient
+    );
+    // output vector of lines(cv.32SC4 type). Each line is represented by a 4-element vector
+    // (x1,y1,x2,y2) ,where (x1,y1) and (x2,y2) are the ending points of each detected line segment.
+    let lines = new cv.Mat();
+    let color = new cv.Scalar(255, 255, 255);
+    const rho = 1; // distance resolution of the accumulator in pixels.
+    const theta = Math.PI / 180; // angle resolution of the accumulator in radians.
+    // accumulator threshold parameter. Only those lines are returned that get enough votes
+    const threshold = 15;
+    // const threshold = 30;
+    const minLineLength = 30; // minimum line length. Line segments shorter than that are rejected.
+    // const minLineLength = 50;
+    const maxLineGap = 20; // maximum allowed gap between points on the same line to link them.
+    // const maxLineGap = 20;
+    cv.HoughLinesP(
+      grayscaleMat,
+      lines,
+      rho,
+      theta,
+      threshold,
+      minLineLength,
+      maxLineGap
+    );
+    let dst = new cv.Mat(grayscaleMat.size(), cv.CV_8UC1);
+    // draw lines
+    for (let i = 0; i < lines.rows; ++i) {
+      let startPoint = new cv.Point(
+        lines.data32S[i * 4],
+        lines.data32S[i * 4 + 1]
+      );
+      let endPoint = new cv.Point(
+        lines.data32S[i * 4 + 2],
+        lines.data32S[i * 4 + 3]
+      );
+      cv.line(dst, startPoint, endPoint, color);
+    }
+    const data = [];
+    cv.resize(dst, dst, new cv.Size(128, 128));
+    for(let row=0; row < 128; row++) {
+      const rowItem = [];
+      for(let col=0; col < 128; col++) {
+        if(dst.ucharPtr(row, col)[0] > 100) { // threshold value for detection
+          dst.ucharPtr(row, col)[0] = 255;
+        } else {
+          dst.ucharPtr(row, col)[0] = 0;
+        }
+        const pixel = dst.ucharPtr(row, col);
+        const colItem = pixel[0] === 255 ? 1 : 0;
+        rowItem.push(colItem);
+      }
+      data.push(rowItem);
+    }
+    // debugger;
+    postMessage({
+      msg,
+      // payload: imageDataFromMat(dst)
+      payload: {
+        template: data,
+        img: imageDataFromMat(dst),
+      },
+    });
   }
 
   function imageProcessing3({ msg, payload }) {
@@ -89,14 +210,16 @@ if (process.env.BROWSER) {
     // correctly / is doing the same thing with the code here.  I use this site to compare
     // http://www.jsondiff.com/ (you have to replace the semicolons with commas when
     // doing 'cout << end << mat << endl;' in the c++ code in order for the outputs to be same).
-    console.log(JSON.stringify(Object.keys(mat.data).map(key => mat.data[key])));
+    console.log(
+      JSON.stringify(Object.keys(mat.data).map((key) => mat.data[key]))
+    );
   }
 
   function imageProcessing4({ msg, payload }) {
     const rgbaMat = cv.matFromImageData(payload);
     const mat = doPreprocessingGrayscaleSm(rgbaMat);
     const distanceTransImg = doDistanceTransformation(mat);
-    if(storedFeatures.length == 0) {
+    if (storedFeatures.length == 0) {
       console.error("Error: database is empty");
     }
     let min = 2147483647.0; // max int
@@ -104,20 +227,20 @@ if (process.env.BROWSER) {
     let matchedIndex = -1;
     let sum = 0;
     // Calculate Chamfer distance
-    for (let i = 0; i < storedFeatures.length; i++){
+    for (let i = 0; i < storedFeatures.length; i++) {
       sum = 0;
       // array of points for this particular template
       let temp = storedFeatures[i].featureData;
-      if(temp.length != 0){
-        for (let j = 0; j < temp.length; ++j){
+      if (temp.length != 0) {
+        for (let j = 0; j < temp.length; ++j) {
           // [0] is x and [1] is y
           sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
         }
-        sum = sum / (temp.length*255);
-        if (sum < min){
-            min = sum;
-            min_id = storedFeatures[i].userId;
-            matchedIndex = i;
+        sum = sum / (temp.length * 255);
+        if (sum < min) {
+          min = sum;
+          min_id = storedFeatures[i].userId;
+          matchedIndex = i;
         }
       }
     }
@@ -129,44 +252,72 @@ if (process.env.BROWSER) {
     for (let p of storedFeatures[matchedIndex].featureData) {
       matchedImage.ucharPtr(p[0], p[1])[0] = 255;
     }
-    postMessage({ msg, payload: {distance: min, userId: min_id, img: imageDataFromMat(matchedImage)} });
+    postMessage({
+      msg,
+      payload: {
+        distance: min,
+        userId: min_id,
+        img: imageDataFromMat(matchedImage),
+      },
+    });
   }
 
   function doDistanceTransformation(img) {
     // Two pass algorithm with two Euclidean kernel
     let invImg = new cv.Mat();
-    cv.subtract(new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(255)), img, invImg);
+    cv.subtract(
+      new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(255)),
+      img,
+      invImg
+    );
     // First pass from top left
-	  for (let x = 1; x < invImg.rows - 1; x++){
-      for (let y = 1; y < invImg.cols - 1; y++){
-        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2)) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2));
+    for (let x = 1; x < invImg.rows - 1; x++) {
+      for (let y = 1; y < invImg.cols - 1; y++) {
+        if (
+          invImg.ucharPtr(x, y)[0] >
+          invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2)
+        ) {
+          invImg.ucharPtr(x, y)[0] =
+            invImg.ucharPtr(x - 1, y - 1)[0] + Math.sqrt(2);
         }
         if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x, y - 1)[0] + 1) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x, y - 1)[0] + Math.sqrt(2));
+          invImg.ucharPtr(x, y)[0] =
+            invImg.ucharPtr(x, y - 1)[0] + Math.sqrt(2);
         }
-        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2)) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2));
+        if (
+          invImg.ucharPtr(x, y)[0] >
+          invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2)
+        ) {
+          invImg.ucharPtr(x, y)[0] =
+            invImg.ucharPtr(x + 1, y - 1)[0] + Math.sqrt(2);
         }
         if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y)[0] + 1) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y)[0] + 1);
+          invImg.ucharPtr(x, y)[0] = invImg.ucharPtr(x - 1, y)[0] + 1;
         }
       }
     }
     // Second pass from bottom right
-    for (let x = invImg.rows - 2; x >= 1; x--){
-      for (let y = invImg.cols - 2; y >= 1; y--){
+    for (let x = invImg.rows - 2; x >= 1; x--) {
+      for (let y = invImg.cols - 2; y >= 1; y--) {
         if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y)[0] + 1) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y)[0] + 1);
+          invImg.ucharPtr(x, y)[0] = invImg.ucharPtr(x + 1, y)[0] + 1;
         }
-        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2)) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2));
+        if (
+          invImg.ucharPtr(x, y)[0] >
+          invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2)
+        ) {
+          invImg.ucharPtr(x, y)[0] =
+            invImg.ucharPtr(x - 1, y + 1)[0] + Math.sqrt(2);
         }
         if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x, y + 1)[0] + 1) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x, y + 1)[0] + 1);
+          invImg.ucharPtr(x, y)[0] = invImg.ucharPtr(x, y + 1)[0] + 1;
         }
-        if (invImg.ucharPtr(x, y)[0] > invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2)) {
-          invImg.ucharPtr(x, y)[0] = (invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2));
+        if (
+          invImg.ucharPtr(x, y)[0] >
+          invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2)
+        ) {
+          invImg.ucharPtr(x, y)[0] =
+            invImg.ucharPtr(x + 1, y + 1)[0] + Math.sqrt(2);
         }
       }
     }
@@ -177,11 +328,26 @@ if (process.env.BROWSER) {
     // Locating principal lines in four directions
     // NOTE: this doesn't seem to work correctly, the 45 is the only one that detects pixels
     // it probably has to do with the initial image not matching correctly
-    let linesInDir0 = locatePrincipalLineInGivenDirection(mat,H1_0,H2_0,0);
-    let linesInDir90 = locatePrincipalLineInGivenDirection(mat,H1_90,H2_90,90);
-    let linesInDir45 = locatePrincipalLineInGivenDirection(mat,H1_45,H2_45,45);
-    let linesInDir135 = locatePrincipalLineInGivenDirection(mat,H1_135,H2_135,135);
-    const lines = new cv.Mat(128,128,cv.CV_8UC1,new cv.Scalar(0));
+    let linesInDir0 = locatePrincipalLineInGivenDirection(mat, H1_0, H2_0, 0);
+    let linesInDir90 = locatePrincipalLineInGivenDirection(
+      mat,
+      H1_90,
+      H2_90,
+      90
+    );
+    let linesInDir45 = locatePrincipalLineInGivenDirection(
+      mat,
+      H1_45,
+      H2_45,
+      45
+    );
+    let linesInDir135 = locatePrincipalLineInGivenDirection(
+      mat,
+      H1_135,
+      H2_135,
+      135
+    );
+    const lines = new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(0));
     // pretty helpful guide
     // https://kdr2.com/tech/main/1810-elewise-matrix-op-opencv.html
     cv.bitwise_or(linesInDir45, linesInDir90, lines);
@@ -227,12 +393,7 @@ if (process.env.BROWSER) {
     }
 
     // Create binary image, this will contain the extracted principal lines in a given direction
-    let binaryImage = new cv.Mat(
-      128,
-      128,
-      cv.CV_8UC1,
-      new cv.Scalar(0, 0, 0)
-    );
+    let binaryImage = new cv.Mat(128, 128, cv.CV_8UC1, new cv.Scalar(0, 0, 0));
 
     // Locating changes in first-order derivatives in 45 direction
     if (degree == 45) {
@@ -251,7 +412,10 @@ if (process.env.BROWSER) {
           }
           /* If first-order derivative's sign has changed and the second-order derivative's value is greater
 				  than the threshold, then setting the current pixel to 255, otherwise to 0 */
-          if ((derivChangeFound || I_der[j][i - j] == 0) && I_der2[j][i - j] > secondDerivThresholdValue) {
+          if (
+            (derivChangeFound || I_der[j][i - j] == 0) &&
+            I_der2[j][i - j] > secondDerivThresholdValue
+          ) {
             binaryImage.ucharPtr(j, i - j)[0] = 255;
           } else {
             binaryImage.ucharPtr(j, i - j)[0] = 0;
@@ -524,7 +688,7 @@ if (process.env.BROWSER) {
 
     // Check if the startingPoint was found
     if (startingPoint.x === -1 && startingPoint.y === -1) {
-      throw 'Boundary starting point not found';
+      throw "Boundary starting point not found";
     }
 
     boundaryVector.push(startingPoint);
@@ -655,7 +819,7 @@ if (process.env.BROWSER) {
         break;
       default:
         throw new Error(
-          'Bad number of channels (Source image must have 1, 3 or 4 channels)'
+          "Bad number of channels (Source image must have 1, 3 or 4 channels)"
         );
     }
     const clampedArray = new ImageData(
@@ -683,12 +847,12 @@ if (process.env.BROWSER) {
         console.log(mat.size());
         mat.delete();
         await createFileFromUrl(
-          'haarcascade_frontalface_default.xml',
+          "haarcascade_frontalface_default.xml",
           `${publicPath}/js/haarcascade_frontalface_default.xml`
         );
         classifier = new cv.CascadeClassifier();
         // eigenRecognizer = new cv.EigenFaceRecognizer();
-        classifier.load('haarcascade_frontalface_default.xml');
+        classifier.load("haarcascade_frontalface_default.xml");
         clearInterval(interval);
         return callbackFn(!limitReached);
       } else {
@@ -709,7 +873,7 @@ if (process.env.BROWSER) {
   self.onmessage = (e) => {
     // console.log(e);
     switch (e.data.msg) {
-      case 'load': {
+      case "load": {
         // Import Webassembly script
         self.importScripts(`${publicPath}/js/opencv-4-3-0.js`);
         cv = cv();
@@ -717,17 +881,17 @@ if (process.env.BROWSER) {
           // console.log(e);
           if (success) {
             postMessage({ msg: e.data.msg });
-          } else throw new Error('Error on loading OpenCV');
+          } else throw new Error("Error on loading OpenCV");
         });
         break;
       }
-      case 'imageProcessing':
+      case "imageProcessing":
         return imageProcessing(e.data);
-      case 'imageProcessing2':
+      case "imageProcessing2":
         return imageProcessing2(e.data);
-      case 'imageProcessing3':
-        return imageProcessing3(e.data);
-      case 'imageProcessing4':
+      case "imageProcessing3":
+        return imageProcessing3a(e.data);
+      case "imageProcessing4":
         return imageProcessing4(e.data);
       default:
         break;

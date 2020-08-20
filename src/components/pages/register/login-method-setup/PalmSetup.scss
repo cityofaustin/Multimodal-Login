@@ -59,3 +59,13 @@
     color: #cecece;
   }
 }
+
+.palm-overlay {
+  position: absolute;
+  top: 14px;
+  left: -41px;
+  svg {
+    width: 288px;
+    height: 288px;
+  }
+}

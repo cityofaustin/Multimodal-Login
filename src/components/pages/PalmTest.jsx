@@ -81,28 +81,28 @@ export default class PalmTest extends Component {
     ctx3.canvas.height = 128;
     ctx3.putImageData(imageData3, 0, 0);
 
-    let payload = await cvservice.imageProcessing4(imageData3);
-    payload = payload.data.payload;
-    const canvas4 = document.getElementById('preprocessed-image4');
-    const ctx4 = canvas4.getContext('2d');
-    const imageData4 = payload.img;
-    ctx4.canvas.width = 128;
-    ctx4.canvas.height = 128;
-    ctx4.putImageData(imageData4, 0, 0);
+    // let payload = await cvservice.imageProcessing4(imageData3);
+    // payload = payload.data.payload;
+    // const canvas4 = document.getElementById('preprocessed-image4');
+    // const ctx4 = canvas4.getContext('2d');
+    // const imageData4 = payload.img;
+    // ctx4.canvas.width = 128;
+    // ctx4.canvas.height = 128;
+    // ctx4.putImageData(imageData4, 0, 0);
 
-    if(methodType === 'line') {
-      matchResponse = (payload.distance < 0.011) ? 1 : 2;
-    } else {
-      // otherwise it's texture
-      matchResponse = (payload.distance < 0.137) ? 1 : 2;
-    }
-    this.setState({
-      userId: payload.userId,
-      matchedUserId: payload.userId,
-      // rounds to 7 decimals places
-      distance: Number(Math.round(payload.distance+'e7')+'e-7'),
-      matchResponse
-    });
+    // if(methodType === 'line') {
+    //   matchResponse = (payload.distance < 0.011) ? 1 : 2;
+    // } else {
+    //   // otherwise it's texture
+    //   matchResponse = (payload.distance < 0.137) ? 1 : 2;
+    // }
+    // this.setState({
+    //   userId: payload.userId,
+    //   matchedUserId: payload.userId,
+    //   // rounds to 7 decimals places
+    //   distance: Number(Math.round(payload.distance+'e7')+'e-7'),
+    //   matchResponse
+    // });
   };
 
   render() {

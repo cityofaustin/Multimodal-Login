@@ -11,25 +11,42 @@ import AirplaneModeHelpSvg from "../../../svg/AirplaneModeHelpSvg";
 import delay from "../../../../util/delay";
 import templateSample from "../../../../palmLines.json";
 import GoBackSvg from "../../../svg/GoBackSvg";
+import cvservice from "../../../../services/CvService";
 
 if (process.env.BROWSER) {
   import("./PalmSetup.scss");
 }
 export default class PalmSetup extends Component {
+  videoElement = null; // the webcam ref
+  canvasElement = null; // the original snapshot ref
+  canvasElement2 = null; // the processed snapshot ref
+  imageData = null; // the template palm image data
+  // this.width = 204;
+  // this.height = 314;
+  width = 467.77;
+  height = 720;
+
   constructor(props) {
     super(props);
-    this.videoElement = null;
-    this.width = 204;
-    this.height = 314;
-    const palmTemplate = props.palmItem
-      ? props.palmItem.palmTemplate
-      : undefined;
+    // const palmTemplate = props.palmItem
+    //   ? props.palmItem.palmTemplate
+    //   : undefined;
     this.state = {
-      palmTemplate,
-      // currentStep: 1,
-      currentStep: 3,
+      palmTemplate: undefined,
+      currentStep: 1,
+      // currentStep: 3,
       totalSteps: 4,
     };
+  }
+
+  componentDidMount() {
+    this.load();
+  }
+
+  async load() {
+    if (process.env.BROWSER) {
+      await cvservice.load();
+    }
   }
 
   handleOpenCamera = () => {
@@ -37,27 +54,69 @@ export default class PalmSetup extends Component {
     this.setState({ enableCamera: true });
   };
 
-  handleTakePicture = () => {
+  handleTakePicture = async () => {
     const { currentStep } = { ...this.state };
     // TODO:
     // 1) add palm overlay for desired ROI of palm
     // 2) add canvas over here, send back ROI of palm to canvas
     // 3) run houghline code https://answers.opencv.org/question/218774/how-to-extract-palm-lines/
+    this.ctx1 = this.canvasElement.getContext("2d");
+    const image = this.videoElement; // An element to draw into the context.
+    const sx = 40; // The x-axis coordinate of the top left corner of the sub-rectangle of the source image to draw into the destination context.
+    const sy = 100; // The y-axis coordinate of the top left corner of the sub-rectangle of the source image to draw into the destination context.
+    const sWidth = 128; // The width of the sub-rectangle of the source image to draw into the destination context. If not specified, the entire rectangle from the coordinates specified by sx and sy to the bottom-right corner of the image is used.
+    const sHeight = 128; // The height of the sub-rectangle of the source image to draw into the destination context.
+    const dx = 0; // The x-axis coordinate in the destination canvas at which to place the top-left corner of the source image.
+    const dy = 0; // The y-axis coordinate in the destination canvas at which to place the top-left corner of the source image.
+    const dWidth = 128; // The width to draw the image in the destination canvas. This allows scaling of the drawn image. If not specified, the image is not scaled in width when drawn.
+    const dHeight = 128; // The height to draw the image in the destination canvas. This allows scaling of the drawn image. If not specified, the image is not scaled in height when drawn.
+    // this.ctx1.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    this.ctx1.drawImage(
+      image,
+      0,
+      0,
+      this.width,
+      this.height,
+      0,
+      0,
+      this.width,
+      this.height
+    );
     // Turns off webcam
     const stream = this.videoElement.srcObject;
     const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
     this.videoElement.srcObject = null;
-    let palmTemplate = "";
-    templateSample.forEach((dataPoint) => {
-      palmTemplate += dataPoint.toString();
-    });
-    this.setState({
-      palmTemplate,
-      enableCamera: false,
-      // NOTE: temporarily not doing this to try opencv line detection
-      // currentStep: currentStep + 1,
-    });
+
+    const imageInput = this.ctx1.getImageData(0, 0, this.width, this.height);
+    const payload = (await cvservice.imageProcessing3(imageInput)).data.payload;
+    this.imageData = payload.img;
+
+    // const ctx2 = this.canvasElement2.getContext("2d");
+    // ctx2.canvas.width = 128;
+    // ctx2.canvas.height = 128;
+    // ctx2.putImageData(this.imageData, 0, 0);
+
+    // let palmTemplate = "";
+    // templateSample.forEach((dataPoint) => {
+    //   palmTemplate += dataPoint.toString();
+    // });
+    const palmTemplate = payload.template;
+
+    this.setState(
+      {
+        palmTemplate,
+        enableCamera: false,
+        currentStep: currentStep + 1,
+      },
+      async () => {
+        await delay(50); // enough time for react to render the canvas element.
+        const ctx2 = this.canvasElement2.getContext("2d");
+        ctx2.canvas.width = 128;
+        ctx2.canvas.height = 128;
+        ctx2.putImageData(this.imageData, 0, 0);
+      }
+    );
   };
 
   async setupCamera() {
@@ -91,7 +150,7 @@ export default class PalmSetup extends Component {
   }
 
   renderTakePicture() {
-    const { isLogin, renderHiddenInputs } = { ...this.props };
+    const { isLogin, renderHiddenInputs, toggleDisplayHow } = { ...this.props };
     const { palmTemplate, currentStep, enableCamera, totalSteps } = {
       ...this.state,
     };
@@ -112,7 +171,10 @@ export default class PalmSetup extends Component {
           </div>
         )}
         {!palmTemplate && enableCamera && (
-          <div>
+          <div style={{ position: "relative"}}>
+            <div className="palm-overlay">
+              <PalmExampleSvg />
+            </div>
             <video
               className="video"
               playsInline
@@ -120,10 +182,36 @@ export default class PalmSetup extends Component {
                 this.videoElement = videoElement;
               }}
             />
+            <canvas
+              ref={(canvasElement) => {
+                this.canvasElement = canvasElement;
+              }}
+              width={this.width}
+              height={this.height}
+              style={{
+                display: "none",
+                marginTop: "20px",
+                maxWidth: "100%",
+                backgroundColor: "black",
+                border: "1px solid #555",
+              }}
+            />
           </div>
         )}
         {palmTemplate && (
           <Fragment>
+            <canvas
+              ref={(canvasElement2) => {
+                this.canvasElement2 = canvasElement2;
+              }}
+              width={128}
+              height={128}
+              style={{
+                maxWidth: "100%",
+                backgroundColor: "black",
+                border: "1px solid #555",
+              }}
+            />
             <span className="palm-template">{palmTemplate}</span>
             <div className="diagram-excerpt-1">
               We will send this hash to our server to verify you.
@@ -173,7 +261,11 @@ export default class PalmSetup extends Component {
               />
             </form>
           )}
-          <div className="how">How does this work?</div>
+          {toggleDisplayHow && (
+            <div className="how" onClick={toggleDisplayHow}>
+              How does this work?
+            </div>
+          )}
         </div>
       </div>
     );
