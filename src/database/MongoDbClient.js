@@ -9,9 +9,18 @@ import PasswordLoginType from "./models/login-type/PasswordLoginType";
 import FaceLoginType from "./models/login-type/FaceLoginType";
 import PalmLoginType from "./models/login-type/PalmLoginType";
 import crypto from "crypto";
+import Key from "./models/Key";
 import TextLoginType from "./models/login-type/TextLoginType";
 import SecurityQuestionsLoginType from "./models/login-type/SecurityQuestionsLoginType";
+import Web3 from "web3";
+import secureKeyStorage from "../common/secureKeyStorage";
+import EthCrypto from "eth-crypto";
 
+// const secureKeyStorage = require("../common/secureKeyStorage");
+// const EthCrypto = require("eth-crypto");
+// const common = require("../common/common");
+
+const web3 = new Web3();
 const REQUIRED_PASSWORDS = 1;
 
 let mongoDbOptions = {
@@ -45,30 +54,38 @@ class MongoDbClient {
 
     let users = await OAuthUser.find({});
     if (users.length === 0) {
-      const ownerEmail = "wiyase1364@royandk.com";
-      const caseWorkerEmail = "joxef68600@tmail15.com";
-
       let sally = {
         username: "owner",
         password: "owner",
-        faceTemplate: "owner",
-        email: ownerEmail,
-        contactEmail: caseWorkerEmail,
-        phoneNumber: "5555555555",
-      };
-
-      let billy = {
-        username: "caseworker",
-        password: "caseworker",
-        faceTemplate: "caseworker",
-        email: caseWorkerEmail,
       };
 
       await this.createNewOAuthUser(sally, "sally-oauth-123");
-      await this.createNewOAuthUser(billy, "billy-oauth-123");
     }
 
     console.log("Oauth Server Ready!");
+  }
+
+  // Encrytpion Keys
+  async store(guid, key) {
+    const keyEntity = new Key();
+    keyEntity.uuid = guid;
+    keyEntity.encryptedKey = key;
+    await keyEntity.save();
+    return keyEntity;
+  }
+
+  async retrieve(guid) {
+    let key = await Key.findOne({
+      uuid: guid,
+    });
+    return key;
+  }
+
+  async createNewDID() {
+    const account = web3.eth.accounts.create();
+    const privKeyWithoutHeader = account.privateKey.substring(2);
+    let did = { address: account.address, privateKey: privKeyWithoutHeader };
+    return did;
   }
 
   async createNewOAuthUser(body, uuid = undefined) {
@@ -83,7 +100,6 @@ class MongoDbClient {
     user.username =
       body.username && body.username.length > 0 ? body.username : body.email;
     user.email = body.email;
-    // user.contactEmail = body.contactEmail;
     user.phoneNumber = body.text;
 
     user.loginTypes = [];
@@ -139,6 +155,20 @@ class MongoDbClient {
       await faceLoginType.save();
       user.loginTypes.push(faceLoginType);
     }
+
+    const privKeyUuid = uuidv4();
+
+    let did = await this.createNewDID();
+    did.publicEncryptionKey = EthCrypto.publicKeyByPrivateKey(
+      "0x" + did.privateKey
+    );
+    did.privateKeyGuid = privKeyUuid;
+
+    await secureKeyStorage.store(privKeyUuid, did.privateKey);
+
+    user.didAddress = did.address;
+    user.didPublicEncryptionKey = did.publicEncryptionKey;
+    user.didPrivateKeyGuid = did.privateKeyGuid;
 
     await user.save();
 

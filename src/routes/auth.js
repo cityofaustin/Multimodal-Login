@@ -1,14 +1,27 @@
 import express from "express";
 import { celebrate } from "celebrate";
 import Schema from "./middleware/schema";
-import DebugControl from '../util/debug';
-import oauthServer from '../services/OathService';
-import common from '../common/common';
+import DebugControl from "../util/debug";
+import oauthServer from "../services/OathService";
+import common from "../common/common";
+import secureKeyStorage from "../common/secureKeyStorage";
+
+import auth from "../middleware/auth";
 
 const router = express.Router();
 
+router
+  .route("/get-encryption-key")
+  .get(auth.required, async (req, res, next) => {
+    const account = await common.dbClient.findUserByUserName(
+      req.payload.username
+    );
+    let key = await secureKeyStorage.retrieve(account.didPrivateKeyGuid);
+    res.status(200).json({ encryptionKey: key });
+  });
+
 router.post(
-  '/register',
+  "/register",
   celebrate({
     body: Schema.userRegisterSchema,
   }),
@@ -24,15 +37,15 @@ router.post(
     }
 
     const params = [
-      'client_id',
-      'redirect_uri',
-      'response_type',
-      'grant_type',
-      'state', // could be used to prevent CSRF https://www.npmjs.com/package/csurf
-      'scope',
+      "client_id",
+      "redirect_uri",
+      "response_type",
+      "grant_type",
+      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+      "scope",
     ]
       .map((a) => `${a}=${req.body[a]}`)
-      .join('&');
+      .join("&");
     return res.redirect(`/oauth?success=false&${params}`);
   },
   (req, res, next) => {
@@ -51,9 +64,9 @@ router.post(
 );
 
 router.post(
-  '/authorize',
+  "/authorize",
   async (req, res, next) => {
-    DebugControl.log.flow('Initial User Authentication');
+    DebugControl.log.flow("Initial User Authentication");
 
     const accountMatched = await common.dbClient.getAccountByCredentials(
       req.body
@@ -65,15 +78,15 @@ router.post(
     }
 
     const params = [
-      'client_id',
-      'redirect_uri',
-      'response_type',
-      'grant_type',
-      'state', // could be used to prevent CSRF https://www.npmjs.com/package/csurf
-      'scope',
+      "client_id",
+      "redirect_uri",
+      "response_type",
+      "grant_type",
+      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+      "scope",
     ]
       .map((a) => `${a}=${req.body[a]}`)
-      .join('&');
+      .join("&");
     return res.redirect(`/login?success=false&${params}`);
   },
   (req, res, next) => {
@@ -113,14 +126,14 @@ router.post(
 // ); // Sends back token
 
 router.post(
-  '/token',
+  "/token",
   (req, res, next) => {
-    DebugControl.log.flow('Token');
+    DebugControl.log.flow("Token");
     next();
   },
   tokenHandler(),
   (req, res, next) => {
-    DebugControl.log.flow('After');
+    DebugControl.log.flow("After");
     next();
   }
 ); // Sends back token
@@ -137,7 +150,7 @@ function tokenHandler() {
       },
     });
   } catch (err) {
-    console.log('AUTH Token Error!');
+    console.log("AUTH Token Error!");
     console.log(err);
   }
   return response;
