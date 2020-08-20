@@ -6,7 +6,11 @@ import ContactSvg from "../svg/contact-svg";
 import UrlUtil from "../../util/url-util";
 import axios from "axios";
 import LoginMethods from "./login/LoginMethods";
+// import opencv from '../../workers/opencv-4-3-0.js';
+// import test from '../../fonts/Montserrat/Montserrat-Regular.ttf'
 
+// console.log(test);
+// console.log(opencv);
 let img;
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
@@ -101,26 +105,26 @@ class Login extends React.Component {
 
   handleSnapshot = async (blob) => {
     const { userName1 } = { ...this.state };
-    if (blob) {
-      try {
-        const imgFile = new File([blob], "imgFile.png", {
-          type: blob.type,
-          lastModified: Date.now(),
-        });
-        const input = "/verify/face";
-        const formdata = new FormData();
-        formdata.append("img", imgFile, "imgFile");
-        formdata.append("username", userName1);
-        const init = {
-          method: "POST",
-          body: formdata,
-        };
-        const response = await fetch(input, init);
-        console.log(response);
-      } catch (err) {
-        console.error(err.message);
-      }
-    }
+    // if (blob) {
+    //   try {
+    //     const imgFile = new File([blob], 'imgFile.png', {
+    //       type: blob.type,
+    //       lastModified: Date.now(),
+    //     });
+    //     const input = '/verify/face';
+    //     const formdata = new FormData();
+    //     formdata.append('img', imgFile, 'imgFile');
+    //     formdata.append('username', userName1);
+    //     const init = {
+    //       method: 'POST',
+    //       body: formdata,
+    //     };
+    //     const response = await fetch(input, init);
+    //     console.log(response);
+    //   } catch (err) {
+    //     console.error(err.message);
+    //   }
+    // }
   };
 
   renderUsernamePrompt() {
