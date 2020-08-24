@@ -99,33 +99,8 @@ class MongoDbClient {
 
     if (body.palmTemplate !== undefined) {
       const palmLoginType = new PalmLoginType();
-      // TODO: don't hash template as need original to compare.
-      const saltHash = this.getSecretSaltHash(body.palmTemplate);
-      palmLoginType.palmGuidSalt = saltHash.salt;
-      palmLoginType.palmGuidHash = saltHash.hash;
-      // TODO:
-      // let min = 2147483647.0; // max int
-      // let min_id = 0;
-      // let matchedIndex = -1;
-      // let sum = 0;
-      // // Calculate Chamfer distance
-      // for (let i = 0; i < storedFeatures.length; i++) {
-      //   sum = 0;
-      //   // array of points for this particular template
-      //   let temp = storedFeatures[i].featureData;
-      //   if (temp.length != 0) {
-      //     for (let j = 0; j < temp.length; ++j) {
-      //       // [0] is x and [1] is y
-      //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
-      //     }
-      //     sum = sum / (temp.length * 255);
-      //     if (sum < min) {
-      //       min = sum;
-      //       min_id = storedFeatures[i].userId;
-      //       matchedIndex = i;
-      //     }
-      //   }
-      // }
+      // NOTE: don't hash template as need original to compare.
+      palmLoginType.palmTemplate = body.palmTemplate;
       await palmLoginType.save();
       user.loginTypes.push(palmLoginType);
     }
@@ -329,14 +304,50 @@ class MongoDbClient {
 
       if (
         body.palmTemplate &&
-        loginType.itemtype === "PalmLoginType" &&
-        this.validSecret(
-          body.palmTemplate,
-          loginType.palmGuidSalt,
-          loginType.palmGuidHash
-        )
+        loginType.itemtype === "PalmLoginType"
       ) {
-        successfulLoginPasswords++;
+        const newtemplateList = body.palmTemplate.split(",");
+        // console.log(newtemplateList);
+        const newTemplate = [];
+        const newPointTemplate = [];
+        // for (let i = 0; i < 128 * 128;) {
+        //   const row = [];
+        //   for (; i < 128; i++) {
+        //     row.push(newtemplateList[i]);
+        //   }
+        //   newTemplate.push(row);
+        // }
+        // for(let i=0; i<128; i++){
+        //   for(let j=0; j<128; j++){
+        //     if(newTemplate[i][j] === '1') {
+        //       newPointTemplate.push([i,j]);
+        //     }
+        //   }
+        // }
+        let min = 2147483647.0; // max int
+        let min_id = 0;
+        let matchedIndex = -1;
+        let sum = 0;
+        // TODO:
+        // Calculate Chamfer distance
+        // for (let i = 0; i < storedFeatures.length; i++) {
+        //   sum = 0;
+        // array of points for this particular template
+        // let temp = storedFeatures[i].featureData;
+        // if (temp.length != 0) {
+          //     for (let j = 0; j < temp.length; ++j) {
+          //       // [0] is x and [1] is y
+          //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
+          //     }
+          //     sum = sum / (temp.length * 255);
+          //     if (sum < min) {
+          //       min = sum;
+          //       min_id = storedFeatures[i].userId;
+          //       matchedIndex = i;
+          //     }
+          //   }
+        // }
+        // successfulLoginPasswords++;
       }
 
       if (

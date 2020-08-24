@@ -9,8 +9,8 @@ html, body {
 
 body {
   // https://stackoverflow.com/a/17499101/6907541
-  background-image: linear-gradient($mid-blue 50%, $azure2 50%);
-  // background-image: linear-gradient($mid-blue 50%, white 50%);
+  // background-image: linear-gradient($mid-blue 50%, $azure2 50%);
+  background-image: linear-gradient($mid-blue 50%, white 50%);
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
@@ -20,7 +20,7 @@ body {
   // z-index: -1;
   top: calc(50% - 145px);
   transition: transform 1.5s ease-out;
-  transform: translateX(0px);
+  transform: translateX(-360px);
   // transform: translateX(-3240px);
   will-change: transform;
   width: 100vw;
