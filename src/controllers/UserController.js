@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 let fetch;
 if (!process.env.BROWSER) {
-  fetch = require('node-fetch');
+  fetch = require("node-fetch");
 } else {
   fetch = window.fetch;
 }
@@ -31,9 +31,11 @@ class UserController {
   getLoginInfoByUsernameOrEmail = async (request, response) => {
     try {
       const usernameOrEmail = request.body.usernameOrEmail;
+
       let res = await common.dbClient.getLoginInfoByUsernameOrEmail(
         usernameOrEmail
       );
+
       return response.json(res);
     } catch (err) {
       console.error(err.stack);

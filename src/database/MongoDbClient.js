@@ -141,7 +141,6 @@ class MongoDbClient {
           answerHash: saltHash.hash,
         };
       });
-      // console.log(securityQuestionsLoginType.securityQuestions);
       await securityQuestionsLoginType.save();
       user.loginTypes.push(securityQuestionsLoginType);
     }
@@ -242,10 +241,14 @@ class MongoDbClient {
         const securityQuestionLoginType = user.loginTypes.find(
           (loginType) => loginType.itemtype === "SecurityQuestionsLoginType"
         );
-        securityQuestions = securityQuestionLoginType.securityQuestions.map(
-          (securityQuestion) => securityQuestion.question
-        );
-        loginInfo.securityQuestions = securityQuestions;
+
+        if (securityQuestionLoginType !== undefined) {
+          securityQuestions = securityQuestionLoginType.securityQuestions.map(
+            (securityQuestion) => securityQuestion.question
+          );
+
+          loginInfo.securityQuestions = securityQuestions;
+        }
         loginInfo.loginMethods = loginMethods;
       }
     }
@@ -332,10 +335,7 @@ class MongoDbClient {
         successfulLoginPasswords++;
       }
 
-      if (
-        body.palmTemplate &&
-        loginType.itemtype === "PalmLoginType"
-      ) {
+      if (body.palmTemplate && loginType.itemtype === "PalmLoginType") {
         const newtemplateList = body.palmTemplate.split(",");
         // console.log(newtemplateList);
         const newTemplate = [];
@@ -365,17 +365,17 @@ class MongoDbClient {
         // array of points for this particular template
         // let temp = storedFeatures[i].featureData;
         // if (temp.length != 0) {
-          //     for (let j = 0; j < temp.length; ++j) {
-          //       // [0] is x and [1] is y
-          //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
-          //     }
-          //     sum = sum / (temp.length * 255);
-          //     if (sum < min) {
-          //       min = sum;
-          //       min_id = storedFeatures[i].userId;
-          //       matchedIndex = i;
-          //     }
-          //   }
+        //     for (let j = 0; j < temp.length; ++j) {
+        //       // [0] is x and [1] is y
+        //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
+        //     }
+        //     sum = sum / (temp.length * 255);
+        //     if (sum < min) {
+        //       min = sum;
+        //       min_id = storedFeatures[i].userId;
+        //       matchedIndex = i;
+        //     }
+        //   }
         // }
         // successfulLoginPasswords++;
       }
