@@ -109,22 +109,6 @@ router.post(
   })
 );
 
-// router.post(
-//   '/token',
-//   (req, res, next) => {
-//     DebugControl.log.flow('Token');
-//     next();
-//   },
-//   oauthServer.token({
-//     requireClientAuthentication: {
-//       // whether client needs to provide client_secret
-//       authorization_code: false,
-//       accessTokenLifetime: 172800, // 2days, default 1 hour
-//       refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
-//     },
-//   })
-// ); // Sends back token
-
 router.post(
   "/token",
   (req, res, next) => {

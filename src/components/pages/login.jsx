@@ -6,7 +6,11 @@ import ContactSvg from "../svg/contact-svg";
 import UrlUtil from "../../util/url-util";
 import axios from "axios";
 import LoginMethods from "./login/LoginMethods";
+// import opencv from '../../workers/opencv-4-3-0.js';
+// import test from '../../fonts/Montserrat/Montserrat-Regular.ttf'
 
+// console.log(test);
+// console.log(opencv);
 let img;
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
@@ -26,11 +30,13 @@ class Login extends React.Component {
       oneTimeCode: "",
       loginMethods: undefined,
       // loginMethods: [
-        // "PasswordLoginType",
-        // "SecurityQuestionsLoginType",
-        // "PalmLoginType",
-        // "TextLoginType",
+      // "PasswordLoginType",
+      // "SecurityQuestionsLoginType",
+      // "PalmLoginType",
+      // "TextLoginType",
       // ],
+      securityQuestions: undefined,
+      // securityQuestions: ["streetNumGrewOn", "cityGrewIn", "primarySchool"],
       findUserError: "",
       requestLoginCode: false,
       faceVerify: false,
@@ -72,8 +78,8 @@ class Login extends React.Component {
     e.preventDefault();
 
     const { username } = { ...this.state };
-    let { findUserError, loginMethods } = { ...this.state };
-    const input = "/api/users/find-by-username-or-email";
+    let { findUserError, loginMethods, securityQuestions } = { ...this.state };
+    const input = "/api/users/login-info";
     const init = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -84,10 +90,11 @@ class Login extends React.Component {
     if (response.loginMethods) {
       findUserError = "";
       loginMethods = response.loginMethods;
+      securityQuestions = response.securityQuestions;
     } else {
       findUserError = "No account found with that username";
     }
-    this.setState({ findUserError, loginMethods });
+    this.setState({ findUserError, loginMethods, securityQuestions });
   };
 
   handleInputChange = (e) => {
@@ -98,26 +105,26 @@ class Login extends React.Component {
 
   handleSnapshot = async (blob) => {
     const { userName1 } = { ...this.state };
-    if (blob) {
-      try {
-        const imgFile = new File([blob], "imgFile.png", {
-          type: blob.type,
-          lastModified: Date.now(),
-        });
-        const input = "/verify/face";
-        const formdata = new FormData();
-        formdata.append("img", imgFile, "imgFile");
-        formdata.append("username", userName1);
-        const init = {
-          method: "POST",
-          body: formdata,
-        };
-        const response = await fetch(input, init);
-        console.log(response);
-      } catch (err) {
-        console.error(err.message);
-      }
-    }
+    // if (blob) {
+    //   try {
+    //     const imgFile = new File([blob], 'imgFile.png', {
+    //       type: blob.type,
+    //       lastModified: Date.now(),
+    //     });
+    //     const input = '/verify/face';
+    //     const formdata = new FormData();
+    //     formdata.append('img', imgFile, 'imgFile');
+    //     formdata.append('username', userName1);
+    //     const init = {
+    //       method: 'POST',
+    //       body: formdata,
+    //     };
+    //     const response = await fetch(input, init);
+    //     console.log(response);
+    //   } catch (err) {
+    //     console.error(err.message);
+    //   }
+    // }
   };
 
   renderUsernamePrompt() {
@@ -261,7 +268,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { loginMethods, username } = { ...this.state };
+    const { loginMethods, username, securityQuestions } = { ...this.state };
     return (
       <Fragment>
         <Fragment>
@@ -280,7 +287,11 @@ class Login extends React.Component {
           <main id="main" style={{ position: "absolute", top: 0, opacity: 0 }}>
             {!loginMethods && this.renderUsernamePrompt()}
             {loginMethods && (
-              <LoginMethods loginMethods={loginMethods} username={username} />
+              <LoginMethods
+                loginMethods={loginMethods}
+                username={username}
+                securityQuestions={securityQuestions}
+              />
             )}
           </main>
         </Fragment>

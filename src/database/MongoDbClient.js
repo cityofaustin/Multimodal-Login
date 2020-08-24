@@ -115,9 +115,8 @@ class MongoDbClient {
 
     if (body.palmTemplate !== undefined) {
       const palmLoginType = new PalmLoginType();
-      const saltHash = this.getSecretSaltHash(body.palmTemplate);
-      palmLoginType.palmGuidSalt = saltHash.salt;
-      palmLoginType.palmGuidHash = saltHash.hash;
+      // NOTE: don't hash template as need original to compare.
+      palmLoginType.palmTemplate = body.palmTemplate;
       await palmLoginType.save();
       user.loginTypes.push(palmLoginType);
     }
@@ -230,17 +229,27 @@ class MongoDbClient {
     return undefined;
   }
 
-  async getLoginMethodsByUsernameOrEmail(usernameOrEmail) {
+  async getLoginInfoByUsernameOrEmail(usernameOrEmail) {
+    let loginInfo = {};
     let loginMethods;
+    let securityQuestions;
     if (usernameOrEmail) {
       let user = await OAuthUser.findOne({
         $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       }).populate("loginTypes");
       if (user) {
         loginMethods = user.loginTypes.map((loginType) => loginType.itemtype);
+        const securityQuestionLoginType = user.loginTypes.find(
+          (loginType) => loginType.itemtype === "SecurityQuestionsLoginType"
+        );
+        securityQuestions = securityQuestionLoginType.securityQuestions.map(
+          (securityQuestion) => securityQuestion.question
+        );
+        loginInfo.securityQuestions = securityQuestions;
+        loginInfo.loginMethods = loginMethods;
       }
     }
-    return { loginMethods };
+    return loginInfo;
   }
 
   async saveUser(user) {
@@ -321,6 +330,79 @@ class MongoDbClient {
         )
       ) {
         successfulLoginPasswords++;
+      }
+
+      if (
+        body.palmTemplate &&
+        loginType.itemtype === "PalmLoginType"
+      ) {
+        const newtemplateList = body.palmTemplate.split(",");
+        // console.log(newtemplateList);
+        const newTemplate = [];
+        const newPointTemplate = [];
+        // for (let i = 0; i < 128 * 128;) {
+        //   const row = [];
+        //   for (; i < 128; i++) {
+        //     row.push(newtemplateList[i]);
+        //   }
+        //   newTemplate.push(row);
+        // }
+        // for(let i=0; i<128; i++){
+        //   for(let j=0; j<128; j++){
+        //     if(newTemplate[i][j] === '1') {
+        //       newPointTemplate.push([i,j]);
+        //     }
+        //   }
+        // }
+        let min = 2147483647.0; // max int
+        let min_id = 0;
+        let matchedIndex = -1;
+        let sum = 0;
+        // TODO:
+        // Calculate Chamfer distance
+        // for (let i = 0; i < storedFeatures.length; i++) {
+        //   sum = 0;
+        // array of points for this particular template
+        // let temp = storedFeatures[i].featureData;
+        // if (temp.length != 0) {
+          //     for (let j = 0; j < temp.length; ++j) {
+          //       // [0] is x and [1] is y
+          //       sum += distanceTransImg.ucharPtr(temp[j][0], temp[j][1])[0];
+          //     }
+          //     sum = sum / (temp.length * 255);
+          //     if (sum < min) {
+          //       min = sum;
+          //       min_id = storedFeatures[i].userId;
+          //       matchedIndex = i;
+          //     }
+          //   }
+        // }
+        // successfulLoginPasswords++;
+      }
+
+      if (
+        body.securityQuestions &&
+        loginType.itemtype === "SecurityQuestionsLoginType"
+      ) {
+        const securityQuestions = JSON.parse(body.securityQuestions);
+        let isValid = true;
+        for (const securityQuestion of securityQuestions) {
+          const match = loginType.securityQuestions.find(
+            (securityQuestionItem) =>
+              securityQuestionItem.question === securityQuestion.question
+          );
+          const isAnswerValid = this.validSecret(
+            securityQuestion.answer,
+            match.answerSalt,
+            match.answerHash
+          );
+          if (!isAnswerValid) {
+            isValid = false;
+          }
+        }
+        successfulLoginPasswords = isValid
+          ? successfulLoginPasswords + 1
+          : successfulLoginPasswords;
       }
     }
 

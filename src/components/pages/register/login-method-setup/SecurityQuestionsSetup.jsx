@@ -1,9 +1,10 @@
-import React, { Component, Fragment } from 'react';
-import MSelect from '../../../common/MSelect';
-import HowSvg from '../../../svg/HowSvg';
-import SecurityExampleSvg from '../../../svg/SecurityExampleSvg';
+import React, { Component, Fragment } from "react";
+import MSelect from "../../../common/MSelect";
+import HowSvg from "../../../svg/HowSvg";
+import SecurityExampleSvg from "../../../svg/SecurityExampleSvg";
+import CrossSvg from "../../../svg/CrossSvg";
 if (process.env.BROWSER) {
-  import('./SecurityQuestionsSetup.scss');
+  import("./SecurityQuestionsSetup.scss");
 }
 export default class SecurityQuestionSetup extends Component {
   constructor(props) {
@@ -11,15 +12,7 @@ export default class SecurityQuestionSetup extends Component {
     let securityItems = [
       {
         question: undefined,
-        answer: '',
-      },
-      {
-        question: undefined,
-        answer: '',
-      },
-      {
-        question: undefined,
-        answer: '',
+        answer: "",
       },
     ];
     securityItems = props.securityItems ? props.securityItems : securityItems;
@@ -43,7 +36,20 @@ export default class SecurityQuestionSetup extends Component {
             return (
               <Fragment key={i}>
                 <div className="card-body-section1">
-                  <label>Question #{i + 1}</label>
+                  <div style={{display: "flex", justifyContent: "space-between"}}>
+                    <label>Question #{i + 1}</label>
+                    {i > 0 && (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          let newList = securityItems.slice(i);
+                          this.setState({securityItems: newList});
+                        }}
+                      >
+                        <CrossSvg />
+                      </div>
+                    )}
+                  </div>
                   <MSelect
                     value={this.getOptions().find(
                       (option) => option.value === securityItem.question
@@ -72,14 +78,30 @@ export default class SecurityQuestionSetup extends Component {
               </Fragment>
             );
           })}
+          {securityItems.length < 3 && (
+            <input
+              type="button"
+              value="Add Question"
+              style={{ width: "220px", marginTop: "20px" }}
+              onClick={() => {
+                securityItems.push({
+                  question: undefined,
+                  answer: "",
+                });
+                this.setState({
+                  securityItems,
+                });
+              }}
+            />
+          )}
         </div>
         <div className="submit-section">
           <input
-            style={{ width: '210px' }}
+            style={{ width: "210px" }}
             type="button"
             value="Set Questions"
             onClick={() =>
-              this.props.handleGoBack('owner', 10, { securityItems })
+              this.props.handleGoBack("owner", 10, { securityItems })
             }
             disabled={this.isDisabled()}
           />
@@ -121,24 +143,24 @@ export default class SecurityQuestionSetup extends Component {
     const { securityItems } = { ...this.state };
     return [
       {
-        value: 'streetNumGrewOn',
-        label: 'What was the street number that you grew up on?',
+        value: "streetNumGrewOn",
+        label: "What was the street number that you grew up on?",
         isDisabled: securityItems.some(
-          (securityItem) => securityItem.question === 'streetNumGrewOn'
+          (securityItem) => securityItem.question === "streetNumGrewOn"
         ),
       },
       {
-        value: 'cityGrewIn',
-        label: 'In what town or city did you grow up in?',
+        value: "cityGrewIn",
+        label: "In what town or city did you grow up in?",
         isDisabled: securityItems.some(
-          (securityItem) => securityItem.question === 'cityGrewIn'
+          (securityItem) => securityItem.question === "cityGrewIn"
         ),
       },
       {
-        value: 'primarySchool',
-        label: 'What primary school did you go to?',
+        value: "primarySchool",
+        label: "What primary school did you go to?",
         isDisabled: securityItems.some(
-          (securityItem) => securityItem.question === 'primarySchool'
+          (securityItem) => securityItem.question === "primarySchool"
         ),
       },
     ];

@@ -15,8 +15,9 @@ const config = {
   entry: './src/fe.js',
   devtool: 'source-map',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    path: path.resolve(__dirname, 'src', 'static', 'public'),
+    filename: '[name].js',
+    globalObject: 'this'
   },
   devServer: {
     proxy: {
@@ -49,11 +50,17 @@ const config = {
     new webpack.DefinePlugin({
       "process.env": {
         BROWSER: JSON.stringify(true),
+        FE: JSON.stringify(true)
       },
     }),
   ],
   module: {
     rules: [
+      {
+        test: /\.worker\.js$/,
+        use: ['worker-loader', 'babel-loader'],
+        include: [path.join(__dirname, 'src/workers')],
+      },
       {
         test: /\.(js|jsx)$/,
         use: {
@@ -96,7 +103,19 @@ const config = {
             }
           }
         ]
-      }
+      },
+      {
+        test: /opencv-4-3-0.js|opencv-4-4-0.js|opencv-4-4-0_js.js|opencv--3.4.4.js|\.xml$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'js/',
+            },
+          },
+        ],
+      },
     ]
   }
 };

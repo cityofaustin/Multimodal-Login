@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const production = process.env.NODE_ENV === "production";
+const CopyPlugin = require("copy-webpack-plugin");
 
 const pages = ["index", "login", "register"];
 
@@ -38,10 +39,21 @@ const config = [
         : path.resolve(__dirname, "src", "static", "public"),
       filename: production ? "js/[chunkhash].js" : "js/[name].js",
       publicPath: "/public/",
+      globalObject: "this",
     },
 
     module: {
       rules: [
+        {
+          test: /\.worker\.js$/,
+          use: ["worker-loader", "babel-loader"],
+          include: [path.join(__dirname, "src/workers")],
+        },
+        {
+          test: /\.wasm$/,
+          loaders: ["base64-loader"],
+          type: "javascript/auto",
+        },
         {
           test: /\.(js|jsx)$/,
           use: {
@@ -50,7 +62,7 @@ const config = [
               presets: ["@babel/preset-env", "@babel/preset-react"],
             },
           },
-          exclude: [/node_modules/, /static/],
+          exclude: [/node_modules/, /static/, /workers/],
         },
         {
           test: /\.ejs$/,
@@ -86,13 +98,13 @@ const config = [
         {
           test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
           issuer: {
-            test: /\.jsx?$/
+            test: /\.jsx?$/,
           },
-          use: ['babel-loader', '@svgr/webpack', 'url-loader']
+          use: ["babel-loader", "@svgr/webpack", "url-loader"],
         },
         {
           test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-          loader: 'url-loader'
+          loader: "url-loader",
         },
         {
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -102,6 +114,29 @@ const config = [
               options: {
                 name: "[name].[ext]",
                 outputPath: "/fonts",
+              },
+            },
+          ],
+        },
+        // {
+        //   test: /opencv-4-3-0.js$/,
+        //   use: [
+        //     {
+        //       loader: 'raw-loader',
+        //       options: {
+        //         esModule: false,
+        //       },
+        //     },
+        //   ],
+        // },
+        {
+          test: /opencv-4-3-0.js|opencv-4-4-0.js|\.xml$/,
+          use: [
+            {
+              loader: "file-loader",
+              options: {
+                name: "[name].[ext]",
+                outputPath: "/js",
               },
             },
           ],
@@ -137,6 +172,11 @@ const config = [
     },
 
     plugins: [
+      // new CopyPlugin({
+      //   patterns: [
+      //     { from: 'assets/wasm', to: 'wasm' },
+      //   ],
+      // }),
       // https://stackoverflow.com/a/30355080/6907541
       new webpack.DefinePlugin({
         "process.env": {

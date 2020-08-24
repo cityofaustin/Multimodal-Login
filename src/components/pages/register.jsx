@@ -27,8 +27,8 @@ class Register extends Component {
   constructor() {
     super();
     this.state = {
-      selectedRole: undefined,
-      step: 0,
+      selectedRole: 'owner',
+      step: 1,
       // selectedRole: 'owner',
       // step: 10,
       isAnimatingForward: false,
@@ -108,7 +108,7 @@ class Register extends Component {
       const key = Object.keys(data)[0];
       this.setState({ [key]: data[key] });
     }
-    if (step === 0) {
+    if (step === 1) {
       this.goBackToWelcome();
     }
     this.setState({ isAnimatingBackward: true });
