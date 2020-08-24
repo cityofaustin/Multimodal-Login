@@ -110,6 +110,7 @@ class Register extends Component {
     }
     if (step === 1) {
       this.goBackToWelcome();
+      return;
     }
     this.setState({ isAnimatingBackward: true });
     // waiting for react to put on dom, setState callback didn't seem
