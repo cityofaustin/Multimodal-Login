@@ -59,7 +59,7 @@ class UserController {
       await common.dbClient.addOneTimeCode(user._id, oneTimeCode);
 
       const loginUuid = uuidv4();
-      const url = `${process.env.BACKEND_URI}/account/${user.username}/${oneTimeCode}/${loginUuid}`;
+      const url = `${process.env.BACKEND_URI}/send-code/account/${user.username}/${oneTimeCode}/${loginUuid}`;
       const init = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
