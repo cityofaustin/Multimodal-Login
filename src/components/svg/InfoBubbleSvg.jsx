@@ -39,7 +39,7 @@ export default class InfoBubble extends Component {
             data-name="If you wish to do
 both, you must
 create two separate
-MyPass accounts."
+accounts."
             transform="translate(193.5 327)"
             fill="#fff"
             fontSize="12"
@@ -55,7 +55,7 @@ MyPass accounts."
               create two separate{' '}
             </tspan>
             <tspan x="-52.884" y="45">
-              MyPass accounts.
+              accounts.
             </tspan>
           </text>
         </g>

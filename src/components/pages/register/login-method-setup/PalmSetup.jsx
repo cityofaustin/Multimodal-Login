@@ -9,7 +9,7 @@ import PalmSvg from "../../../svg/PalmSvg";
 import NoWifiSvg from "../../../svg/NoWifiSvg";
 import AirplaneModeHelpSvg from "../../../svg/AirplaneModeHelpSvg";
 import delay from "../../../../util/delay";
-import templateSample from "../../../../palmLines.json";
+// import templateSample from "../../../../palmLines.json";
 import GoBackSvg from "../../../svg/GoBackSvg";
 import cvservice from "../../../../services/CvService";
 

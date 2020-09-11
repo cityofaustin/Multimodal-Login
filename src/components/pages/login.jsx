@@ -45,12 +45,34 @@ class Login extends React.Component {
 
   componentDidMount() {
     if (process.env.BROWSER) {
+      this.loadAppSettings();
       setTimeout(() => {
         document.getElementById("splash").style.animation = "fadeout 1s";
         document.getElementById("splash").style.opacity = 0;
         document.getElementById("main").style.animation = "fadein 1s";
         document.getElementById("main").style.opacity = 1;
       }, 1000);
+    }
+  }
+
+  loadAppSettings = async () => {
+    try {
+      const url = "api/app-settings";
+      const init = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      };
+      const response = await fetch(url, init);
+      const appSettings = await response.json();
+      const titleSetting = appSettings.find(
+        (a) => a.settingName === "title"
+      );
+      if (titleSetting) {
+        document.title = titleSetting.settingValue + ' Auth';
+      }
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
     }
   }
 

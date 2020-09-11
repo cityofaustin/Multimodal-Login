@@ -15,11 +15,14 @@ if (process.env.BROWSER) {
 class Index extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      appSettings: []
+    };
   }
 
   componentDidMount() {
     if (process.env.BROWSER) {
+      this.loadAppSettings();
       setTimeout(() => {
         document.getElementById('splash').style.animation = 'fadeout 1s';
         document.getElementById('splash').style.opacity = 0;
@@ -27,6 +30,28 @@ class Index extends Component {
         document.getElementById('main').style.opacity = 1;
       }, 1000);
     }
+  }
+
+  loadAppSettings = async () => {
+    let {appSettings} = {...this.state};
+    try {
+      const url = "api/app-settings";
+      const init = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      };
+      appSettings = await (await fetch(url, init)).json();
+      const titleSetting = appSettings.find(
+        (a) => a.settingName === "title"
+      );
+      if (titleSetting) {
+        document.title = titleSetting.settingValue + ' Auth';
+      }
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
+    }
+    this.setState({appSettings});
   }
 
   renderHiddenInputs() {
@@ -63,6 +88,11 @@ class Index extends Component {
 
   render() {
     if (process.env.BROWSER) {
+      const {appSettings} = {...this.state};
+      const titleSetting = appSettings.find(
+        (a) => a.settingName === 'title'
+      );
+      const title = titleSetting ? titleSetting.settingValue : 'This';
       return (
         <Fragment>
           <div id="splash">
@@ -76,7 +106,7 @@ class Index extends Component {
               <div className="section">
                 <div className="title">Welcome!</div>
                 <div className="subtitle">
-                  MyPass is a secure &amp; private document storage solution.
+                  {title} is a secure &amp; private document storage solution.
                 </div>
                 <div className="sub-section">
                   <img src={img} alt="" />

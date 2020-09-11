@@ -53,6 +53,7 @@ class Register extends Component {
 
   async componentDidMount() {
     if (process.env.BROWSER) {
+      this.loadAppSettings();
       await delay(1000);
       const splash = document.getElementById('splash');
       splash.style.animation = 'fadeout 1s';
@@ -61,6 +62,27 @@ class Register extends Component {
       document.getElementById('main').style.opacity = 1;
       await delay(1000);
       splash.parentNode.removeChild(splash);
+    }
+  }
+
+  loadAppSettings = async () => {
+    try {
+      const url = "api/app-settings";
+      const init = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      };
+      const response = await fetch(url, init);
+      const appSettings = await response.json();
+      const titleSetting = appSettings.find(
+        (a) => a.settingName === "title"
+      );
+      if (titleSetting) {
+        document.title = titleSetting.settingValue + ' Auth';
+      }
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
     }
   }
 
