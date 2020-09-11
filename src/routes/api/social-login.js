@@ -25,7 +25,7 @@ router.post("/request-social-login-code", async (req, res) => {
   const oneTimeCode = getRandomInt(100000, 999999);
   await common.dbClient.addOneTimeCode(user._id, oneTimeCode);
 
-  const url = `${process.env.BACKEND_URI}/account/${user.username}/${oneTimeCode}/${loginUuid}`;
+  const url = `${process.env.BACKEND_URI}/send-code/account/${user.username}/${oneTimeCode}/${loginUuid}`;
   const init = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
