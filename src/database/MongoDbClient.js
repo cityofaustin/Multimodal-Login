@@ -15,6 +15,7 @@ import SecurityQuestionsLoginType from "./models/login-type/SecurityQuestionsLog
 import Web3 from "web3";
 import secureKeyStorage from "../common/secureKeyStorage";
 import EthCrypto from "eth-crypto";
+import SocialSupportType from "./models/login-type/SocialSupportType";
 
 // const secureKeyStorage = require("../common/secureKeyStorage");
 // const EthCrypto = require("eth-crypto");
@@ -153,6 +154,11 @@ class MongoDbClient {
       await faceLoginType.save();
       user.loginTypes.push(faceLoginType);
     }
+
+    // Everyone gets a socialhelper login method
+    const socialSupportType = new SocialSupportType();
+    await socialSupportType.save();
+    user.loginTypes.push(socialSupportType);
 
     const privKeyUuid = uuidv4();
 

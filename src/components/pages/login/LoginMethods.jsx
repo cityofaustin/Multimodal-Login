@@ -12,6 +12,7 @@ import TextExampleSvg from "../../svg/TextExampleSvg";
 import HowSvg from "../../svg/HowSvg";
 import GoBackSvg from "../../svg/GoBackSvg";
 import SecurityExampleSvg from "../../svg/SecurityExampleSvg";
+import SocialSupportLoginSvg from "../../svg/SocialSupportLoginSvg";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
@@ -84,6 +85,28 @@ export default class LoginMethods extends Component {
     keycodeSentEl.style.opacity = 0.6;
     try {
       const url = "api/users/send-text-otp";
+      const init = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+        }),
+      };
+      await fetch(url, init);
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
+    }
+    await delay(2000);
+    keycodeSentEl.style.opacity = 0;
+  };
+
+  sendKeycodeToHelper = async () => {
+    const { username } = { ...this.props };
+    const keycodeSentEl = document.getElementById("keycode-sent");
+    keycodeSentEl.style.opacity = 0.6;
+    try {
+      const url = "api/users/send-helper-text-otp";
       const init = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -399,6 +422,94 @@ export default class LoginMethods extends Component {
             isDisplayHow={isDisplayHow}
           />
         );
+      case "SocialSupportType":
+        return (
+          <Fragment>
+            {!isDisplayHow && (
+              <div id="section-1-owner">
+                <div className="section-contents">
+                  <form
+                    method="POST"
+                    action="/authorize"
+                    className="card login-card"
+                  >
+                    <div className="top-section">
+                      <div className="card-title">Social Support</div>
+                      <SocialSupportLoginSvg />
+                    </div>
+                    <div className="keycode-btn-container">
+                      <input
+                        className="keycode-btn"
+                        style={{ width: "210px" }}
+                        type="button"
+                        value="Text code to helpers"
+                        onClick={() => this.sendKeycodeToHelper()}
+                        // disabled={!phoneNumber}
+                      />
+                      <div id="keycode-sent">Your keycode has been sent!</div>
+                    </div>
+                    <div className="card-body-section2">
+                      <div>Your Keycode</div>
+                      <div className="keycode-input">
+                        <KeycodeInputSvg />
+                        <input
+                          name="oneTimeCode"
+                          type="number"
+                          maxLength="6"
+                          minLength="6"
+                          value={keycode}
+                          onChange={(e) => {
+                            this.setState({ keycode: e.target.value });
+                          }}
+                        />
+                      </div>
+                      <div className="input-excerpt">
+                        Please enter your 6 digit keycode
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style={{ width: "210px" }}
+                        type="submit"
+                        value="Login"
+                        disabled={keycode.length < 1}
+                      />
+                      <div
+                        className="how"
+                        onClick={() =>
+                          this.setState({ isDisplayHow: !isDisplayHow })
+                        }
+                      >
+                        How does this work?
+                      </div>
+                    </div>
+                    {this.renderHiddenInputs()}
+                  </form>
+                </div>
+              </div>
+            )}
+            {isDisplayHow && (
+              <div>
+                <div className="card owner1">
+                  <div className="how-container">
+                    <HowSvg loginMethod="text" />
+                    <div className="sec-excerpt">
+                      Two-step verification is a simple way to authenticate a
+                      user by sending a unique code to their mobile device.
+                    </div>
+                    <TextExampleSvg />
+                  </div>
+                  <GoBackSvg
+                    color="#2362c7"
+                    goBack={() =>
+                      this.setState({ isDisplayHow: !isDisplayHow })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </Fragment>
+        );
       default:
         return (
           <div id="section-1-owner">
@@ -416,6 +527,8 @@ export default class LoginMethods extends Component {
 
   render() {
     const { loginMethods } = { ...this.props };
+
+    console.log({ loginMethods });
     const { selectedLoginMethod } = { ...this.state };
     let { isDisplayHow } = { ...this.state };
     return (
