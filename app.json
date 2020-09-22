@@ -1,0 +1,27 @@
+{
+  "name": "MyPass Oauth Multimodal Login",
+  "description": "MyPass Oauth Multimodal Login Quickstart",
+  "repository": "https://github.com/cityofaustin/Trauma-Accessible-Login",
+
+  "env": {
+    "FILE_SAFE_KEY": {
+      "description": "Secret used to encrypt documents",
+      "generator": "secret"
+    },
+    "AUTH_SECRET": {
+      "description": "Secret used to encrypt sessions",
+      "generator": "secret"
+    },
+    "ENVIRONMENT": {
+      "description": "Current environmnet",
+      "value": "HEROKU"
+    },
+    "CLIENT_ID": {
+      "description": "Oauth Client Id",
+      "value": "t1L0EvTYT-H_xU3oNaR0BBYc"
+    }
+  },
+  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
+  "keywords": ["node", "express", "heroku"],
+  "image": "heroku/nodejs"
+}
