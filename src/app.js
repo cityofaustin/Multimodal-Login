@@ -82,7 +82,7 @@ if (key !== undefined && cert !== undefined) {
       );
     });
 } else {
-  app.listen(port, () =>
-    console.log(`app listening at http://localhost:${port}`)
-  );
+  const server = app.listen(process.env.PORT || port, function () {
+    console.log("Oauth Server Listening on port " + server.address().port);
+  });
 }
