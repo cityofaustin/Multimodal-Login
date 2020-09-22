@@ -53,10 +53,9 @@ This endpoint runs at http://localhost:3000
 ## One Click Heroku Deployment
 
 Alternativly you can deploy to heroku with one click:
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ![Image of Heroku One Click Deploy](https://www.herokucdn.com/deploy/button.svg)
-[Deploy to Heroku](https://www.heroku.com/deploy/?template=https://github.com/cityofaustin/Trauma-Accessible-Login)
+[Deploy to Heroku](https://www.heroku.com/deploy/?template=https://github.com/cityofaustin/Trauma-Accessible-Login/tree/main)
 
 ### dev notes
 
