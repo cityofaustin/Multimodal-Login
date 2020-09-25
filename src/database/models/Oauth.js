@@ -64,6 +64,8 @@ const saveToken = async (token, client, user) => {
   // Can't just chain `lean()` to `save()` as we did with `findOne()` elsewhere. Instead we use `Promise` to resolve the data.
   let saveResult = await accessToken.save();
 
+  let expirationTime = parseInt(token.accessTokenExpiresAt.getTime() / 1000); // expiration time, seconds since unix epoch
+
   const accessJWT = jwt.sign(
     {
       sub: user._id, // subject, whom the token refers to
@@ -74,7 +76,7 @@ const saveToken = async (token, client, user) => {
       auth_time: parseInt(new Date().getTime() / 1000), // time when authetication occurred
       // TODO: change this to actuall origin it's running on
       iss: ip.address(), // issuer, who created and signed this token
-      exp: parseInt(token.accessTokenExpiresAt.getTime() / 1000), // expiration time, seconds since unix epoch
+      exp: expirationTime,
       jti: saveResult._id, // jwt id unique identifier for this token
       client_id: clearInterval.clientId,
       username: user.username,
