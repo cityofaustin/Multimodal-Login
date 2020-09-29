@@ -30,7 +30,7 @@ Part of being accessible to those experiencing trauma includes being sensitive t
 
 <kbd><img src="/docs/Improvedbio.png" align="middle" width="800" ></kbd>
 
-Important to note that the biometrics model included in this modual is a UI framework.  In order to perform function biometric authentication, a third party recognition API needs to be included.  While we are not in the position to make an edorcement of a private utility we have put together an implimentation guide for making biometrics secure and private by design
+Important to note that the biometrics model included in this module is a UI framework.  In order to perform function biometric authentication, a third party recognition API needs to be included.  While we are not in the position to make an endorsement of a private utility we have put together an implementation guide for making biometrics secure and private by design.
 
 [Ethical Implimentation of Biomentrics](https://github.com/cityofaustin/Trauma-Accessible-Login/wiki/EthicalBiometrics)
 
