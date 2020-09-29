@@ -28,7 +28,11 @@ Because trauma accessible login features are needed for nearly all online servic
 
 Part of being accessible to those experiencing trauma includes being sensitive to the fear that they may assign to specific methods of authentication. This is particularly true for any biometrics authentication. For the trauma accessible login, we addressed this fear through what we believe to be an improved biometrics model. We believe that if a user chooses to include biometrics as part of their sign-in process, that it should be private and secure by design. To ensure this, we have created a workflow that invites a user to put their device in airplane mode while completing biometric scans, such as facial recognition or fingerprint recognition. This ensures that all processing of sensitive biometric information is performed offline, and only once this information is converted to a safe form such as an abstracted template is the device reconnected to the internet.
 
-<kbd><img src="/docs/Improvedbio.png" align="middle" width="600" ></kbd>
+<kbd><img src="/docs/Improvedbio.png" align="middle" width="800" ></kbd>
+
+Important to note that the biometrics model included in this modual is a UI framework.  In order to perform function biometric authentication, a third party recognition API needs to be included.  While we are not in the position to make an edorcement of a private utility we have put together an implimentation guide for making biometrics secure and private by design
+
+[Ethical Implimentation of Biomentrics](https://github.com/cityofaustin/Trauma-Accessible-Login/wiki/EthicalBiometrics)
 
 ## Design considerations.
 
@@ -52,10 +56,9 @@ This endpoint runs at http://localhost:3000
 
 ## One Click Heroku Deployment
 
-Alternativly you can deploy to heroku with one click:
+Alternatively you can deploy to heroku with one click:
 
-![Image of Heroku One Click Deploy](https://www.herokucdn.com/deploy/button.svg)
-[Deploy to Heroku](https://www.heroku.com/deploy/?template=https://github.com/cityofaustin/Trauma-Accessible-Login/tree/main)
+[![Image of Heroku One Click Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy/?template=https://github.com/cityofaustin/Trauma-Accessible-Login/tree/main)
 
 ### dev notes
 

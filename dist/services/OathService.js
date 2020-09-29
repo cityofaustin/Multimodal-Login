@@ -1,0 +1,13 @@
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _expressOauthServer = _interopRequireDefault(require("express-oauth-server"));
+var _Oauth = _interopRequireDefault(require("../database/models/Oauth"));
+
+const oathServer = new _expressOauthServer.default({
+  debug: true,
+  model: _Oauth.default,
+  useErrorHandler: true,
+  grants: ['authorization_code']
+  // allowBearerTokensInQueryString: true, // not needed here
+});var _default =
+
+oathServer;exports.default = _default;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9zZXJ2aWNlcy9PYXRoU2VydmljZS5qcyJdLCJuYW1lcyI6WyJvYXRoU2VydmVyIiwiT0F1dGhTZXJ2ZXIiLCJkZWJ1ZyIsIm1vZGVsIiwidXNlRXJyb3JIYW5kbGVyIiwiZ3JhbnRzIl0sIm1hcHBpbmdzIjoieUxBQUE7QUFDQTs7QUFFQSxNQUFNQSxVQUFVLEdBQUcsSUFBSUMsMkJBQUosQ0FBZ0I7QUFDakNDLEVBQUFBLEtBQUssRUFBRSxJQUQwQjtBQUVqQ0MsRUFBQUEsS0FBSyxFQUFMQSxjQUZpQztBQUdqQ0MsRUFBQUEsZUFBZSxFQUFFLElBSGdCO0FBSWpDQyxFQUFBQSxNQUFNLEVBQUUsQ0FBQyxvQkFBRDtBQUNSO0FBTGlDLENBQWhCLENBQW5CLEM7O0FBUWVMLFUiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgT0F1dGhTZXJ2ZXIgZnJvbSAnZXhwcmVzcy1vYXV0aC1zZXJ2ZXInO1xuaW1wb3J0IG1vZGVsIGZyb20gJy4uL2RhdGFiYXNlL21vZGVscy9PYXV0aCc7XG5cbmNvbnN0IG9hdGhTZXJ2ZXIgPSBuZXcgT0F1dGhTZXJ2ZXIoe1xuICBkZWJ1ZzogdHJ1ZSxcbiAgbW9kZWwsXG4gIHVzZUVycm9ySGFuZGxlcjogdHJ1ZSxcbiAgZ3JhbnRzOiBbJ2F1dGhvcml6YXRpb25fY29kZSddLFxuICAvLyBhbGxvd0JlYXJlclRva2Vuc0luUXVlcnlTdHJpbmc6IHRydWUsIC8vIG5vdCBuZWVkZWQgaGVyZVxufSk7XG5cbmV4cG9ydCBkZWZhdWx0IG9hdGhTZXJ2ZXI7XG4iXX0=
