@@ -1,1 +1,156 @@
-!function(e){function t(t){for(var a,c,o=t[0],l=t[1],s=t[2],f=0,p=[];f<o.length;f++)c=o[f],Object.prototype.hasOwnProperty.call(r,c)&&r[c]&&p.push(r[c][0]),r[c]=0;for(a in l)Object.prototype.hasOwnProperty.call(l,a)&&(e[a]=l[a]);for(u&&u(t);p.length;)p.shift()();return i.push.apply(i,s||[]),n()}function n(){for(var e,t=0;t<i.length;t++){for(var n=i[t],a=!0,o=1;o<n.length;o++){var l=n[o];0!==r[l]&&(a=!1)}a&&(i.splice(t--,1),e=c(c.s=n[0]))}return e}var a={},r={2:0},i=[];function c(t){if(a[t])return a[t].exports;var n=a[t]={i:t,l:!1,exports:{}};return e[t].call(n.exports,n,n.exports,c),n.l=!0,n.exports}c.m=e,c.c=a,c.d=function(e,t,n){c.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},c.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},c.t=function(e,t){if(1&t&&(e=c(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(c.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var a in e)c.d(n,a,function(t){return e[t]}.bind(null,a));return n},c.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return c.d(t,"a",t),t},c.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},c.p="/public/";var o=this.webpackJsonp=this.webpackJsonp||[],l=o.push.bind(o);o.push=t,o=o.slice();for(var s=0;s<o.length;s++)t(o[s]);var u=l;i.push([40,0]),n()}({19:function(e,t,n){"use strict";n.d(t,"a",(function(){return g}));var a=n(2),r=n.n(a),i=n(3),c=n.n(i),o=n(4),l=n.n(o),s=n(5),u=n.n(s),f=n(1),p=n.n(f),m=n(0),d=n.n(m);function h(e){var t=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}();return function(){var n,a=p()(e);if(t){var r=p()(this).constructor;n=Reflect.construct(a,arguments,r)}else n=a.apply(this,arguments);return u()(this,n)}}var g=function(e){l()(n,e);var t=h(n);function n(e){return r()(this,n),t.call(this,e)}return c()(n,[{key:"render",value:function(){return d.a.createElement("svg",{xmlns:"http://www.w3.org/2000/svg",width:"8208",height:"290",viewBox:"0 0 4104 290",preserveAspectRatio:"none"},d.a.createElement("defs",null,d.a.createElement("clipPath",{id:"clip-path"},d.a.createElement("rect",{width:"4104",height:"290",fill:"none"}))),d.a.createElement("g",{id:"Repeat_Grid_2","data-name":"Repeat Grid 2",clipPath:"url(#clip-path)"},d.a.createElement("g",{transform:"translate(6813 1056)"},d.a.createElement("path",{id:"Path_1918","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"})),d.a.createElement("g",{transform:"translate(7495 1056)"},d.a.createElement("path",{id:"Path_1918-2","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"})),d.a.createElement("g",{transform:"translate(8177 1056)"},d.a.createElement("path",{id:"Path_1918-3","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"})),d.a.createElement("g",{transform:"translate(8859 1056)"},d.a.createElement("path",{id:"Path_1918-4","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"})),d.a.createElement("g",{transform:"translate(9541 1056)"},d.a.createElement("path",{id:"Path_1918-5","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"})),d.a.createElement("g",{transform:"translate(10223 1056)"},d.a.createElement("path",{id:"Path_1918-6","data-name":"Path 1918",d:"M521,198.248v210c-8-17-20.92-44.85-49-40.53-52,8-48.17,67.53-105,67.53s-59.16-44-116-44-78.16,57-135,57-60.5-67-111-87c-52.84-20.93-52.33,72-109.16,72-28.42,0-42.63-12.5-56.84-25v-210c8,17,20.92,44.85,49,40.53,52-8,48.17-67.53,105-67.53s59.16,44,116,44,78.16-57,135-57,60.5,67,111,87c52.84,20.93,52.33-72,109.16-72C492.58,173.248,506.79,185.748,521,198.248Z",transform:"translate(-6652 -1214.248)",fill:"#fff"}))))}}]),n}(m.Component)},40:function(e,t,n){e.exports=n(99)},66:function(e,t,n){var a=n(17),r=n(67);"string"==typeof(r=r.__esModule?r.default:r)&&(r=[[e.i,r,""]]);var i={insert:"head",singleton:!1};a(r,i);e.exports=r.locals||{}},67:function(e,t,n){(t=n(18)(!1)).push([e.i,'body{background-image:linear-gradient(#2362c7 50%, white 50%);background-size:100% 100%;background-repeat:no-repeat;overflow:hidden}.wave-container{position:absolute;z-index:-1;top:calc(50% - 145px);width:100vw;overflow-x:visible}.wave-container svg{overflow:auto}#main{position:absolute;top:0;opacity:0;width:100%}#main .welcome-container{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}#main .welcome-container .section{margin:18px;width:290px}#main .welcome-container .section .title{font-size:30px;font-weight:500;color:#ffffff;margin-bottom:6px}#main .welcome-container .section .subtitle{color:#ffffff;opacity:0.69;font-size:20px;font-weight:500;margin-bottom:49px}#main .welcome-container .section .sub-section{display:flex;flex-direction:column;align-items:center}#main .welcome-container .section .sub-section .already{margin-top:33.7px;font-size:15px;font-weight:500;color:#2362c7}#main .welcome-container .section .sub-section .or{font-size:15px;font-weight:500;color:#9a9a9a}#main .welcome-container .section .sub-section input[type="button"],#main .welcome-container .section .sub-section input[type="submit"]{width:210px;height:50px;border-radius:9px;font-size:25px;font-weight:500;text-align:center;color:#ffffff;font-family:Montserrat;margin:6px 0 3px 0;cursor:pointer}#main .welcome-container .section .sub-section .login{background-color:#2362c7}#main .welcome-container .section .sub-section .sign-up{background-color:#9a9a9a}\n',""]),e.exports=t},68:function(e,t,n){"use strict";n.r(t),t.default="/public/img/24bada2dc970bc7c358aba2b16688cbd.png"},99:function(e,t,n){"use strict";n.r(t);var a,r=n(0),i=n.n(r),c=n(14),o=n(8),l=n.n(o),s=n(10),u=n.n(s),f=n(2),p=n.n(f),m=n(3),d=n.n(m),h=n(7),g=n.n(h),v=n(4),y=n.n(v),b=n(5),E=n.n(b),w=n(1),x=n.n(w),P=n(6),O=n.n(P),j=n(16),_=n(11),S=n(19);function k(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);t&&(a=a.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),n.push.apply(n,a)}return n}function M(e){for(var t=1;t<arguments.length;t++){var n=null!=arguments[t]?arguments[t]:{};t%2?k(Object(n),!0).forEach((function(t){O()(e,t,n[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):k(Object(n)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))}))}return e}function R(e){var t=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}();return function(){var n,a=x()(e);if(t){var r=x()(this).constructor;n=Reflect.construct(a,arguments,r)}else n=a.apply(this,arguments);return E()(this,n)}}n(25),n(66),a=n(68).default;var N=function(e){y()(n,e);var t=R(n);function n(){var e;return p()(this,n),e=t.call(this),O()(g()(e),"loadAppSettings",u()(l.a.mark((function t(){var n,a,r,i;return l.a.wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return n=M({},e.state),a=n.appSettings,t.prev=1,"api/app-settings",r={method:"GET",headers:{"Content-Type":"application/json"}},t.next=6,fetch("api/app-settings",r);case 6:return t.next=8,t.sent.json();case 8:a=t.sent,(i=a.find((function(e){return"title"===e.settingName})))&&(document.title=i.settingValue+" Auth"),t.next=17;break;case 13:t.prev=13,t.t0=t.catch(1),console.log("Error!"),console.log(t.t0);case 17:e.setState({appSettings:a});case 18:case"end":return t.stop()}}),t,null,[[1,13]])})))),e.state={appSettings:[]},e}return d()(n,[{key:"componentDidMount",value:function(){this.loadAppSettings(),setTimeout((function(){document.getElementById("splash").style.animation="fadeout 1s",document.getElementById("splash").style.opacity=0,document.getElementById("main").style.animation="fadein 1s",document.getElementById("main").style.opacity=1}),1e3)}},{key:"renderHiddenInputs",value:function(){return i.a.createElement(r.Fragment,null,i.a.createElement("input",{type:"hidden",name:"client_id",value:_.a.getQueryVariable("client_id")}),i.a.createElement("input",{type:"hidden",name:"response_type",value:_.a.getQueryVariable("response_type")}),i.a.createElement("input",{type:"hidden",name:"redirect_url",value:_.a.getQueryVariable("redirect_url")}),i.a.createElement("input",{type:"hidden",name:"scope",value:_.a.getQueryVariable("scope")}),i.a.createElement("input",{type:"hidden",name:"state",value:_.a.getQueryVariable("state")}))}},{key:"render",value:function(){var e=M({},this.state).appSettings.find((function(e){return"title"===e.settingName})),t=e?e.settingValue:"This";return i.a.createElement(r.Fragment,null,i.a.createElement("div",{id:"splash"},i.a.createElement(j.a,null)),i.a.createElement("main",{id:"main"},i.a.createElement("section",{className:"wave-container"},i.a.createElement(S.a,null)),i.a.createElement("section",{className:"welcome-container"},i.a.createElement("div",{className:"section"},i.a.createElement("div",{className:"title"},"Welcome!"),i.a.createElement("div",{className:"subtitle"},t," is a secure & private document storage solution."),i.a.createElement("div",{className:"sub-section"},i.a.createElement("img",{src:a,alt:""}),i.a.createElement("div",{className:"already"},"Already a user?"),i.a.createElement("form",{method:"GET",action:"login"},this.renderHiddenInputs(),i.a.createElement("input",{className:"login",value:"Login",type:"submit"})),i.a.createElement("div",{className:"or"},"or"),i.a.createElement("form",{method:"GET",action:"register"},this.renderHiddenInputs(),i.a.createElement("input",{className:"sign-up",type:"submit",value:"Sign-Up"})))))))}}]),n}(r.Component);Object(c.hydrate)(i.a.createElement(N,null),document.getElementById("root"))}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	function webpackJsonpCallback(data) {
+/******/ 		var chunkIds = data[0];
+/******/ 		var moreModules = data[1];
+/******/ 		var executeModules = data[2];
+/******/
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(Object.prototype.hasOwnProperty.call(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				resolves.push(installedChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		for(moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(parentJsonpFunction) parentJsonpFunction(data);
+/******/
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/
+/******/ 		// add entry modules from loaded chunk to deferred list
+/******/ 		deferredModules.push.apply(deferredModules, executeModules || []);
+/******/
+/******/ 		// run deferred modules when all chunks ready
+/******/ 		return checkDeferredModules();
+/******/ 	};
+/******/ 	function checkDeferredModules() {
+/******/ 		var result;
+/******/ 		for(var i = 0; i < deferredModules.length; i++) {
+/******/ 			var deferredModule = deferredModules[i];
+/******/ 			var fulfilled = true;
+/******/ 			for(var j = 1; j < deferredModule.length; j++) {
+/******/ 				var depId = deferredModule[j];
+/******/ 				if(installedChunks[depId] !== 0) fulfilled = false;
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferredModules.splice(i--, 1);
+/******/ 				result = __webpack_require__(__webpack_require__.s = deferredModule[0]);
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		return result;
+/******/ 	}
+/******/
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// Promise = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"index": 0
+/******/ 	};
+/******/
+/******/ 	var deferredModules = [];
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/public/";
+/******/
+/******/ 	var jsonpArray = this["webpackJsonp"] = this["webpackJsonp"] || [];
+/******/ 	var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+/******/ 	jsonpArray.push = webpackJsonpCallback;
+/******/ 	jsonpArray = jsonpArray.slice();
+/******/ 	for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+/******/ 	var parentJsonpFunction = oldJsonpFunction;
+/******/
+/******/
+/******/ 	// add entry module to deferred list
+/******/ 	deferredModules.push([0,"react.index.login.register","react.index"]);
+/******/ 	// run deferred modules when ready
+/******/ 	return checkDeferredModules();
+/******/ })
+/************************************************************************/
+/******/ ([]);

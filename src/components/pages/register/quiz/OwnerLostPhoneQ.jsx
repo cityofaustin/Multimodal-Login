@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../../util/browser-util';
-import GoBackSvg from '../../../svg/GoBackSvg';
-import OptionSvg from '../../../svg/OptionSvg';
+import React, { Component } from "react";
+import { handleIOSBrowser } from "../../../../util/browser-util";
+import GoBackSvg from "../../../svg/GoBackSvg";
+import OptionSvg from "../../../svg/OptionSvg";
 // import HasPhoneSvg from '../../../svg/HasPhoneSvg';
 import {
   animateIn,
   getSectionClassName,
-} from '../../../../util/animation-util';
+} from "../../../../util/animation-util";
 if (process.env.BROWSER) {
-  import('./OwnerLostPhoneQ.scss');
+  import("./OwnerLostPhoneQ.scss");
 }
 
 export default class OwnerLostPhoneQ extends Component {
@@ -22,7 +22,7 @@ export default class OwnerLostPhoneQ extends Component {
     const { lostPhone } = props.questions;
     const selectedOption = lostPhone ? lostPhone : undefined;
     this.state = {
-      options: ['noPhone', 'lostPhoneOnceOrMore', 'lostPhoneNever'],
+      options: ["noPhone", "lostPhoneOnceOrMore", "lostPhoneNever"],
       selectedOption,
     };
   }
@@ -53,15 +53,17 @@ export default class OwnerLostPhoneQ extends Component {
             {/* <HasPhoneSvg /> */}
             <div className="options">
               {options.map((option, i) => {
-                let svgType = i < 2 ? 'meh-phone' : 'smiley-phone';
-                svgType = i < 1 ? 'no-phone' : svgType;
+                let svgType = i < 2 ? "meh-phone" : "smiley-phone";
+                svgType = i < 1 ? "no-phone" : svgType;
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() =>
-                      this.setState({ selectedOption: option })
-                    }
+                    handleClick={() => {
+                      if (!this.props.position) {
+                        this.setState({ selectedOption: option });
+                      }
+                    }}
                     isSelected={selectedOption === option}
                   />
                 );
@@ -69,13 +71,13 @@ export default class OwnerLostPhoneQ extends Component {
             </div>
             <div className="section-container">
               <input
-                style={{ width: '210px' }}
+                style={{ width: "210px" }}
                 type="button"
                 value="Next"
                 onClick={() => {
                   const q = this.props.questions;
                   q.lostPhone = selectedOption;
-                  this.props.handleGoForward('owner', 7, { questions: q });
+                  this.props.handleGoForward("owner", 7, { questions: q });
                 }}
                 disabled={!selectedOption}
               />
@@ -83,7 +85,7 @@ export default class OwnerLostPhoneQ extends Component {
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 6)}
+            goBack={() => this.props.handleGoBack("owner", 6)}
           />
         </div>
       </div>

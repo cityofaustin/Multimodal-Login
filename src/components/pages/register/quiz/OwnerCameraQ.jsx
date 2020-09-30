@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../../util/browser-util';
-import GoBackSvg from '../../../svg/GoBackSvg';
+import React, { Component } from "react";
+import { handleIOSBrowser } from "../../../../util/browser-util";
+import GoBackSvg from "../../../svg/GoBackSvg";
 // import PasswordSvg from '../../../svg/PasswordSvg';
-import OptionSvg from '../../../svg/OptionSvg';
+import OptionSvg from "../../../svg/OptionSvg";
 import {
   animateIn,
   getSectionClassName,
-} from '../../../../util/animation-util';
+} from "../../../../util/animation-util";
 if (process.env.BROWSER) {
-  import('./OwnerCameraQ.scss');
+  import("./OwnerCameraQ.scss");
 }
 
 export default class OwnerCameraQ extends Component {
@@ -23,10 +23,10 @@ export default class OwnerCameraQ extends Component {
     const selectedOptions = devicesWithCamera ? devicesWithCamera : [];
     this.state = {
       options: [
-        'cameraAccessNone',
-        'cameraAccessTablet',
-        'cameraAccessComputer',
-        'cameraAccessPhone',
+        "cameraAccessNone",
+        "cameraAccessTablet",
+        "cameraAccessComputer",
+        "cameraAccessPhone",
       ],
       selectedOptions,
     };
@@ -81,7 +81,11 @@ export default class OwnerCameraQ extends Component {
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() => this.handleOptionSelect(option)}
+                    handleClick={() => {
+                      if (!this.props.position) {
+                        this.handleOptionSelect(option);
+                      }
+                    }}
                     isSelected={selectedOptions.indexOf(option) > -1}
                   />
                 );
@@ -89,16 +93,16 @@ export default class OwnerCameraQ extends Component {
             </div>
             <div className="section-container">
               <input
-                style={{ width: '210px' }}
+                style={{ width: "210px" }}
                 type="button"
                 value="Next"
                 onClick={() => {
                   const q = this.props.questions;
                   q.devicesWithCamera = selectedOptions;
-                  if (q.devicesWithCamera.indexOf('cameraAccessNone') > -1) {
+                  if (q.devicesWithCamera.indexOf("cameraAccessNone") > -1) {
                     q.scanningPalm = undefined;
                   }
-                  this.props.handleGoForward('owner', 6, { questions: q });
+                  this.props.handleGoForward("owner", 6, { questions: q });
                 }}
                 disabled={selectedOptions.length < 1}
               />
@@ -106,7 +110,7 @@ export default class OwnerCameraQ extends Component {
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 5)}
+            goBack={() => this.props.handleGoBack("owner", 5)}
           />
         </div>
       </div>

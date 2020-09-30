@@ -1,1 +1,25 @@
-(this.webpackJsonp=this.webpackJsonp||[]).push([[9],{112:function(e,t,n){(t=n(18)(!1)).push([e.i,'#section-10-owner .card{min-height:454px;display:flex;flex-direction:column;justify-content:space-between;align-items:center}#section-10-owner .card .card-title{font-size:25px !important;padding-bottom:13px}#section-10-owner .card .card-content{display:flex;flex-direction:column;align-items:center}#section-10-owner .card .card-content .excerpt{text-align:center;padding:18px 0 8px 0}#section-10-owner .card .card-content .email-section{padding-bottom:25px}#section-10-owner .card .card-content .email-section .card-body-section1{align-items:flex-start !important;display:flex;flex-direction:column}#section-10-owner .card .card-content .email-section .card-body-section1 div{font-size:18px;color:#484848;margin-bottom:2px}#section-10-owner .card .card-content .email-section .card-body-section1 input[type="password"]{width:210px;height:35px;line-height:35px;border-radius:8px;border:solid 1px rgba(112,112,112,0.27);background-color:#e8f0fe;padding-left:14px;font-size:30px;color:rgba(72,72,72,0.77)}#section-10-owner .how-container{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}#section-10-owner .how-container .sec-excerpt{text-align:center;margin-bottom:24px;font-size:18px;color:#484848;opacity:0.77}\n',""]),e.exports=t},127:function(e,t,n){var o=n(17),i=n(112);"string"==typeof(i=i.__esModule?i.default:i)&&(i=[[e.i,i,""]]);var c={insert:"head",singleton:!1};o(i,c);e.exports=i.locals||{}}}]);
+(this["webpackJsonp"] = this["webpackJsonp"] || []).push([[9],{
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerLostPhoneQ.scss":
+/*!**********************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerLostPhoneQ.scss ***!
+  \**********************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.i, \"#section-6-owner .card {\\n  display: flex;\\n  flex-direction: column;\\n  justify-content: space-between;\\n  align-items: center;\\n  height: 453px; }\\n  #section-6-owner .card .options {\\n    display: flex;\\n    flex-wrap: wrap;\\n    justify-content: center; }\\n    #section-6-owner .card .options svg {\\n      margin: 0 -4px; }\\n    #section-6-owner .card .options svg:first-child {\\n      width: 200px; }\\n\", \"\"]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack:///./src/components/pages/register/quiz/OwnerLostPhoneQ.scss?./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js");
+
+/***/ }),
+
+/***/ "./src/components/pages/register/quiz/OwnerLostPhoneQ.scss":
+/*!*****************************************************************!*\
+  !*** ./src/components/pages/register/quiz/OwnerLostPhoneQ.scss ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var api = __webpack_require__(/*! ../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ \"./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js\");\n            var content = __webpack_require__(/*! !../../../../../node_modules/css-loader/dist/cjs.js!../../../../../node_modules/sass-loader/dist/cjs.js!./OwnerLostPhoneQ.scss */ \"./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerLostPhoneQ.scss\");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === 'string') {\n              content = [[module.i, content, '']];\n            }\n\nvar options = {};\n\noptions.insert = \"head\";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack:///./src/components/pages/register/quiz/OwnerLostPhoneQ.scss?");
+
+/***/ })
+
+}]);

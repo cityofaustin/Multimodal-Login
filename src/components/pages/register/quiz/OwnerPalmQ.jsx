@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../../util/browser-util';
-import GoBackSvg from '../../../svg/GoBackSvg';
-import OptionSvg from '../../../svg/OptionSvg';
-import PalmInfoSvg from '../../../svg/PalmInfoSvg';
+import React, { Component } from "react";
+import { handleIOSBrowser } from "../../../../util/browser-util";
+import GoBackSvg from "../../../svg/GoBackSvg";
+import OptionSvg from "../../../svg/OptionSvg";
+import PalmInfoSvg from "../../../svg/PalmInfoSvg";
 import {
   animateIn,
   getSectionClassName,
-} from '../../../../util/animation-util';
+} from "../../../../util/animation-util";
 if (process.env.BROWSER) {
-  import('./OwnerPalmQ.scss');
+  import("./OwnerPalmQ.scss");
 }
 
 export default class OwnerPalmQ extends Component {
@@ -23,7 +23,7 @@ export default class OwnerPalmQ extends Component {
     const { scanningPalm } = props.questions;
     const selectedOption = scanningPalm ? scanningPalm : undefined;
     this.state = {
-      options: ['palmNotComfortable', 'palmComfortable'],
+      options: ["palmNotComfortable", "palmComfortable"],
       selectedOption,
     };
   }
@@ -54,14 +54,16 @@ export default class OwnerPalmQ extends Component {
             <div className="options">
               {options.map((option) => {
                 const svgType =
-                  option === options[0] ? 'meh-palm' : 'smiley-palm';
+                  option === options[0] ? "meh-palm" : "smiley-palm";
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() =>
-                      this.setState({ selectedOption: option })
-                    }
+                    handleClick={() => {
+                      if (!this.props.position) {
+                        this.setState({ selectedOption: option });
+                      }
+                    }}
                     isSelected={selectedOption === option}
                   />
                 );
@@ -69,13 +71,13 @@ export default class OwnerPalmQ extends Component {
             </div>
             <div className="section-container">
               <input
-                style={{ width: '210px' }}
+                style={{ width: "210px" }}
                 type="button"
                 value="Next"
                 onClick={() => {
                   const q = this.props.questions;
                   q.scanningPalm = selectedOption;
-                  this.props.handleGoForward('owner', 8, { questions: q });
+                  this.props.handleGoForward("owner", 8, { questions: q });
                 }}
                 disabled={!selectedOption}
               />
@@ -83,7 +85,7 @@ export default class OwnerPalmQ extends Component {
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 7)}
+            goBack={() => this.props.handleGoBack("owner", 7)}
           />
         </div>
       </div>

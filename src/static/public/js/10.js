@@ -1,1 +1,25 @@
-(this.webpackJsonp=this.webpackJsonp||[]).push([[10],{101:function(e,t,p){(t=p(18)(!1)).push([e.i,'#palm-setup{height:587px;min-height:454px;display:flex;flex-direction:column;justify-content:space-between;align-items:center}#palm-setup .card-content{display:flex;flex-direction:column;align-items:center}#palm-setup .card-content .card-title{font-size:20px;font-weight:bold;color:#2362c7;text-align:center;padding-bottom:13px}#palm-setup .card-content .excerpt{text-align:center;padding:18px 0 8px 0}#palm-setup .how{padding-top:5px;font-size:15px;color:#9a9a9a;text-align:center;cursor:pointer}#palm-setup input[type="button"]{width:210px;height:50px;font-size:20px}#palm-setup .diagram-excerpt-1{text-align:center;font-size:15px;color:#484848;opacity:0.77}#palm-setup .diagram-section-1{width:100%;display:flex;justify-content:space-evenly}#palm-setup .video{background-color:#ededed;width:204px;height:314px;border:1px solid #707070}#palm-setup .palm-template{word-break:break-all;display:block;height:100px;overflow-y:scroll;font-size:20px;color:#cecece}.palm-overlay{position:absolute;top:14px;left:-41px}.palm-overlay svg{width:288px;height:288px}\n',""]),e.exports=t},116:function(e,t,p){var o=p(17),i=p(101);"string"==typeof(i=i.__esModule?i.default:i)&&(i=[[e.i,i,""]]);var a={insert:"head",singleton:!1};o(i,a);e.exports=i.locals||{}}}]);
+(this["webpackJsonp"] = this["webpackJsonp"] || []).push([[10],{
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerPalmQ.scss":
+/*!*****************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerPalmQ.scss ***!
+  \*****************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.i, \"#section-7-owner .card {\\n  display: flex;\\n  flex-direction: column;\\n  justify-content: space-between;\\n  align-items: center;\\n  height: 453px; }\\n  #section-7-owner .card .options {\\n    display: flex; }\\n    #section-7-owner .card .options svg {\\n      margin: 0 -4px; }\\n\", \"\"]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack:///./src/components/pages/register/quiz/OwnerPalmQ.scss?./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js");
+
+/***/ }),
+
+/***/ "./src/components/pages/register/quiz/OwnerPalmQ.scss":
+/*!************************************************************!*\
+  !*** ./src/components/pages/register/quiz/OwnerPalmQ.scss ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var api = __webpack_require__(/*! ../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ \"./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js\");\n            var content = __webpack_require__(/*! !../../../../../node_modules/css-loader/dist/cjs.js!../../../../../node_modules/sass-loader/dist/cjs.js!./OwnerPalmQ.scss */ \"./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/components/pages/register/quiz/OwnerPalmQ.scss\");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === 'string') {\n              content = [[module.i, content, '']];\n            }\n\nvar options = {};\n\noptions.insert = \"head\";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack:///./src/components/pages/register/quiz/OwnerPalmQ.scss?");
+
+/***/ })
+
+}]);

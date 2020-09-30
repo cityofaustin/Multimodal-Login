@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../../util/browser-util';
-import GoBackSvg from '../../../svg/GoBackSvg';
-import OptionSvg from '../../../svg/OptionSvg';
-import SecurityQuestionSvg from '../../../svg/SecurityQuestionSvg';
+import React, { Component } from "react";
+import { handleIOSBrowser } from "../../../../util/browser-util";
+import GoBackSvg from "../../../svg/GoBackSvg";
+import OptionSvg from "../../../svg/OptionSvg";
+import SecurityQuestionSvg from "../../../svg/SecurityQuestionSvg";
 import {
   animateIn,
   getSectionClassName,
-} from '../../../../util/animation-util';
+} from "../../../../util/animation-util";
 if (process.env.BROWSER) {
-  import('./OwnerSecurityQ.scss');
+  import("./OwnerSecurityQ.scss");
 }
 
 export default class OwnerSecurityQ extends Component {
@@ -24,7 +24,7 @@ export default class OwnerSecurityQ extends Component {
       ? answeringSecurityQuestions
       : undefined;
     this.state = {
-      options: ['securityNotGood', 'securityGood'],
+      options: ["securityNotGood", "securityGood"],
       selectedOption,
     };
   }
@@ -58,14 +58,16 @@ export default class OwnerSecurityQ extends Component {
             <div className="options">
               {options.map((option) => {
                 const svgType =
-                  option === options[0] ? 'meh-security' : 'smiley-security';
+                  option === options[0] ? "meh-security" : "smiley-security";
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() =>
-                      this.setState({ selectedOption: option })
-                    }
+                    handleClick={() => {
+                      if (!this.props.position) {
+                        this.setState({ selectedOption: option });
+                      }
+                    }}
                     isSelected={selectedOption === option}
                   />
                 );
@@ -73,13 +75,13 @@ export default class OwnerSecurityQ extends Component {
             </div>
             <div className="section-container">
               <input
-                style={{ width: '210px' }}
+                style={{ width: "210px" }}
                 type="button"
                 value="Next"
                 onClick={() => {
                   const q = this.props.questions;
                   q.answeringSecurityQuestions = selectedOption;
-                  this.props.handleGoForward('owner', 9, { questions: q });
+                  this.props.handleGoForward("owner", 9, { questions: q });
                 }}
                 disabled={!selectedOption}
               />
@@ -87,7 +89,7 @@ export default class OwnerSecurityQ extends Component {
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 8)}
+            goBack={() => this.props.handleGoBack("owner", 8)}
           />
         </div>
       </div>

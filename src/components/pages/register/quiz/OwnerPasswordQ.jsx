@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { handleIOSBrowser } from '../../../../util/browser-util';
-import GoBackSvg from '../../../svg/GoBackSvg';
-import PasswordSvg from '../../../svg/PasswordSvg';
-import OptionSvg from '../../../svg/OptionSvg';
+import React, { Component } from "react";
+import { handleIOSBrowser } from "../../../../util/browser-util";
+import GoBackSvg from "../../../svg/GoBackSvg";
+import PasswordSvg from "../../../svg/PasswordSvg";
+import OptionSvg from "../../../svg/OptionSvg";
 import {
   animateIn,
   getSectionClassName,
-} from '../../../../util/animation-util';
+} from "../../../../util/animation-util";
 if (process.env.BROWSER) {
-  import('./OwnerPasswordQ.scss');
+  import("./OwnerPasswordQ.scss");
 }
 
 export default class OwnerPasswordQ extends Component {
@@ -22,7 +22,7 @@ export default class OwnerPasswordQ extends Component {
     const { forgetsPassword } = props.questions;
     const selectedOption = forgetsPassword ? forgetsPassword : undefined;
     this.state = {
-      options: ['forgetPasswordOften', 'forgetPasswordRarely'],
+      options: ["forgetPasswordOften", "forgetPasswordRarely"],
       selectedOption,
     };
   }
@@ -54,14 +54,16 @@ export default class OwnerPasswordQ extends Component {
             </div>
             <div className="options">
               {options.map((option) => {
-                const svgType = option === options[0] ? 'meh' : 'smiley';
+                const svgType = option === options[0] ? "meh" : "smiley";
                 return (
                   <OptionSvg
                     key={option}
                     svgType={svgType}
-                    handleClick={() =>
-                      this.setState({ selectedOption: option })
-                    }
+                    handleClick={() => {
+                      if (!this.props.position) {
+                        this.setState({ selectedOption: option });
+                      }
+                    }}
                     isSelected={selectedOption === option}
                   />
                 );
@@ -69,13 +71,13 @@ export default class OwnerPasswordQ extends Component {
             </div>
             <div className="section-container">
               <input
-                style={{ width: '210px' }}
+                style={{ width: "210px" }}
                 type="button"
                 value="Next"
                 onClick={() => {
                   const q = this.props.questions;
                   q.forgetsPassword = selectedOption;
-                  this.props.handleGoForward('owner', 5, { questions: q });
+                  this.props.handleGoForward("owner", 5, { questions: q });
                 }}
                 disabled={!selectedOption}
               />
@@ -83,7 +85,7 @@ export default class OwnerPasswordQ extends Component {
           </div>
           <GoBackSvg
             color="#2362c7"
-            goBack={() => this.props.handleGoBack('owner', 4)}
+            goBack={() => this.props.handleGoBack("owner", 4)}
           />
         </div>
       </div>
