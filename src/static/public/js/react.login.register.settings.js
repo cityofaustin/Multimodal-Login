@@ -1,4 +1,4 @@
-(this["webpackJsonp"] = this["webpackJsonp"] || []).push([["react.login.register"],{
+(this["webpackJsonp"] = this["webpackJsonp"] || []).push([["react.login.register.settings"],{
 
 /***/ "./node_modules/@babel/runtime/helpers/inheritsLoose.js":
 /*!**************************************************************!*\

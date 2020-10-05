@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import UrlUtil from "../../../util/url-util";
 import LoginMethodOptionSvg from "../../svg/LoginMethodOptionSvg";
-import PasswordMethodLoginSvg from "../../svg/PasswordMethodLoginSvg";
 import KeycodeInputSvg from "../../svg/KeycodeInputSvg";
 import delay from "../../../util/delay";
 import TextMethodLoginSvg from "../../svg/TextMethodLoginSvg";
@@ -13,6 +12,8 @@ import HowSvg from "../../svg/HowSvg";
 import GoBackSvg from "../../svg/GoBackSvg";
 import SecurityExampleSvg from "../../svg/SecurityExampleSvg";
 import SocialSupportLoginSvg from "../../svg/SocialSupportLoginSvg";
+import ExitConfigSvg from "../../svg/ExitConfigSvg";
+import PasswordSetup from "../../setup/PasswordSetup";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
@@ -39,7 +40,6 @@ export default class LoginMethods extends Component {
 
     this.state = {
       username: "",
-      password: "",
       faceTemplate: "",
       oneTimeCode: "",
       requestLoginCode: false,
@@ -77,6 +77,21 @@ export default class LoginMethods extends Component {
         ),
       },
     ];
+  };
+
+  getLoginMethodsNotSetup = () => {
+    const { loginMethods } = { ...this.props };
+    const allLoginMethods = [
+      "SecurityQuestionsLoginType",
+      "PasswordLoginType",
+      "TextLoginType",
+      "SocialSupportType",
+      "PalmLoginType",
+    ];
+    const loginMethodsNotSetup = allLoginMethods.filter(
+      (alm) => !loginMethods.find((lm) => lm === alm)
+    );
+    return loginMethodsNotSetup;
   };
 
   sendKeycode = async () => {
@@ -163,50 +178,19 @@ export default class LoginMethods extends Component {
     );
   };
 
-  renderSelectedLoginMethod(loginMethod) {
-    const { password, keycode, securityItems, isDisplayHow } = {
+  renderSelectedLoginMethod(loginMethod, isSettings = false, isAdd = false) {
+    const { keycode, securityItems, isDisplayHow } = {
       ...this.state,
     };
+    const { username } = { ...this.props };
     switch (loginMethod) {
       case "PasswordLoginType":
         return (
-          <div id="section-1-owner">
-            <div className="section-contents">
-              <form
-                method="POST"
-                action="/authorize"
-                className="card login-card"
-              >
-                <div className="top-section">
-                  <div className="card-title">Password</div>
-                  <PasswordMethodLoginSvg />
-                </div>
-                <div className="card-body">
-                  <div className="card-body-section1">
-                    <div>Password</div>
-                    <input
-                      name="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) =>
-                        this.setState({ password: e.target.value })
-                      }
-                    />
-                    <div className="excerpt">
-                      Please type your password to gain access to your account.
-                    </div>
-                  </div>
-                </div>
-                <input
-                  style={{ width: "210px" }}
-                  type="submit"
-                  value="Login"
-                  disabled={password.length < 1}
-                />
-                {this.renderHiddenInputs()}
-              </form>
-            </div>
-          </div>
+          <PasswordSetup
+            username={username}
+            isSettings={isSettings}
+            isAdd={isAdd}
+          />
         );
       case "TextLoginType":
         return (
@@ -526,21 +510,35 @@ export default class LoginMethods extends Component {
   }
 
   render() {
-    const { loginMethods } = { ...this.props };
+    const { loginMethods, isSettings } = { ...this.props };
 
-    console.log({ loginMethods });
+    // console.log({ loginMethods });
     const { selectedLoginMethod } = { ...this.state };
-    let { isDisplayHow } = { ...this.state };
+    // let { isDisplayHow } = { ...this.state };
     return (
       <div className="login-container">
         <div className="section">
-          <div className="title">How would you like to login?</div>
-          <div className="subtitle">Choose your login method</div>
+          {!isSettings && (
+            <Fragment>
+              <div className="title">How would you like to login?</div>
+              <div className="subtitle">Choose your login method</div>
+            </Fragment>
+          )}
+          {isSettings && (
+            <Fragment>
+              <div className="title">
+                Which login method do you need to configure?
+              </div>
+              <div className="subtitle">
+                Edit an existing login method or add a new one
+              </div>
+            </Fragment>
+          )}
           <div className="login-methods">
             {loginMethods.map((loginMethod) => (
               <div key={loginMethod} className="login-method">
                 {selectedLoginMethod === loginMethod &&
-                  this.renderSelectedLoginMethod(loginMethod)}
+                  this.renderSelectedLoginMethod(loginMethod, isSettings)}
                 {selectedLoginMethod !== loginMethod && (
                   <div
                     className="login-svg"
@@ -551,11 +549,54 @@ export default class LoginMethods extends Component {
                       })
                     }
                   >
-                    <LoginMethodOptionSvg loginMethod={loginMethod} />
+                    <LoginMethodOptionSvg
+                      loginMethod={loginMethod}
+                      loginConfigure={isSettings ? "configure" : "none"}
+                    />
                   </div>
                 )}
               </div>
             ))}
+            {isSettings && (
+              <Fragment>
+                {this.getLoginMethodsNotSetup().map((loginMethod) => (
+                  <div key={loginMethod} className="login-method">
+                    {selectedLoginMethod === loginMethod &&
+                      this.renderSelectedLoginMethod(
+                        loginMethod,
+                        isSettings,
+                        true
+                      )}
+                    {selectedLoginMethod !== loginMethod && (
+                      <div
+                        className="login-svg"
+                        onClick={() =>
+                          this.setState({
+                            isDisplayHow: false,
+                            selectedLoginMethod: loginMethod,
+                          })
+                        }
+                      >
+                        <LoginMethodOptionSvg
+                          loginMethod={loginMethod}
+                          loginConfigure="add"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    window.location.href = UrlUtil.getQueryVariable(
+                      "redirect_url"
+                    );
+                  }}
+                >
+                  <ExitConfigSvg />
+                </div>
+              </Fragment>
+            )}
           </div>
         </div>
       </div>

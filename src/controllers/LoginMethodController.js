@@ -1,8 +1,9 @@
-import * as express from 'express';
+import * as express from "express";
 import auth from "../middleware/auth";
+import common from "../common/common";
 
 class LoginMethodController {
-  path = '/login-methods';
+  path = "/login-methods";
   router = express.Router();
 
   constructor() {
@@ -14,10 +15,18 @@ class LoginMethodController {
     this.router.get(this.path, auth.required, this.getLoginMethods);
   }
 
-  getLoginMethods = (request, response) => {
-    // TODO:
-    return response.json({loginMethods: ['1']});
-  }
+  getLoginMethods = async (request, response) => {
+    try {
+      let username = request.payload.username;
+      let res = await common.dbClient.getLoginInfoByUsernameOrEmail(
+        username
+      );
+      return response.json({...res, username });
+    } catch (err) {
+      console.error(err.stack);
+      return response.status(500).send("Something broke!");
+    }
+  };
 }
 
 export default LoginMethodController;

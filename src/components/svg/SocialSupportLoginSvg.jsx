@@ -35,13 +35,13 @@ export default class SocialSupportLoginSvg extends Component {
             >
               <text
                 id="Social_Support"
-                data-name="Social 
+                data-name="Social
 Support"
                 transform="translate(87 214.606)"
                 fill="#2362c7"
-                font-size="41"
-                font-family="Montserrat-Bold, Montserrat"
-                font-weight="700"
+                fontSize="41"
+                fontFamily="Montserrat-Bold, Montserrat"
+                fontWeight="700"
               >
                 <tspan x="-69.413" y="0">
                   Social{" "}

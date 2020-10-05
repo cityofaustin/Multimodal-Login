@@ -3,12 +3,14 @@ import LogoSvg from "../svg/logo-svg";
 import ContactSvg from "../svg/contact-svg";
 import LoaderSvg from "../svg/LoaderSvg";
 import UrlUtil from "../../util/url-util";
+import LoginMethods from "./login/LoginMethods";
 // import UrlUtil from "../../util/url-util";
 // import LoginMethods from "./login/LoginMethods";
 
 if (process.env.BROWSER) {
   require("../global.scss");
   require("./settings.scss");
+  require("./login.scss");
 }
 
 class Settings extends React.Component {
@@ -16,6 +18,9 @@ class Settings extends React.Component {
     super();
     this.state = {
       isLoadingLoginMethods: true,
+      loginMethods: [],
+      securityQuestions: [],
+      username: ""
     };
   }
 
@@ -54,6 +59,7 @@ class Settings extends React.Component {
   };
 
   loadLoginMethods = async () => {
+    let {loginMethods, securityQuestions, username} = {...this.state};
     try {
       const url = "/api/login-methods";
       const authorization = UrlUtil.getQueryVariable("access_token");
@@ -69,39 +75,17 @@ class Settings extends React.Component {
         // NOTE: uncomment when done
         // window.location.href = '../' + location.search;
       }
-      const loginMethods = await response.json();
-      // this.setState({ isLoadingLoginMethods: false });
+      const responseJson = await response.json();
+      loginMethods = responseJson.loginMethods;
+      securityQuestions = responseJson.securityQuestions;
+      this.setState({ isLoadingLoginMethods: false, loginMethods, securityQuestions, username });
     } catch (err) {
       console.error(err);
     }
   };
 
-  findUser = async (e) => {
-    e.preventDefault();
-
-    const { username, isLoadingLoginMethods } = { ...this.state };
-    let { findUserError, loginMethods, securityQuestions } = { ...this.state };
-    const input = "/api/users/login-info";
-    const init = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ usernameOrEmail: username }),
-    };
-    const httpResponse = await fetch(input, init);
-    const response = await httpResponse.json();
-    if (response.loginMethods) {
-      findUserError = "";
-      loginMethods = response.loginMethods;
-      securityQuestions = response.securityQuestions;
-    } else {
-      findUserError = "No account found with that username";
-    }
-    this.setState({ findUserError, loginMethods, securityQuestions });
-  };
-
   render() {
-    const { isLoadingLoginMethods } = { ...this.state };
-    // const { loginMethods, username, securityQuestions } = { ...this.state };
+    const { isLoadingLoginMethods, loginMethods, securityQuestions, username } = { ...this.state };
     return (
       <Fragment>
         <Fragment>
@@ -129,18 +113,14 @@ class Settings extends React.Component {
               </div>
             )}
             {!isLoadingLoginMethods && (
-              <div className="login-methods">
-                Which login method do you need to configure?
-              </div>
-            )}
-            {/* {!loginMethods && this.renderUsernamePrompt()}
-            {loginMethods && (
               <LoginMethods
                 loginMethods={loginMethods}
                 username={username}
                 securityQuestions={securityQuestions}
+                isSettings
               />
-            )} */}
+            )}
+
           </main>
         </Fragment>
       </Fragment>
