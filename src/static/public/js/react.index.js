@@ -77,7 +77,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__(/*! /Users/adam/git/coa/Trauma-Accessible-Login/src/components/entrypoints/index.jsx */\"./src/components/entrypoints/index.jsx\");\n\n\n//# sourceURL=webpack:///multi_./src/components/entrypoints/index.jsx?");
+eval("module.exports = __webpack_require__(/*! C:\\Users\\Nitro\\MY-WORKSPACE-WINDOWS\\MYPASS-OAUTH-BRANCHES\\multimodal-login\\src\\components\\entrypoints\\index.jsx */\"./src/components/entrypoints/index.jsx\");\n\n\n//# sourceURL=webpack:///multi_./src/components/entrypoints/index.jsx?");
 
 /***/ })
 

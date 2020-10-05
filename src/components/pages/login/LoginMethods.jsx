@@ -13,6 +13,7 @@ import HowSvg from "../../svg/HowSvg";
 import GoBackSvg from "../../svg/GoBackSvg";
 import SecurityExampleSvg from "../../svg/SecurityExampleSvg";
 import SocialSupportLoginSvg from "../../svg/SocialSupportLoginSvg";
+import EthCrypto from "eth-crypto";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
@@ -49,6 +50,8 @@ export default class LoginMethods extends Component {
       // selectedLoginMethod: "TextLoginType",
       securityItems,
       isDisplayHow: false,
+      publicAddress: "",
+      signature: "",
     };
   }
 
@@ -159,10 +162,56 @@ export default class LoginMethods extends Component {
         />
         <input id="scope" name="scope" type="hidden" value="" />
         <input id="state" name="state" type="hidden" value="" />
+        <input
+          type="text"
+          id="signature"
+          name="signature"
+          type="hidden"
+          value={this.state.signature}
+        />
+        <input
+          type="text"
+          id="publicAddress"
+          name="publicAddress"
+          type="hidden"
+          value={this.state.publicAddress}
+        />
       </Fragment>
     );
   };
 
+  onPasswordChange = (e) => {
+    let pass = e.target.value;
+    this.setState({ password: pass });
+
+    if (this.state.password !== undefined && pass.length >= 64) {
+      let privateKey = pass;
+      let publicEncryptionKey;
+      let publicAddress;
+      let signature;
+
+      if (privateKey.substring(0, 2) !== "0x") {
+        privateKey = "0x" + privateKey;
+      }
+
+      try {
+        publicEncryptionKey = EthCrypto.publicKeyByPrivateKey(privateKey);
+        publicAddress = EthCrypto.publicKey.toAddress(publicEncryptionKey);
+
+        const message = publicAddress;
+        const messageHash = EthCrypto.hash.keccak256(message);
+        signature = EthCrypto.sign(privateKey, messageHash);
+
+        document.cookie =
+          "bring-your-own-key=" + privateKey.substring(2, privateKey.length);
+      } catch (e) {
+        console.log("Not using byok");
+      }
+
+      this.setState({ publicAddress });
+      this.setState({ signature });
+    }
+  };
   renderSelectedLoginMethod(loginMethod) {
     const { password, keycode, securityItems, isDisplayHow } = {
       ...this.state,
@@ -188,9 +237,7 @@ export default class LoginMethods extends Component {
                       name="password"
                       type="password"
                       value={password}
-                      onChange={(e) =>
-                        this.setState({ password: e.target.value })
-                      }
+                      onChange={this.onPasswordChange}
                     />
                     <div className="excerpt">
                       Please type your password to gain access to your account.
@@ -528,7 +575,6 @@ export default class LoginMethods extends Component {
   render() {
     const { loginMethods } = { ...this.props };
 
-    console.log({ loginMethods });
     const { selectedLoginMethod } = { ...this.state };
     let { isDisplayHow } = { ...this.state };
     return (

@@ -160,19 +160,41 @@ class MongoDbClient {
     await socialSupportType.save();
     user.loginTypes.push(socialSupportType);
 
-    const privKeyUuid = uuidv4();
+    // Normal User
+    if (
+      body.publicEncryptionKey === undefined &&
+      body.publicAddress === undefined
+    ) {
+      const privKeyUuid = uuidv4();
 
-    let did = await this.createNewDID();
-    did.publicEncryptionKey = EthCrypto.publicKeyByPrivateKey(
-      "0x" + did.privateKey
-    );
-    did.privateKeyGuid = privKeyUuid;
+      let did = await this.createNewDID();
+      did.publicEncryptionKey = EthCrypto.publicKeyByPrivateKey(
+        "0x" + did.privateKey
+      );
+      did.privateKeyGuid = privKeyUuid;
 
-    await secureKeyStorage.store(privKeyUuid, did.privateKey);
+      await secureKeyStorage.store(privKeyUuid, did.privateKey);
 
-    user.didAddress = did.address;
-    user.didPublicEncryptionKey = did.publicEncryptionKey;
-    user.didPrivateKeyGuid = did.privateKeyGuid;
+      user.didAddress = did.address;
+      user.didPublicEncryptionKey = did.publicEncryptionKey;
+      user.didPrivateKeyGuid = did.privateKeyGuid;
+    } else {
+      // BYOK User
+      // Doubles as passwordLoginType
+      const passwordLoginType = new PasswordLoginType();
+      const saltHash = this.getSecretSaltHash(uuidv4());
+      passwordLoginType.passwordSalt = saltHash.salt;
+      passwordLoginType.passwordHash = saltHash.hash;
+      await passwordLoginType.save();
+      user.loginTypes.push(passwordLoginType);
+
+      const privKeyUuid = uuidv4();
+      await secureKeyStorage.store(privKeyUuid, "userbyok");
+
+      user.didAddress = body.publicAddress;
+      user.didPublicEncryptionKey = body.publicEncryptionKey;
+      user.didPrivateKeyGuid = privKeyUuid;
+    }
 
     await user.save();
 
@@ -277,6 +299,7 @@ class MongoDbClient {
   // If they are authorized to login
   async getAccountByCredentials(body) {
     let user = null;
+
     if (body.username && body.username.length > 0) {
       user = await OAuthUser.findOne({
         username: body.username,
@@ -325,6 +348,16 @@ class MongoDbClient {
           loginType.passwordSalt,
           loginType.passwordHash
         )
+      ) {
+        successfulLoginPasswords++;
+      }
+
+      // BYOK
+      if (
+        body.publicAddress &&
+        body.signature &&
+        loginType.itemtype === "PasswordLoginType" &&
+        this.validByok(body.publicAddress, body.signature, user.didAddress)
       ) {
         successfulLoginPasswords++;
       }
@@ -433,6 +466,22 @@ class MongoDbClient {
       .pbkdf2Sync(password, secretSalt, 10000, 512, "sha512")
       .toString("hex");
     return secretHash === hash;
+  };
+
+  validByok = function (publicAddress, signature, userPublicAddress) {
+    const signer = EthCrypto.recover(
+      signature,
+      EthCrypto.hash.keccak256(publicAddress) // signed message hash
+    );
+
+    if (
+      signer !== undefined &&
+      signer.toLowerCase() === userPublicAddress.toLowerCase()
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   getSecretSaltHash = function (password) {

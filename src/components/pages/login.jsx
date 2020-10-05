@@ -6,6 +6,7 @@ import ContactSvg from "../svg/contact-svg";
 import UrlUtil from "../../util/url-util";
 import axios from "axios";
 import LoginMethods from "./login/LoginMethods";
+import EthCrypto from "eth-crypto";
 // import opencv from '../../workers/opencv-4-3-0.js';
 // import test from '../../fonts/Montserrat/Montserrat-Regular.ttf'
 
@@ -64,17 +65,15 @@ class Login extends React.Component {
       };
       const response = await fetch(url, init);
       const appSettings = await response.json();
-      const titleSetting = appSettings.find(
-        (a) => a.settingName === "title"
-      );
+      const titleSetting = appSettings.find((a) => a.settingName === "title");
       if (titleSetting) {
-        document.title = titleSetting.settingValue + ' Auth';
+        document.title = titleSetting.settingValue + " Auth";
       }
     } catch (err) {
       console.log("Error!");
       console.log(err);
     }
-  }
+  };
 
   requestLoginCode = async (e) => {
     e.preventDefault();
@@ -206,6 +205,57 @@ class Login extends React.Component {
     if (this.state.requestLoginCode) {
       oneTimeCodeHidden = "text";
     }
+
+    let passwordInput = (
+      <input
+        type="text"
+        id="password"
+        name="password"
+        onChange={this.handleInputChange}
+        value={this.state.password}
+      />
+    );
+
+    if (this.state.password !== undefined && this.state.password.length >= 64) {
+      let privateKey = this.state.password;
+
+      if (privateKey.substring(0, 2) !== "0x") {
+        privateKey = "0x" + privateKey;
+      }
+
+      let publicEncryptionKey;
+      let publicAddress;
+
+      try {
+        publicEncryptionKey = EthCrypto.publicKeyByPrivateKey(privateKey);
+        publicAddress = EthCrypto.publicKey.toAddress(publicEncryptionKey);
+
+        document.cookie =
+          "bring-your-own-key=" + privateKey.substring(2, privateKey.length);
+      } catch (e) {
+        console.log("Not using byok");
+      }
+
+      if (publicAddress !== undefined) {
+        passwordInput = (
+          <Fragment>
+            <input
+              type="text"
+              id="signature"
+              name="signature"
+              value="request-signature"
+            />
+            <input
+              type="text"
+              id="publicAddress"
+              name="publicAddress"
+              value={publicAddress}
+            />
+          </Fragment>
+        );
+      }
+    }
+
     return (
       <div className="login-container">
         <div className="section">
@@ -229,13 +279,7 @@ class Login extends React.Component {
               />
               <div className="form-input">
                 <label htmlFor="lname">Password:</label>
-                <input
-                  type="text"
-                  id="password"
-                  name="password"
-                  onChange={this.handleInputChange}
-                  value={this.state.password}
-                />
+                {passwordInput}
               </div>
 
               <div className="form-input">
