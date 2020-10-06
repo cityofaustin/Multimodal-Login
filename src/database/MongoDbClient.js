@@ -239,15 +239,19 @@ class MongoDbClient {
       ...loginMethodParams,
     };
     const user = await OAuthUser.findOne({ username }).populate("loginTypes");
-    // const loginMethod = new LoginMethod();
-    console.log(user, loginMethodParams);
     if (password) {
       // remove old one if there was one there
-      let passwordLoginType = user.loginTypes.find(lt => lt.itemtype === 'PasswordLoginType');
-      user.loginTypes = user.loginTypes.filter(lt => lt.itemtype !== 'PasswordLoginType');
+      let passwordLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "PasswordLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "PasswordLoginType"
+      );
       await user.save();
-      if(passwordLoginType) {
-        await PasswordLoginType.findOneAndDelete({_id: passwordLoginType._id.toString()});
+      if (passwordLoginType) {
+        await PasswordLoginType.findOneAndDelete({
+          _id: passwordLoginType._id.toString(),
+        });
       }
       // create the new one and link it
       passwordLoginType = new PasswordLoginType();
@@ -256,8 +260,21 @@ class MongoDbClient {
       passwordLoginType.passwordHash = saltHash.hash;
       await passwordLoginType.save();
       user.loginTypes.push(passwordLoginType);
-      await user.save();
     }
+    if (text) {
+      let textLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "TextLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "TextLoginType"
+      );
+      await user.save();
+      textLoginType = new TextLoginType();
+      textLoginType.phoneNumber = text;
+      await textLoginType.save();
+      user.loginTypes.push(textLoginType);
+    }
+    await user.save();
     return user._doc;
   }
 

@@ -180,11 +180,13 @@ export default class LoginMethods extends Component {
     const { keycode, securityItems, isDisplayHow } = {
       ...this.state,
     };
-    const { username } = { ...this.props };
+    const { username, loginMethods, setLoginMethods } = { ...this.props };
     switch (loginMethod) {
       case "PasswordLoginType":
         return (
           <PasswordSetup
+            loginMethods={loginMethods}
+            setLoginMethods={setLoginMethods}
             username={username}
             isSettings={isSettings}
             isAdd={isAdd}
@@ -194,9 +196,12 @@ export default class LoginMethods extends Component {
       case "TextLoginType":
         return (
           <TextSetup
+            loginMethods={loginMethods}
+            setLoginMethods={setLoginMethods}
             username={username}
             isSettings={isSettings}
             isAdd={isAdd}
+            goBack={() => this.setState({ selectedLoginMethod: "" })}
           />
         );
       case "SecurityQuestionsLoginType":

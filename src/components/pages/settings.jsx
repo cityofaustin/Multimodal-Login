@@ -84,6 +84,11 @@ class Settings extends React.Component {
     }
   };
 
+  setLoginMethods = (loginMethods) => {
+    // debugger;
+    this.setState({loginMethods});
+  };
+
   render() {
     const { isLoadingLoginMethods, loginMethods, securityQuestions, username } = { ...this.state };
     return (
@@ -115,6 +120,7 @@ class Settings extends React.Component {
             {!isLoadingLoginMethods && (
               <LoginMethods
                 loginMethods={loginMethods}
+                setLoginMethods={this.setLoginMethods}
                 username={username}
                 securityQuestions={securityQuestions}
                 isSettings

@@ -13,11 +13,13 @@ class PasswordSetup extends Component {
   setPassword = async (e) => {
     e.preventDefault();
     const { password } = { ...this.state };
+    const { isAdd } = { ...this.props };
+
     try {
       const url = "/api/login-methods";
       const authorization = UrlUtil.getQueryVariable("access_token");
       const init = {
-        method: "PUT",
+        method: isAdd ? "POST" : "PUT",
         headers: {
           Authorization: `Bearer ${authorization}`,
           "Content-Type": "application/json",
@@ -25,6 +27,12 @@ class PasswordSetup extends Component {
         body: JSON.stringify({ password }),
       };
       await fetch(url, init);
+      if(isAdd) {
+        loginMethods.push("PasswordLoginType")
+        setLoginMethods(loginMethods);
+        goBack();
+        return;
+      }
     } catch (err) {
       console.error(err);
     }
@@ -180,6 +188,8 @@ class PasswordSetup extends Component {
 }
 
 PasswordSetup.propTypes = {
+  loginMethods: PropTypes.arrayOf(PropTypes.string),
+  setLoginMethods: PropTypes.func,
   username: PropTypes.string,
   isSettings: PropTypes.bool,
   isAdd: PropTypes.bool,
