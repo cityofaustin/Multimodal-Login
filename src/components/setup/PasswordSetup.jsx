@@ -7,11 +7,28 @@ class PasswordSetup extends Component {
   state = {
     password: "",
     confirmPassword: "",
+    isPasswordSet: false,
   };
 
-  setPassword = (e) => {
+  setPassword = async (e) => {
     e.preventDefault();
-    alert("todo");
+    const { password } = { ...this.state };
+    try {
+      const url = "/api/login-methods";
+      const authorization = UrlUtil.getQueryVariable("access_token");
+      const init = {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${authorization}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      };
+      await fetch(url, init);
+    } catch (err) {
+      console.error(err);
+    }
+    this.setState({ isPasswordSet: true });
   };
 
   renderHiddenInputs = () => {
@@ -43,8 +60,8 @@ class PasswordSetup extends Component {
     );
   };
   renderSetPassword() {
-    const { password, confirmPassword } = { ...this.state };
-
+    const { password, confirmPassword, isPasswordSet } = { ...this.state };
+    const { goBack } = {...this.props};
     return (
       <div id="section-1-owner">
         <div className="section-contents">
@@ -77,9 +94,24 @@ class PasswordSetup extends Component {
                     this.setState({ confirmPassword: e.target.value })
                   }
                 />
-                <div className="excerpt">
-                  Please type in your new password above
-                </div>
+                {!isPasswordSet && (
+                  <div className="excerpt">
+                    Please type in your new password above
+                  </div>
+                )}
+                {isPasswordSet && (
+                  <div
+                    className="success"
+                    style={{
+                      marginTop: "12px",
+                      fontSize: "15px",
+                      textAlign: "center",
+                      color: "#32a736",
+                    }}
+                  >
+                    Password set!
+                  </div>
+                )}
               </div>
             </div>
             <input
@@ -89,9 +121,13 @@ class PasswordSetup extends Component {
               disabled={
                 password.length < 1 ||
                 confirmPassword.length < 1 ||
-                password !== confirmPassword
+                password !== confirmPassword ||
+                isPasswordSet
               }
             />
+            <div className="how" onClick={goBack}>
+              Take me back
+            </div>
           </form>
         </div>
       </div>
@@ -134,7 +170,7 @@ class PasswordSetup extends Component {
     );
   }
   render() {
-    const { isSettings, isAdd } = { ...this.props };
+    const { isSettings } = { ...this.props };
     if (!isSettings) {
       return this.renderLogin();
     } else {
@@ -147,6 +183,7 @@ PasswordSetup.propTypes = {
   username: PropTypes.string,
   isSettings: PropTypes.bool,
   isAdd: PropTypes.bool,
+  goBack: PropTypes.func
 };
 
 export default PasswordSetup;

@@ -1,19 +1,17 @@
 import React, { Component, Fragment } from "react";
 import UrlUtil from "../../../util/url-util";
 import LoginMethodOptionSvg from "../../svg/LoginMethodOptionSvg";
-import KeycodeInputSvg from "../../svg/KeycodeInputSvg";
 import delay from "../../../util/delay";
-import TextMethodLoginSvg from "../../svg/TextMethodLoginSvg";
 import SecurityMethodLoginSvg from "../../svg/SecurityMethodLoginSvg";
 import MSelect from "../../common/MSelect";
 import PalmSetup from "../register/login-method-setup/PalmSetup";
-import TextExampleSvg from "../../svg/TextExampleSvg";
 import HowSvg from "../../svg/HowSvg";
 import GoBackSvg from "../../svg/GoBackSvg";
 import SecurityExampleSvg from "../../svg/SecurityExampleSvg";
-import SocialSupportLoginSvg from "../../svg/SocialSupportLoginSvg";
 import ExitConfigSvg from "../../svg/ExitConfigSvg";
 import PasswordSetup from "../../setup/PasswordSetup";
+import SocialSupportSetup from "../../setup/SocialSupportSetup";
+import TextSetup from "../../setup/TextSetup";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
@@ -190,95 +188,16 @@ export default class LoginMethods extends Component {
             username={username}
             isSettings={isSettings}
             isAdd={isAdd}
+            goBack={() => this.setState({ selectedLoginMethod: "" })}
           />
         );
       case "TextLoginType":
         return (
-          <Fragment>
-            {!isDisplayHow && (
-              <div id="section-1-owner">
-                <div className="section-contents">
-                  <form
-                    method="POST"
-                    action="/authorize"
-                    className="card login-card"
-                  >
-                    <div className="top-section">
-                      <div className="card-title">Text Login</div>
-                      <TextMethodLoginSvg />
-                    </div>
-                    <div className="keycode-btn-container">
-                      <input
-                        className="keycode-btn"
-                        style={{ width: "210px" }}
-                        type="button"
-                        value="Text me my code"
-                        onClick={() => this.sendKeycode()}
-                        // disabled={!phoneNumber}
-                      />
-                      <div id="keycode-sent">Your keycode has been sent!</div>
-                    </div>
-                    <div className="card-body-section2">
-                      <div>Your Keycode</div>
-                      <div className="keycode-input">
-                        <KeycodeInputSvg />
-                        <input
-                          name="oneTimeCode"
-                          type="number"
-                          maxLength="6"
-                          minLength="6"
-                          value={keycode}
-                          onChange={(e) => {
-                            this.setState({ keycode: e.target.value });
-                          }}
-                        />
-                      </div>
-                      <div className="input-excerpt">
-                        Please enter your 6 digit keycode
-                      </div>
-                    </div>
-                    <div>
-                      <input
-                        style={{ width: "210px" }}
-                        type="submit"
-                        value="Login"
-                        disabled={keycode.length < 1}
-                      />
-                      <div
-                        className="how"
-                        onClick={() =>
-                          this.setState({ isDisplayHow: !isDisplayHow })
-                        }
-                      >
-                        How does this work?
-                      </div>
-                    </div>
-                    {this.renderHiddenInputs()}
-                  </form>
-                </div>
-              </div>
-            )}
-            {isDisplayHow && (
-              <div>
-                <div className="card owner1">
-                  <div className="how-container">
-                    <HowSvg loginMethod="text" />
-                    <div className="sec-excerpt">
-                      Two-step verification is a simple way to authenticate a
-                      user by sending a unique code to their mobile device.
-                    </div>
-                    <TextExampleSvg />
-                  </div>
-                  <GoBackSvg
-                    color="#2362c7"
-                    goBack={() =>
-                      this.setState({ isDisplayHow: !isDisplayHow })
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </Fragment>
+          <TextSetup
+            username={username}
+            isSettings={isSettings}
+            isAdd={isAdd}
+          />
         );
       case "SecurityQuestionsLoginType":
         return (
@@ -408,91 +327,11 @@ export default class LoginMethods extends Component {
         );
       case "SocialSupportType":
         return (
-          <Fragment>
-            {!isDisplayHow && (
-              <div id="section-1-owner">
-                <div className="section-contents">
-                  <form
-                    method="POST"
-                    action="/authorize"
-                    className="card login-card"
-                  >
-                    <div className="top-section">
-                      <div className="card-title">Social Support</div>
-                      <SocialSupportLoginSvg />
-                    </div>
-                    <div className="keycode-btn-container">
-                      <input
-                        className="keycode-btn"
-                        style={{ width: "210px" }}
-                        type="button"
-                        value="Text code to helpers"
-                        onClick={() => this.sendKeycodeToHelper()}
-                        // disabled={!phoneNumber}
-                      />
-                      <div id="keycode-sent">Your keycode has been sent!</div>
-                    </div>
-                    <div className="card-body-section2">
-                      <div>Your Keycode</div>
-                      <div className="keycode-input">
-                        <KeycodeInputSvg />
-                        <input
-                          name="oneTimeCode"
-                          type="number"
-                          maxLength="6"
-                          minLength="6"
-                          value={keycode}
-                          onChange={(e) => {
-                            this.setState({ keycode: e.target.value });
-                          }}
-                        />
-                      </div>
-                      <div className="input-excerpt">
-                        Please enter your 6 digit keycode
-                      </div>
-                    </div>
-                    <div>
-                      <input
-                        style={{ width: "210px" }}
-                        type="submit"
-                        value="Login"
-                        disabled={keycode.length < 1}
-                      />
-                      <div
-                        className="how"
-                        onClick={() =>
-                          this.setState({ isDisplayHow: !isDisplayHow })
-                        }
-                      >
-                        How does this work?
-                      </div>
-                    </div>
-                    {this.renderHiddenInputs()}
-                  </form>
-                </div>
-              </div>
-            )}
-            {isDisplayHow && (
-              <div>
-                <div className="card owner1">
-                  <div className="how-container">
-                    <HowSvg loginMethod="text" />
-                    <div className="sec-excerpt">
-                      Two-step verification is a simple way to authenticate a
-                      user by sending a unique code to their mobile device.
-                    </div>
-                    <TextExampleSvg />
-                  </div>
-                  <GoBackSvg
-                    color="#2362c7"
-                    goBack={() =>
-                      this.setState({ isDisplayHow: !isDisplayHow })
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </Fragment>
+          <SocialSupportSetup
+            username={username}
+            isSettings={isSettings}
+            goBack={() => this.setState({ selectedLoginMethod: "" })}
+          />
         );
       default:
         return (
