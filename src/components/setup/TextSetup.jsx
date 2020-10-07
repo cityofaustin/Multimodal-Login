@@ -4,6 +4,7 @@ import TextExampleSvg from "../svg/TextExampleSvg";
 import TextMethodLoginSvg from "../svg/TextMethodLoginSvg";
 import KeycodeInputSvg from "../svg/KeycodeInputSvg";
 import UrlUtil from "../../util/url-util";
+import delay from "../../util/delay";
 
 class TextSetup extends Component {
   state = {
@@ -27,8 +28,8 @@ class TextSetup extends Component {
         body: JSON.stringify({ text: phoneNumber }),
       };
       await fetch(url, init);
-      if(isAdd) {
-        loginMethods.push("TextLoginType")
+      if (isAdd) {
+        loginMethods.push("TextLoginType");
         setLoginMethods(loginMethods);
         goBack();
         return;
@@ -37,6 +38,27 @@ class TextSetup extends Component {
       console.error(err);
     }
     this.setState({ isTextSet: true });
+  };
+  sendKeycode = async () => {
+    const { username } = { ...this.props };
+    const keycodeSentEl = document.getElementById("keycode-sent");
+    keycodeSentEl.style.opacity = 0.6;
+    try {
+      const url = "api/users/send-text-otp";
+      const init = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+        }),
+      };
+      await fetch(url, init);
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
+    }
+    await delay(2000);
+    keycodeSentEl.style.opacity = 0;
   };
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
@@ -149,7 +171,7 @@ class TextSetup extends Component {
     );
   }
   renderLogin() {
-    const { keycode } = { ...this.state };
+    const { keycode, isDisplayHow } = { ...this.state };
     return (
       <Fragment>
         {!isDisplayHow && (
@@ -252,7 +274,7 @@ TextSetup.propTypes = {
   username: PropTypes.string,
   isSettings: PropTypes.bool,
   isAdd: PropTypes.bool,
-  goBack: PropTypes.func
+  goBack: PropTypes.func,
 };
 
 export default TextSetup;

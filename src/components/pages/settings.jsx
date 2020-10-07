@@ -20,7 +20,7 @@ class Settings extends React.Component {
       isLoadingLoginMethods: true,
       loginMethods: [],
       securityQuestions: [],
-      username: ""
+      username: "",
     };
   }
 
@@ -59,7 +59,7 @@ class Settings extends React.Component {
   };
 
   loadLoginMethods = async () => {
-    let {loginMethods, securityQuestions, username} = {...this.state};
+    let { loginMethods, securityQuestions, username } = { ...this.state };
     try {
       const url = "/api/login-methods";
       const authorization = UrlUtil.getQueryVariable("access_token");
@@ -71,26 +71,43 @@ class Settings extends React.Component {
         },
       };
       const response = await fetch(url, init);
-      if(response.status === 403) {
+      if (response.status === 403) {
         // NOTE: uncomment when done
         // window.location.href = '../' + location.search;
       }
       const responseJson = await response.json();
       loginMethods = responseJson.loginMethods;
-      securityQuestions = responseJson.securityQuestions;
-      this.setState({ isLoadingLoginMethods: false, loginMethods, securityQuestions, username });
+      securityQuestions = responseJson.securityQuestions
+        ? responseJson.securityQuestions.map((sq) => {
+            return { answer: "", question: sq };
+          })
+        : [];
+      this.setState({
+        isLoadingLoginMethods: false,
+        loginMethods,
+        securityQuestions,
+        username,
+      });
     } catch (err) {
       console.error(err);
     }
   };
 
+  setSecurityQuestions = (securityQuestions) => {
+    this.setState({ securityQuestions });
+  };
+
   setLoginMethods = (loginMethods) => {
-    // debugger;
-    this.setState({loginMethods});
+    this.setState({ loginMethods });
   };
 
   render() {
-    const { isLoadingLoginMethods, loginMethods, securityQuestions, username } = { ...this.state };
+    const {
+      isLoadingLoginMethods,
+      loginMethods,
+      securityQuestions,
+      username,
+    } = { ...this.state };
     return (
       <Fragment>
         <Fragment>
@@ -120,13 +137,13 @@ class Settings extends React.Component {
             {!isLoadingLoginMethods && (
               <LoginMethods
                 loginMethods={loginMethods}
+                setSecurityQuestions={this.setSecurityQuestions}
                 setLoginMethods={this.setLoginMethods}
                 username={username}
                 securityQuestions={securityQuestions}
                 isSettings
               />
             )}
-
           </main>
         </Fragment>
       </Fragment>

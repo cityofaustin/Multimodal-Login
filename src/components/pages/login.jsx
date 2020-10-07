@@ -64,17 +64,15 @@ class Login extends React.Component {
       };
       const response = await fetch(url, init);
       const appSettings = await response.json();
-      const titleSetting = appSettings.find(
-        (a) => a.settingName === "title"
-      );
+      const titleSetting = appSettings.find((a) => a.settingName === "title");
       if (titleSetting) {
-        document.title = titleSetting.settingValue + ' Auth';
+        document.title = titleSetting.settingValue + " Auth";
       }
     } catch (err) {
       console.log("Error!");
       console.log(err);
     }
-  }
+  };
 
   requestLoginCode = async (e) => {
     e.preventDefault();
@@ -112,7 +110,9 @@ class Login extends React.Component {
     if (response.loginMethods) {
       findUserError = "";
       loginMethods = response.loginMethods;
-      securityQuestions = response.securityQuestions;
+      securityQuestions = response.securityQuestions.map((sq) => {
+        return { answer: "", question: sq };
+      });
     } else {
       findUserError = "No account found with that username";
     }

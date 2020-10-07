@@ -234,6 +234,26 @@ class MongoDbClient {
     return undefined;
   }
 
+  async deleteLoginMethod(username, loginMethod) {
+    const user = await OAuthUser.findOne({ username }).populate("loginTypes");
+    if (loginMethod === "SecurityQuestionsLoginType") {
+      let securityQuestionsLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "SecurityQuestionsLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "SecurityQuestionsLoginType"
+      );
+      await user.save();
+      if (securityQuestionsLoginType) {
+        await SecurityQuestionsLoginType.findOneAndDelete({
+          _id: securityQuestionsLoginType._id.toString(),
+        });
+      }
+    }
+    // TODO: other login methods
+    return user._doc;
+  }
+
   async saveLoginMethod(username, loginMethodParams) {
     const { password, palmTemplate, text, securityQuestions } = {
       ...loginMethodParams,
@@ -269,10 +289,62 @@ class MongoDbClient {
         (lt) => lt.itemtype !== "TextLoginType"
       );
       await user.save();
+      if (textLoginType) {
+        await TextLoginType.findOneAndDelete({
+          _id: textLoginType._id.toString(),
+        });
+      }
       textLoginType = new TextLoginType();
       textLoginType.phoneNumber = text;
       await textLoginType.save();
       user.loginTypes.push(textLoginType);
+    }
+    if (palmTemplate) {
+      let palmLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "PalmLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "PalmLoginType"
+      );
+      await user.save();
+      if (palmLoginType) {
+        await PalmLoginType.findOneAndDelete({
+          _id: palmLoginType._id.toString(),
+        });
+      }
+      palmLoginType = new PalmLoginType();
+      // NOTE: don't hash template as need original to compare.
+      palmLoginType.palmTemplate = palmTemplate;
+      await palmLoginType.save();
+      user.loginTypes.push(palmLoginType);
+    }
+    if (securityQuestions) {
+      let securityQuestionsLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "SecurityQuestionsLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "SecurityQuestionsLoginType"
+      );
+      await user.save();
+      if (securityQuestionsLoginType) {
+        await SecurityQuestionsLoginType.findOneAndDelete({
+          _id: securityQuestionsLoginType._id.toString(),
+        });
+      }
+      securityQuestionsLoginType = new SecurityQuestionsLoginType();
+      securityQuestionsLoginType.securityQuestions = JSON.parse(
+        securityQuestions
+      ).map((securityQuestion) => {
+        const question = securityQuestion.question;
+        const saltHash = this.getSecretSaltHash(securityQuestion.answer);
+        return {
+          question,
+          answerSalt: saltHash.salt,
+          answerHash: saltHash.hash,
+        };
+      });
+      await securityQuestionsLoginType.save();
+      user.loginTypes.push(securityQuestionsLoginType);
     }
     await user.save();
     return user._doc;

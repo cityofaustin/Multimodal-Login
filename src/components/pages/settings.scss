@@ -21,7 +21,6 @@ body {
       color: #ffffff;
       margin-bottom: 33px;
       margin-top: 18px;
-
     }
     .excerpt {
       margin-top: 13px;
@@ -33,6 +32,54 @@ body {
     }
     .rotate {
       animation: rotation 1.5s infinite linear;
+    }
+  }
+}
+
+.owner1 {
+  padding: 20px;
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: $mid-blue;
+    text-align: center;
+  }
+  .card-body {
+    padding: 0 0 0 16px;
+    .card-body-section {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      > div:nth-child(2) {
+        width: 154px;
+        padding-left: 20.5px;
+        color: $mid-blue;
+        font-size: 23px;
+        font-weight: 500;
+        text-align: center;
+      }
+      .bottom-exerpt {
+        font-size: 16px;
+        text-align: center;
+        color: #707070;
+      }
+    }
+  }
+}
+
+.card {
+  &.delete {
+    background-color: #8e3c3c !important;
+    .card-title {
+      color: #ffffff !important;
+    }
+    #Path_1517 {
+      fill: white;
     }
   }
 }

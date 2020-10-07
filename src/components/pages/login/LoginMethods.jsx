@@ -2,9 +2,8 @@ import React, { Component, Fragment } from "react";
 import UrlUtil from "../../../util/url-util";
 import LoginMethodOptionSvg from "../../svg/LoginMethodOptionSvg";
 import delay from "../../../util/delay";
-import SecurityMethodLoginSvg from "../../svg/SecurityMethodLoginSvg";
 import MSelect from "../../common/MSelect";
-import PalmSetup from "../register/login-method-setup/PalmSetup";
+import PalmSetup from "../../setup/PalmSetup";
 import HowSvg from "../../svg/HowSvg";
 import GoBackSvg from "../../svg/GoBackSvg";
 import SecurityExampleSvg from "../../svg/SecurityExampleSvg";
@@ -12,12 +11,14 @@ import ExitConfigSvg from "../../svg/ExitConfigSvg";
 import PasswordSetup from "../../setup/PasswordSetup";
 import SocialSupportSetup from "../../setup/SocialSupportSetup";
 import TextSetup from "../../setup/TextSetup";
+import SecurityQuestionsSetup from "../../setup/SecurityQuestionsSetup";
+import * as PropTypes from "prop-types";
 
 if (process.env.BROWSER) {
   import("./LoginMethods.scss");
 }
 
-export default class LoginMethods extends Component {
+class LoginMethods extends Component {
   constructor(props) {
     super(props);
     const { securityQuestions } = { ...this.props };
@@ -92,28 +93,6 @@ export default class LoginMethods extends Component {
     return loginMethodsNotSetup;
   };
 
-  sendKeycode = async () => {
-    const { username } = { ...this.props };
-    const keycodeSentEl = document.getElementById("keycode-sent");
-    keycodeSentEl.style.opacity = 0.6;
-    try {
-      const url = "api/users/send-text-otp";
-      const init = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-        }),
-      };
-      await fetch(url, init);
-    } catch (err) {
-      console.log("Error!");
-      console.log(err);
-    }
-    await delay(2000);
-    keycodeSentEl.style.opacity = 0;
-  };
-
   sendKeycodeToHelper = async () => {
     const { username } = { ...this.props };
     const keycodeSentEl = document.getElementById("keycode-sent");
@@ -135,17 +114,6 @@ export default class LoginMethods extends Component {
     await delay(2000);
     keycodeSentEl.style.opacity = 0;
   };
-
-  isSecurityFilledOut() {
-    const { securityItems } = { ...this.state };
-    let isFilledOut = true;
-    for (const securityItem of securityItems) {
-      if (securityItem.answer.length <= 0 || !securityItem.question) {
-        isFilledOut = false;
-      }
-    }
-    return isFilledOut;
-  }
 
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
@@ -177,10 +145,18 @@ export default class LoginMethods extends Component {
   };
 
   renderSelectedLoginMethod(loginMethod, isSettings = false, isAdd = false) {
-    const { keycode, securityItems, isDisplayHow } = {
+    const { isDisplayHow } = {
       ...this.state,
     };
-    const { username, loginMethods, setLoginMethods } = { ...this.props };
+    const {
+      username,
+      loginMethods,
+      setLoginMethods,
+      securityQuestions,
+      setSecurityQuestions,
+    } = {
+      ...this.props,
+    };
     switch (loginMethod) {
       case "PasswordLoginType":
         return (
@@ -206,128 +182,32 @@ export default class LoginMethods extends Component {
         );
       case "SecurityQuestionsLoginType":
         return (
-          <Fragment>
-            {!isDisplayHow && (
-              <div id="section-1-owner">
-                <div className="section-contents">
-                  <form
-                    method="POST"
-                    action="/authorize"
-                    className="card login-card"
-                  >
-                    <div className="top-section">
-                      <div
-                        className="card-title"
-                        style={{ margin: "0 -18px 12px -18px" }}
-                      >
-                        Security Questions
-                      </div>
-                      <SecurityMethodLoginSvg />
-                    </div>
-                    <div className="question-container">
-                      {securityItems.map((securityItem, i) => {
-                        return (
-                          <Fragment key={i}>
-                            <div className="card-body-section1">
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <label>Question #{i + 1}</label>
-                              </div>
-                              <MSelect
-                                value={this.getOptions().find(
-                                  (option) =>
-                                    option.value === securityItem.question
-                                )}
-                                options={this.getOptions()}
-                                isSearcheable={false}
-                                onChange={(e) => {
-                                  securityItem.question = e.value;
-                                  this.setState({ securityItems });
-                                }}
-                              />
-                            </div>
-                            <div className="answer-section">
-                              <div className="card-body-section1">
-                                <label>Answer</label>
-                                <input
-                                  type="text"
-                                  value={securityItem.answer}
-                                  onChange={(e) => {
-                                    securityItem.answer = e.target.value;
-                                    this.setState({ securityItems });
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </Fragment>
-                        );
-                      })}
-                    </div>
-                    <div className="security-excerpt">
-                      Please clear the questions listed above to gain access to
-                      your account.
-                    </div>
-                    <input
-                      name="securityQuestions"
-                      type="hidden"
-                      value={JSON.stringify(securityItems)}
-                    />
-                    <div>
-                      <input
-                        style={{ width: "210px" }}
-                        type="submit"
-                        value="Login"
-                        disabled={!this.isSecurityFilledOut()}
-                      />
-                      <div
-                        className="how"
-                        onClick={() =>
-                          this.setState({ isDisplayHow: !isDisplayHow })
-                        }
-                      >
-                        How does this work?
-                      </div>
-                    </div>
-                    {this.renderHiddenInputs()}
-                  </form>
-                </div>
-              </div>
-            )}
-            {isDisplayHow && (
-              <div>
-                <div className="card owner1">
-                  <div className="how-container">
-                    <HowSvg loginMethod="securityAnswers" />
-                    <div className="sec-excerpt">
-                      Two-step verification is a simple way to authenticate a
-                      user by sending a unique code to their mobile device.
-                    </div>
-                    <SecurityExampleSvg />
-                  </div>
-                  <GoBackSvg
-                    color="#2362c7"
-                    goBack={() =>
-                      this.setState({ isDisplayHow: !isDisplayHow })
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </Fragment>
+          <SecurityQuestionsSetup
+            loginMethods={loginMethods}
+            setLoginMethods={setLoginMethods}
+            isLogin={!isSettings}
+            isSettings={isSettings}
+            securityItems={securityQuestions}
+            setSecurityQuestions={setSecurityQuestions}
+            isAdd={isAdd}
+            goBack={() => this.setState({ selectedLoginMethod: "" })}
+            renderHiddenInputs={this.renderHiddenInputs}
+          />
         );
       case "PalmLoginType":
         return (
           <PalmSetup
-            isLogin
+            isLogin={!isSettings}
+            loginMethods={loginMethods}
+            setLoginMethods={setLoginMethods}
+            isAdd={isAdd}
+            isSettings={isSettings}
             renderHiddenInputs={this.renderHiddenInputs}
             toggleDisplayHow={() =>
               this.setState({ isDisplayHow: !isDisplayHow })
             }
             isDisplayHow={isDisplayHow}
+            goBack={() => this.setState({ selectedLoginMethod: "" })}
           />
         );
       case "SocialSupportType":
@@ -355,10 +235,7 @@ export default class LoginMethods extends Component {
 
   render() {
     const { loginMethods, isSettings } = { ...this.props };
-
-    // console.log({ loginMethods });
     const { selectedLoginMethod } = { ...this.state };
-    // let { isDisplayHow } = { ...this.state };
     return (
       <div className="login-container">
         <div className="section">
@@ -447,3 +324,19 @@ export default class LoginMethods extends Component {
     );
   }
 }
+
+LoginMethods.propTypes = {
+  securityQuestions: PropTypes.arrayOf(
+    PropTypes.shape({
+      answer: PropTypes.string,
+      question: PropTypes.string,
+    })
+  ),
+  setSecurityQuestions: PropTypes.func,
+  loginMethods: PropTypes.arrayOf(PropTypes.string),
+  username: PropTypes.string,
+  setLoginMethods: PropTypes.func,
+  isSettings: PropTypes.bool,
+};
+
+export default LoginMethods;
