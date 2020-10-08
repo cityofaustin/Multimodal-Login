@@ -111,7 +111,9 @@ class Login extends React.Component {
     if (response.loginMethods) {
       findUserError = "";
       loginMethods = response.loginMethods;
-      securityQuestions = response.securityQuestions;
+      securityQuestions = response.securityQuestions ? response.securityQuestions.map((sq) => {
+        return { answer: "", question: sq };
+      }) : [];
     } else {
       findUserError = "No account found with that username";
     }

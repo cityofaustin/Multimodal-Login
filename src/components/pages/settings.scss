@@ -1,0 +1,128 @@
+@import "../variables.scss";
+
+body {
+  background-color: $mid-blue;
+}
+
+#main {
+  .loading-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    svg > path {
+      fill: white;
+    }
+    .title {
+      font-size: 33px;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 33px;
+      margin-top: 18px;
+    }
+    .excerpt {
+      margin-top: 13px;
+      line-height: 1.27;
+      font-size: 15px;
+      color: #ffffff;
+      width: 150px;
+      text-align: center;
+    }
+    .rotate {
+      animation: rotation 1.5s infinite linear;
+    }
+  }
+}
+
+.owner1 {
+  padding: 20px;
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: $mid-blue;
+    text-align: center;
+  }
+  .card-body {
+    padding: 0 0 0 16px;
+    .card-body-section {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      > div:nth-child(2) {
+        width: 154px;
+        padding-left: 20.5px;
+        color: $mid-blue;
+        font-size: 23px;
+        font-weight: 500;
+        text-align: center;
+      }
+      .bottom-exerpt {
+        font-size: 16px;
+        text-align: center;
+        color: #707070;
+      }
+    }
+  }
+}
+
+.card {
+  &.delete {
+    background-color: #8e3c3c !important;
+    .card-title {
+      color: #ffffff !important;
+    }
+    #Path_1517 {
+      fill: white;
+    }
+    #Path_1504 {
+      fill: white;
+    }
+    #Path_1510 {
+      fill: white;
+    }
+    #Path_1511 {
+      fill: white;
+    }
+    #Path_1512 {
+      fill: white;
+    }
+    #Path_1513 {
+      fill: white;
+    }
+    #Path_1514 {
+      fill: white;
+    }
+    #Path_1909 {
+      fill: white;
+    }
+    #Rectangle_1288 {
+      fill: white;
+    }
+    .delete-excerpt {
+      font-size: 15px;
+      color: white;
+      text-align: center;
+    }
+    .delete-button {
+      // width: 220px;
+      margin-top: 20px;
+      background-color: #d95868;
+    }
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}

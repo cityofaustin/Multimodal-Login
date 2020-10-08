@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const production = process.env.NODE_ENV === "production";
 const CopyPlugin = require("copy-webpack-plugin");
 
-const pages = ["index", "login", "register"];
+const pages = ["index", "login", "register", "settings"];
 
 const generateEntryPoints = (entry) => {
   return entry.reduce((obj, item) => {

@@ -1,17 +1,19 @@
 import React, { Component, Fragment } from "react";
-import PalmDetectedSvg from "../../../svg/PalmDetectedSvg";
-import PalmNotDetectedSvg from "../../../svg/PalmNotDetectedSvg";
-import HowSvg from "../../../svg/HowSvg";
-import PalmExampleSvg from "../../../svg/PalmExampleSvg";
-import MStepper from "../../../common/MStepper";
-import PalmHashDiagramSvg from "../../../svg/PalmHashDiagramSvg";
-import PalmSvg from "../../../svg/PalmSvg";
-import NoWifiSvg from "../../../svg/NoWifiSvg";
-import AirplaneModeHelpSvg from "../../../svg/AirplaneModeHelpSvg";
-import delay from "../../../../util/delay";
+import PalmDetectedSvg from "../svg/PalmDetectedSvg";
+import PalmNotDetectedSvg from "../svg/PalmNotDetectedSvg";
+import HowSvg from "../svg/HowSvg";
+import PalmExampleSvg from "../svg/PalmExampleSvg";
+import MStepper from "../common/MStepper";
+import PalmHashDiagramSvg from "../svg/PalmHashDiagramSvg";
+import PalmSvg from "../svg/PalmSvg";
+import NoWifiSvg from "../svg/NoWifiSvg";
+import AirplaneModeHelpSvg from "../svg/AirplaneModeHelpSvg";
+import delay from "../../util/delay";
 // import templateSample from "../../../../palmLines.json";
-import GoBackSvg from "../../../svg/GoBackSvg";
-import cvservice from "../../../../services/CvService";
+import GoBackSvg from "../svg/GoBackSvg";
+import cvservice from "../../services/CvService";
+import UrlUtil from "../../util/url-util";
+import PalmDiagramSvg from "../svg/PalmDiagram";
 
 if (process.env.BROWSER) {
   import("./PalmSetup.scss");
@@ -36,6 +38,7 @@ export default class PalmSetup extends Component {
       currentStep: 1,
       // currentStep: 3,
       totalSteps: 4,
+      reConfigure: false,
     };
   }
 
@@ -149,8 +152,84 @@ export default class PalmSetup extends Component {
     return Promise.reject(errorMessage);
   }
 
+  verifyAndSave = async (e) => {
+    e.preventDefault();
+    const { goBack, isAdd, loginMethods, setLoginMethods } = { ...this.props };
+    const { palmTemplate } = { ...this.state };
+    try {
+      const url = "/api/login-methods";
+      const authorization = UrlUtil.getQueryVariable("access_token");
+      const init = {
+        method: isAdd ? "POST" : "PUT",
+        headers: {
+          Authorization: `Bearer ${authorization}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ palmTemplate: JSON.stringify(palmTemplate) }),
+      };
+      await fetch(url, init);
+      if (isAdd) {
+        loginMethods.push("PalmLoginType");
+        setLoginMethods(loginMethods);
+      }
+      goBack();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  deletePalm = async () => {
+    const { setLoginMethods, goBack } = { ...this.props };
+    let { loginMethods } = { ...this.props };
+    try {
+      const url = "/api/login-methods/PalmLoginType";
+      const authorization = UrlUtil.getQueryVariable("access_token");
+      const init = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authorization}`,
+          "Content-Type": "application/json",
+        },
+      };
+      await fetch(url, init);
+      loginMethods = loginMethods.filter(lm => lm !== "PalmLoginType");
+      setLoginMethods(loginMethods);
+      goBack();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  renderConfigure() {
+    return (
+      <form onSubmit={this.verifyAndSave}>
+        <input
+          style={{ width: "210px", fontSize: "22px" }}
+          type="submit"
+          value="Verify and Save"
+        />
+      </form>
+    );
+  }
+
+  renderLogin() {
+    const { renderHiddenInputs } = { ...this.props };
+    const { palmTemplate } = { ...this.state };
+    return (
+      <form method="POST" action="/authorize">
+        <input name="palmTemplate" type="hidden" value={palmTemplate} />
+        {renderHiddenInputs()}
+        <input
+          style={{ width: "210px", fontSize: "22px" }}
+          type="submit"
+          value="Verify and Login"
+        />
+      </form>
+    );
+  }
+
   renderTakePicture() {
-    const { isLogin, renderHiddenInputs, toggleDisplayHow } = { ...this.props };
+    const { isLogin, toggleDisplayHow, isSettings } = { ...this.props };
     const { palmTemplate, currentStep, enableCamera, totalSteps } = {
       ...this.state,
     };
@@ -171,7 +250,7 @@ export default class PalmSetup extends Component {
           </div>
         )}
         {!palmTemplate && enableCamera && (
-          <div style={{ position: "relative"}}>
+          <div style={{ position: "relative" }}>
             <div className="palm-overlay">
               <PalmExampleSvg />
             </div>
@@ -239,7 +318,7 @@ export default class PalmSetup extends Component {
               onClick={this.handleTakePicture}
             />
           )}
-          {palmTemplate && !isLogin && (
+          {palmTemplate && !isLogin && !isSettings && (
             <input
               type="button"
               value="Set Palm"
@@ -250,17 +329,8 @@ export default class PalmSetup extends Component {
               }
             />
           )}
-          {palmTemplate && isLogin && (
-            <form method="POST" action="/authorize">
-              <input name="palmTemplate" type="hidden" value={palmTemplate} />
-              {renderHiddenInputs()}
-              <input
-                style={{ width: "210px", fontSize: "22px" }}
-                type="submit"
-                value="Verify and Login"
-              />
-            </form>
-          )}
+          {palmTemplate && isLogin && this.renderLogin()}
+          {palmTemplate && isSettings && this.renderConfigure()}
           {toggleDisplayHow && (
             <div className="how" onClick={toggleDisplayHow}>
               How does this work?
@@ -272,8 +342,104 @@ export default class PalmSetup extends Component {
   }
 
   renderPalmCard() {
-    const { toggleDisplayHow } = { ...this.props };
-    const { currentStep, totalSteps } = { ...this.state };
+    const { toggleDisplayHow, isSettings, isAdd } = { ...this.props };
+    const { currentStep, totalSteps, reConfigure, confirmDelete } = {
+      ...this.state,
+    };
+    if (confirmDelete) {
+      return (
+        <div
+          id="palm-setup"
+          className="card owner1 delete"
+          style={{ width: "216px" }}
+        >
+          <div className="card-content">
+            <div className="card-title">Palm Login</div>
+            <PalmSvg />
+          </div>
+          <div className="delete-excerpt">
+            <p>Are you sure you wish to delete this login method?</p>
+            <p>
+              You will have to re-configure your palm print from scratch if you
+              change your mind
+            </p>
+          </div>
+          <div>
+            <input
+              className="delete-button"
+              style={{ width: "210px" }}
+              type="button"
+              value="Yes, delete"
+              onClick={this.deletePalm}
+            />
+            <div
+              className="delete-excerpt"
+              onClick={() => this.setState({ confirmDelete: false })}
+              style={{
+                marginTop: "12px",
+                cursor: "pointer",
+              }}
+            >
+              no, take me back
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (isSettings && !isAdd && !reConfigure) {
+      return (
+        <div id="palm-setup" className="card owner1" style={{ width: "216px" }}>
+          <div className="card-content">
+            <div className="card-title">Palm Login</div>
+            <PalmSvg />
+          </div>
+          <div
+            style={{
+              fontSize: "15px",
+              color: "rgba(72, 72, 72, 0.77)",
+              textAlign: "center",
+              fontWeight: "500",
+            }}
+          >
+            Welcome to your palm print configuration!
+          </div>
+          <PalmDiagramSvg />
+          <div
+            style={{
+              fontSize: "15px",
+              color: "rgba(72, 72, 72, 0.77)",
+              textAlign: "center",
+              fontWeight: "500",
+            }}
+          >
+            Tap below to replace your existing biometric data with a new palm
+            print.
+          </div>
+          <div>
+            <input
+              style={{ width: "210px" }}
+              type="button"
+              value="Re-configure"
+              onClick={() => {
+                this.setState({ reConfigure: true });
+              }}
+            />
+            <div
+              onClick={() => this.setState({ confirmDelete: true })}
+              style={{
+                color: "#d95868",
+                marginTop: "12px",
+                fontSize: "15px",
+                cursor: "pointer",
+                textAlign: "center",
+              }}
+            >
+              delete this login method
+            </div>
+          </div>
+        </div>
+      );
+    }
     switch (currentStep) {
       case 1:
         return (
@@ -349,7 +515,7 @@ export default class PalmSetup extends Component {
   }
 
   renderHow() {
-    const { isLogin, toggleDisplayHow } = { ...this.props };
+    const { isLogin, toggleDisplayHow, isSettings } = { ...this.props };
     const howSection = (
       <div className="how-container">
         <HowSvg loginMethod="palm" />
@@ -360,7 +526,7 @@ export default class PalmSetup extends Component {
         <PalmExampleSvg />
       </div>
     );
-    return isLogin ? (
+    return isLogin || isSettings ? (
       <div>
         <div className="card owner1">
           {howSection}

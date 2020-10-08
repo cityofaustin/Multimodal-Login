@@ -2,9 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { handleIOSBrowser } from '../../../../util/browser-util';
 import GoBackSvg from '../../../svg/GoBackSvg';
 import PasswordSetup from './PasswordSetup';
-import PalmSetup from './PalmSetup';
+import PalmSetup from '../../../setup/PalmSetup';
 import TextSetup from './TextSetup';
-import SecurityQuestionSetup from './SecurityQuestionsSetup';
+import SecurityQuestionSetup from '../../../setup/SecurityQuestionsSetup';
 // import delay from '../../../../util/delay';
 import {
   animateIn,
