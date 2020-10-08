@@ -11,6 +11,7 @@ class TextSetup extends Component {
     keycode: "",
     phoneNumber: "",
     isTextSet: false,
+    confirmDelete: false,
   };
   setText = async (e) => {
     e.preventDefault();
@@ -60,6 +61,27 @@ class TextSetup extends Component {
     await delay(2000);
     keycodeSentEl.style.opacity = 0;
   };
+  deleteTextLogin = async () => {
+    const { setLoginMethods, goBack } = { ...this.props };
+    let { loginMethods } = { ...this.props };
+    try {
+      const url = "/api/login-methods/TextLoginType";
+      const authorization = UrlUtil.getQueryVariable("access_token");
+      const init = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authorization}`,
+          "Content-Type": "application/json",
+        },
+      };
+      await fetch(url, init);
+      loginMethods = loginMethods.filter((lm) => lm !== "TextLoginType");
+      setLoginMethods(loginMethods);
+      goBack();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
     return (
@@ -89,7 +111,48 @@ class TextSetup extends Component {
     );
   };
   renderConfigure() {
-    const { phoneNumber, isTextSet } = { ...this.state };
+    const { isAdd, goBack } = { ...this.props };
+    const { phoneNumber, isTextSet, confirmDelete } = { ...this.state };
+    if (confirmDelete) {
+      return (
+        <div id="section-1-owner">
+          <div className="section-contents">
+            <div className="card login-card delete">
+              <div className="top-section">
+                <div className="card-title">Text Login</div>
+                <TextMethodLoginSvg />
+              </div>
+              <div className="delete-excerpt">
+                <p>Are you sure you wish to delete this login method?</p>
+                <p>
+                  You will have to add a new phone number later if you change
+                  your mind
+                </p>
+              </div>
+              <div>
+                <input
+                  className="delete-button"
+                  style={{ width: "210px" }}
+                  type="button"
+                  value="Yes, delete"
+                  onClick={this.deleteTextLogin}
+                />
+                <div
+                  className="delete-excerpt"
+                  onClick={() => this.setState({ confirmDelete: false })}
+                  style={{
+                    marginTop: "12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  no, take me back
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div id="section-1-owner">
         <div className="section-contents">
@@ -157,6 +220,25 @@ class TextSetup extends Component {
                   phoneNumber.length > 10
                 }
               />
+              {isAdd && (
+                <div className="how" onClick={goBack}>
+                  Take me back
+                </div>
+              )}
+              {!isAdd && (
+                <div
+                  onClick={() => this.setState({ confirmDelete: true })}
+                  style={{
+                    color: "#d95868",
+                    marginTop: "12px",
+                    fontSize: "15px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  delete this login method
+                </div>
+              )}
               {/* <div
                 className="how"
                 onClick={() => this.setState({ isDisplayHow: !isDisplayHow })}

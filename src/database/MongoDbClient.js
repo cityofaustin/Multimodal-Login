@@ -250,6 +250,48 @@ class MongoDbClient {
         });
       }
     }
+    if (loginMethod === "PalmLoginType") {
+      let palmLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "PalmLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "PalmLoginType"
+      );
+      await user.save();
+      if (palmLoginType) {
+        await PalmLoginType.findOneAndDelete({
+          _id: palmLoginType._id.toString(),
+        });
+      }
+    }
+    if (loginMethod === "PasswordLoginType") {
+      let passwordLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "PasswordLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "PasswordLoginType"
+      );
+      await user.save();
+      if (passwordLoginType) {
+        await PasswordLoginType.findOneAndDelete({
+          _id: passwordLoginType._id.toString(),
+        });
+      }
+    }
+    if (loginMethod === "TextLoginType") {
+      let textLoginType = user.loginTypes.find(
+        (lt) => lt.itemtype === "TextLoginType"
+      );
+      user.loginTypes = user.loginTypes.filter(
+        (lt) => lt.itemtype !== "TextLoginType"
+      );
+      await user.save();
+      if (textLoginType) {
+        await TextLoginType.findOneAndDelete({
+          _id: textLoginType._id.toString(),
+        });
+      }
+    }
     // TODO: other login methods
     return user._doc;
   }

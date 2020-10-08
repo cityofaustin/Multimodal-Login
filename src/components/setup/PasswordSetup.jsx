@@ -8,12 +8,13 @@ class PasswordSetup extends Component {
     password: "",
     confirmPassword: "",
     isPasswordSet: false,
+    confirmDelete: false,
   };
 
   setPassword = async (e) => {
     e.preventDefault();
     const { password } = { ...this.state };
-    const { isAdd } = { ...this.props };
+    const { isAdd, loginMethods, setLoginMethods, goBack } = { ...this.props };
 
     try {
       const url = "/api/login-methods";
@@ -27,8 +28,8 @@ class PasswordSetup extends Component {
         body: JSON.stringify({ password }),
       };
       await fetch(url, init);
-      if(isAdd) {
-        loginMethods.push("PasswordLoginType")
+      if (isAdd) {
+        loginMethods.push("PasswordLoginType");
         setLoginMethods(loginMethods);
         goBack();
         return;
@@ -38,7 +39,27 @@ class PasswordSetup extends Component {
     }
     this.setState({ isPasswordSet: true });
   };
-
+  deletePassword = async () => {
+    const { setLoginMethods, goBack } = { ...this.props };
+    let { loginMethods } = { ...this.props };
+    try {
+      const url = "/api/login-methods/PasswordLoginType";
+      const authorization = UrlUtil.getQueryVariable("access_token");
+      const init = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authorization}`,
+          "Content-Type": "application/json",
+        },
+      };
+      await fetch(url, init);
+      loginMethods = loginMethods.filter((lm) => lm !== "PasswordLoginType");
+      setLoginMethods(loginMethods);
+      goBack();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
     return (
@@ -68,8 +89,50 @@ class PasswordSetup extends Component {
     );
   };
   renderSetPassword() {
-    const { password, confirmPassword, isPasswordSet } = { ...this.state };
-    const { goBack } = {...this.props};
+    const { password, confirmPassword, isPasswordSet, confirmDelete } = {
+      ...this.state,
+    };
+    const { goBack, isAdd } = { ...this.props };
+    if (confirmDelete) {
+      return (
+        <div id="section-1-owner">
+          <div className="section-contents">
+            <div className="card login-card delete">
+              <div className="top-section">
+                <div className="card-title">Password</div>
+                <PasswordMethodLoginSvg />
+              </div>
+              <div className="delete-excerpt">
+                <p>Are you sure you wish to delete this login method?</p>
+                <p>
+                  You will have to setup a new password if you change your mind
+                  later
+                </p>
+              </div>
+              <div>
+                <input
+                  className="delete-button"
+                  style={{ width: "210px" }}
+                  type="button"
+                  value="Yes, delete"
+                  onClick={this.deletePassword}
+                />
+                <div
+                  className="delete-excerpt"
+                  onClick={() => this.setState({ confirmDelete: false })}
+                  style={{
+                    marginTop: "12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  no, take me back
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div id="section-1-owner">
         <div className="section-contents">
@@ -133,9 +196,25 @@ class PasswordSetup extends Component {
                 isPasswordSet
               }
             />
-            <div className="how" onClick={goBack}>
-              Take me back
-            </div>
+            {isAdd && (
+              <div className="how" onClick={goBack}>
+                Take me back
+              </div>
+            )}
+            {!isAdd && (
+              <div
+                onClick={() => this.setState({ confirmDelete: true })}
+                style={{
+                  color: "#d95868",
+                  marginTop: "12px",
+                  fontSize: "15px",
+                  cursor: "pointer",
+                  textAlign: "center",
+                }}
+              >
+                delete this login method
+              </div>
+            )}
           </form>
         </div>
       </div>
@@ -193,7 +272,7 @@ PasswordSetup.propTypes = {
   username: PropTypes.string,
   isSettings: PropTypes.bool,
   isAdd: PropTypes.bool,
-  goBack: PropTypes.func
+  goBack: PropTypes.func,
 };
 
 export default PasswordSetup;

@@ -78,7 +78,6 @@ class LoginMethodController {
     try {
       let username = request.payload.username;
       let loginMethod = request.params.loginMethod;
-      console.log(username, loginMethod);
       await common.dbClient.deleteLoginMethod(username, loginMethod);
       return response.status(200).json({ message: "success" });
     } catch (err) {
