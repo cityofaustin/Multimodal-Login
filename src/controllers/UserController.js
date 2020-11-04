@@ -2,6 +2,7 @@ import * as express from "express";
 import common from "../common/common";
 import { getRandomInt } from "../util/random-util";
 import { v4 as uuidv4 } from "uuid";
+import auth from "../middleware/auth";
 
 let fetch;
 if (!process.env.BROWSER) {
@@ -29,6 +30,7 @@ class UserController {
       this.path + "/send-helper-text-otp",
       this.sendHelperTextOTP
     );
+    this.router.delete("/my-account", auth.required, this.deleteMyAccount);
   }
 
   // client
@@ -41,6 +43,16 @@ class UserController {
       );
 
       return response.json(res);
+    } catch (err) {
+      console.error(err.stack);
+      return response.status(500).send("Something broke!");
+    }
+  };
+  deleteMyAccount = async (request, response) => {
+    try {
+      let username = request.payload.username;
+      let res = await common.dbClient.deleteOAuthUser(username);
+      return response.json({ ...res, username });
     } catch (err) {
       console.error(err.stack);
       return response.status(500).send("Something broke!");

@@ -217,7 +217,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push([22,"react.index.login.register.settings","react.login.register.settings","react.register"]);
+/******/ 	deferredModules.push([22,"react.index.login.register.settings.unregister","react.login.register.settings","react.register"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })

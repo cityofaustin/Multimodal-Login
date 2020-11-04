@@ -72,8 +72,7 @@ class Settings extends React.Component {
       };
       const response = await fetch(url, init);
       if (response.status === 403) {
-        // NOTE: uncomment when done
-        // window.location.href = '../' + location.search;
+        window.location.href = '../' + location.search;
       }
       const responseJson = await response.json();
       loginMethods = responseJson.loginMethods;

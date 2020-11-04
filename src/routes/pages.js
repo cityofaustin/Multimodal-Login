@@ -4,6 +4,7 @@ import Index from '../components/pages/index';
 import Login from '../components/pages/login';
 import Settings from '../components/pages/settings';
 import Register from '../components/pages/register';
+import Unregister from '../components/pages/unregister';
 import React from 'react';
 
 const router = express.Router();
@@ -26,6 +27,11 @@ router.get('/settings', async (_req, res) => {
 router.get('/register', async (req, res) => {
   let reactComp = renderToString(React.createElement(Register));
   res.status(200).render('./pages/register', { reactApp: reactComp });
+});
+
+router.get('/unregister', async (req, res) => {
+  let reactComp = renderToString(React.createElement(Unregister));
+  res.status(200).render('./pages/unregister', { reactApp: reactComp });
 });
 
 export default router;

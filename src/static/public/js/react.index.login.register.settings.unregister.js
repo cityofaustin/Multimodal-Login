@@ -1,4 +1,4 @@
-(this["webpackJsonp"] = this["webpackJsonp"] || []).push([["react.index.login.register.settings"],{
+(this["webpackJsonp"] = this["webpackJsonp"] || []).push([["react.index.login.register.settings.unregister"],{
 
 /***/ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js":
 /*!**********************************************************************!*\

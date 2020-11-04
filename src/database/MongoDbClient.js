@@ -89,6 +89,16 @@ class MongoDbClient {
     return did;
   }
 
+  async deleteOAuthUser(username) {
+    const user = await OAuthUser.findOne({ username });
+    for(const loginType of user.loginTypes) {
+      await LoginTypeBase.findOneAndDelete({
+        _id: loginType.toString(),
+      });
+    }
+    await OAuthUser.findOneAndDelete({ username });
+  }
+
   async createNewOAuthUser(body, uuid = undefined) {
     const user = new OAuthUser();
 
