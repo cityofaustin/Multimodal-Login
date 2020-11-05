@@ -1,7 +1,0 @@
-"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _mongoose = _interopRequireDefault(require("mongoose"));
-var _LoginTypeBase = _interopRequireDefault(require("./LoginTypeBase"));
-
-_LoginTypeBase.default.discriminator("SocialSupportType", new _mongoose.default.Schema({}));var _default =
-
-_mongoose.default.model("SocialSupportType");exports.default = _default;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NyYy9kYXRhYmFzZS9tb2RlbHMvbG9naW4tdHlwZS9Tb2NpYWxTdXBwb3J0VHlwZS5qcyJdLCJuYW1lcyI6WyJMb2dpblR5cGVCYXNlIiwiZGlzY3JpbWluYXRvciIsIm1vbmdvb3NlIiwiU2NoZW1hIiwibW9kZWwiXSwibWFwcGluZ3MiOiJ5TEFBQTtBQUNBOztBQUVBQSx1QkFBY0MsYUFBZCxDQUE0QixtQkFBNUIsRUFBaUQsSUFBSUMsa0JBQVNDLE1BQWIsQ0FBb0IsRUFBcEIsQ0FBakQsRTs7QUFFZUQsa0JBQVNFLEtBQVQsQ0FBZSxtQkFBZixDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IG1vbmdvb3NlIGZyb20gXCJtb25nb29zZVwiO1xuaW1wb3J0IExvZ2luVHlwZUJhc2UgZnJvbSBcIi4vTG9naW5UeXBlQmFzZVwiO1xuXG5Mb2dpblR5cGVCYXNlLmRpc2NyaW1pbmF0b3IoXCJTb2NpYWxTdXBwb3J0VHlwZVwiLCBuZXcgbW9uZ29vc2UuU2NoZW1hKHt9KSk7XG5cbmV4cG9ydCBkZWZhdWx0IG1vbmdvb3NlLm1vZGVsKFwiU29jaWFsU3VwcG9ydFR5cGVcIik7XG4iXX0=

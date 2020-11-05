@@ -6,3 +6,6 @@ file
 .idea
 safe.dat
 .DS_Store
+
+src/static
+dist

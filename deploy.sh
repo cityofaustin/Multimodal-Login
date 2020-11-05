@@ -14,7 +14,6 @@ npm install --production
 
 cd ~/PROD/MYPASS-OAUTH/multimodal-login
 
-pm2 stop oauth
-pm2 start --name oauth npm -- start
+pm2 restart oauth
 
 echo ~~FINISHED~~

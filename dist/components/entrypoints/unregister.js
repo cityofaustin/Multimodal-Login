@@ -1,7 +1,0 @@
-"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");var _react = _interopRequireDefault(require("react"));
-var _reactDom = require("react-dom");
-
-var _unregister = _interopRequireDefault(require("../pages/unregister"));
-
-(0, _reactDom.hydrate)( /*#__PURE__*/_react.default.createElement(_unregister.default, null), document.getElementById("root"));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9jb21wb25lbnRzL2VudHJ5cG9pbnRzL3VucmVnaXN0ZXIuanN4Il0sIm5hbWVzIjpbImRvY3VtZW50IiwiZ2V0RWxlbWVudEJ5SWQiXSwibWFwcGluZ3MiOiJrR0FBQTtBQUNBOztBQUVBOztBQUVBLHFDQUFRLDZCQUFDLG1CQUFELE9BQVIsRUFBd0JBLFFBQVEsQ0FBQ0MsY0FBVCxDQUF3QixNQUF4QixDQUF4QiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCBmcm9tIFwicmVhY3RcIjtcbmltcG9ydCB7IGh5ZHJhdGUgfSBmcm9tIFwicmVhY3QtZG9tXCI7XG5cbmltcG9ydCBVbnJlZ2lzdGVyIGZyb20gJy4uL3BhZ2VzL3VucmVnaXN0ZXInO1xuXG5oeWRyYXRlKDxVbnJlZ2lzdGVyIC8+LCBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcInJvb3RcIikpO1xuIl19
