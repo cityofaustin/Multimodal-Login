@@ -7,11 +7,33 @@ import HowSvg from "../svg/HowSvg";
 import TextExampleSvg from "../svg/TextExampleSvg";
 import GoBackSvg from "../svg/GoBackSvg";
 import ContactSvg from "../svg/contact-svg";
+import delay from "../../util/delay";
 
 class SocialSupportSetup extends Component {
   state = {
     isDisplayHow: false,
     keycode: "",
+  };
+  sendKeycodeToHelper = async () => {
+    const { username } = { ...this.props };
+    const keycodeSentEl = document.getElementById("keycode-sent");
+    keycodeSentEl.style.opacity = 0.6;
+    try {
+      const url = "api/users/send-helper-text-otp";
+      const init = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+        }),
+      };
+      await fetch(url, init);
+    } catch (err) {
+      console.log("Error!");
+      console.log(err);
+    }
+    await delay(2000);
+    keycodeSentEl.style.opacity = 0;
   };
   renderHiddenInputs = () => {
     const { username } = { ...this.props };

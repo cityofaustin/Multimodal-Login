@@ -64,6 +64,18 @@ const config = [
           },
           exclude: [/node_modules/, /static/, /workers/],
         },
+        // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+        {
+          enforce: "pre",
+          test: /\.js$/,
+          loader: "source-map-loader",
+          include: [
+            path.resolve(__dirname, "node_modules") + "/ethereumjs-common",
+            path.resolve(__dirname, "node_modules") + "/ethereumjs-util",
+            path.resolve(__dirname, "node_modules") + "/ethereumjs-tx",
+            path.resolve(__dirname, "node_modules") + "/rlp",
+          ],
+        },
         {
           test: /\.ejs$/,
           loader: "raw-loader",
