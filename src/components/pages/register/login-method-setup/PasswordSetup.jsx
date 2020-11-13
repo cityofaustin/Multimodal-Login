@@ -56,7 +56,7 @@ export default class PasswordSetup extends Component {
             type="button"
             value="Set Password"
             onClick={() => this.props.handleGoBack('owner', 10, {passwordItem: {password, confirmPassword}})}
-            disabled={!password || !confirmPassword}
+            disabled={!password || !confirmPassword || password !== confirmPassword}
           />
         </div>
       </div>
