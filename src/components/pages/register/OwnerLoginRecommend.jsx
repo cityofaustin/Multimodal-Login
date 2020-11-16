@@ -226,7 +226,7 @@ export default class OwnerLoginRecommend extends Component {
               {this.getRecommended().length < 1 &&
                 "We couldn't find the perfect login solution for you, but here are some options"}
               {this.getRecommended().length > 0 &&
-                "Based on your answers, we found the following login solution for you"}
+                "Based on your answers, we found the following login solution(s) for you"}
             </div>
           </div>
           {this.getRecommended().map((loginMethod) => (
