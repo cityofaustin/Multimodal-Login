@@ -5,6 +5,7 @@ import SecurityExampleSvg from "../svg/SecurityExampleSvg";
 import CrossSvg from "../svg/CrossSvg";
 import UrlUtil from "../../util/url-util";
 import SecurityMethodLoginSvg from "../svg/SecurityMethodLoginSvg";
+import AddQuestionSvg from "../svg/AddQuestionSvg";
 
 if (process.env.BROWSER) {
   import("./SecurityQuestionsSetup.scss");
@@ -73,7 +74,9 @@ export default class SecurityQuestionSetup extends Component {
         },
       };
       await fetch(url, init);
-      loginMethods = loginMethods.filter(lm => lm !== "SecurityQuestionsLoginType");
+      loginMethods = loginMethods.filter(
+        (lm) => lm !== "SecurityQuestionsLoginType"
+      );
       setLoginMethods(loginMethods);
       setSecurityQuestions([]);
       goBack();
@@ -158,10 +161,8 @@ export default class SecurityQuestionSetup extends Component {
             );
           })}
           {securityItems.length < 3 && (
-            <input
-              type="button"
-              value="Add Question"
-              style={{ width: "220px", marginTop: "20px" }}
+            <div
+              style={{ cursor: "pointer", marginTop: "19px" }}
               onClick={() => {
                 securityItems.push({
                   question: undefined,
@@ -171,7 +172,9 @@ export default class SecurityQuestionSetup extends Component {
                   securityItems,
                 });
               }}
-            />
+            >
+              <AddQuestionSvg />
+            </div>
           )}
         </div>
         <div className="submit-section">
