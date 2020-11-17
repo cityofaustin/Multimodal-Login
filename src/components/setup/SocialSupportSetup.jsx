@@ -13,9 +13,11 @@ class SocialSupportSetup extends Component {
   state = {
     isDisplayHow: false,
     keycode: "",
+    hasKeycodeBeenSent: false
   };
   sendKeycodeToHelper = async () => {
     const { username } = { ...this.props };
+    this.setState({hasKeycodeBeenSent: true});
     const keycodeSentEl = document.getElementById("keycode-sent");
     keycodeSentEl.style.opacity = 0.6;
     try {
@@ -138,7 +140,7 @@ class SocialSupportSetup extends Component {
     );
   }
   renderLogin() {
-    const { isDisplayHow, keycode } = { ...this.state };
+    const { isDisplayHow, keycode, hasKeycodeBeenSent } = { ...this.state };
     return (
       <Fragment>
         {!isDisplayHow && (
@@ -156,11 +158,11 @@ class SocialSupportSetup extends Component {
                 <div className="keycode-btn-container">
                   <input
                     className="keycode-btn"
-                    style={{ width: "210px" }}
+                    style={{ width: "210px", fontSize: '18px' }}
                     type="button"
                     value="Text code to helpers"
                     onClick={() => this.sendKeycodeToHelper()}
-                    // disabled={!phoneNumber}
+                    disabled={hasKeycodeBeenSent}
                   />
                   <div id="keycode-sent">Your keycode has been sent!</div>
                 </div>
