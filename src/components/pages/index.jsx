@@ -113,13 +113,13 @@ class Index extends Component {
                   <div className="already">Already a user?</div>
                   <form method="GET" action="login">
                     {this.renderHiddenInputs()}
-                    <input className="login" value="Login" type="submit" />
+                    <input className="login" value="Find me" type="submit" />
                   </form>
 
                   <div className="or">or</div>
                   <form method="GET" action="register">
                     {this.renderHiddenInputs()}
-                    <input className="sign-up" type="submit" value="Sign-Up" />
+                    <input className="sign-up" type="submit" value="Create Account" />
                   </form>
                 </div>
               </div>
