@@ -23,6 +23,7 @@ export default class SecurityQuestionSetup extends Component {
     this.state = {
       securityItems,
       confirmDelete: false,
+      isFailedLoginAttempt: false,
     };
   }
 
@@ -95,6 +96,26 @@ export default class SecurityQuestionSetup extends Component {
     }
     return isFilledOut;
   }
+
+  authorize = async (e) => {
+    e.preventDefault();
+    const target = e.target;
+    const httpRes = await fetch(target.action, {
+      body: new URLSearchParams(new FormData(target)),
+      headers: {
+        "Content-Type": target.encoding,
+      },
+      method: target.method,
+    });
+    if (httpRes.status === 401) {
+      this.setState({ isFailedLoginAttempt: true });
+    }
+    if (httpRes.status === 200) {
+      if (httpRes.redirected) {
+        location.replace(httpRes.url);
+      }
+    }
+  };
 
   renderSecurityCard() {
     const { securityItems } = { ...this.state };
@@ -236,13 +257,16 @@ export default class SecurityQuestionSetup extends Component {
 
   renderLogin() {
     const { renderHiddenInputs } = { ...this.props };
-    const { isDisplayHow, securityItems } = { ...this.state };
+    const { isDisplayHow, securityItems, isFailedLoginAttempt } = {
+      ...this.state,
+    };
     return (
       <Fragment>
         {!isDisplayHow && (
           <div id="section-1-owner">
             <div className="section-contents">
               <form
+                onSubmit={this.authorize}
                 method="POST"
                 action="/authorize"
                 className="card login-card"
@@ -298,6 +322,9 @@ export default class SecurityQuestionSetup extends Component {
                     );
                   })}
                 </div>
+                {isFailedLoginAttempt && (
+                  <div className="error">Failed login attempt</div>
+                )}
                 <div className="security-excerpt">
                   Please clear the questions listed above to gain access to your
                   account.

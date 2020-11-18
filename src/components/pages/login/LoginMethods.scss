@@ -13,6 +13,15 @@
       width: 216px;
       min-height: 445px;
       justify-content: space-between;
+      .error {
+        text-align: center;
+        min-width: 1px;
+        height: 15px;
+        margin-top: 6px;
+        color: #d95868 !important;
+        font-size: 12px !important;
+        font-weight: 500;
+      }
       .top-section {
         display: flex;
         flex-direction: column;
@@ -36,7 +45,7 @@
           input[type="text"] {
             width: 232px;
             height: 35px;
-            line-height:35px;
+            line-height: 35px;
             border-radius: 8px;
             border: solid 1px rgba(112, 112, 112, 0.27);
             background-color: #e8f0fe;
@@ -154,4 +163,3 @@ input[type="number"] {
   color: #3b3b3b;
   font-family: Montserrat;
 }
-

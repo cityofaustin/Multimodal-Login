@@ -13,11 +13,12 @@ class SocialSupportSetup extends Component {
   state = {
     isDisplayHow: false,
     keycode: "",
-    hasKeycodeBeenSent: false
+    hasKeycodeBeenSent: false,
+    isFailedLoginAttempt: false,
   };
   sendKeycodeToHelper = async () => {
     const { username } = { ...this.props };
-    this.setState({hasKeycodeBeenSent: true});
+    this.setState({ hasKeycodeBeenSent: true });
     const keycodeSentEl = document.getElementById("keycode-sent");
     keycodeSentEl.style.opacity = 0.6;
     try {
@@ -37,6 +38,27 @@ class SocialSupportSetup extends Component {
     await delay(2000);
     keycodeSentEl.style.opacity = 0;
   };
+
+  authorize = async (e) => {
+    e.preventDefault();
+    const target = e.target;
+    const httpRes = await fetch(target.action, {
+      body: new URLSearchParams(new FormData(target)),
+      headers: {
+        "Content-Type": target.encoding,
+      },
+      method: target.method,
+    });
+    if (httpRes.status === 401) {
+      this.setState({ isFailedLoginAttempt: true });
+    }
+    if (httpRes.status === 200) {
+      if (httpRes.redirected) {
+        location.replace(httpRes.url);
+      }
+    }
+  };
+
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
     return (
@@ -140,13 +162,19 @@ class SocialSupportSetup extends Component {
     );
   }
   renderLogin() {
-    const { isDisplayHow, keycode, hasKeycodeBeenSent } = { ...this.state };
+    const {
+      isDisplayHow,
+      keycode,
+      hasKeycodeBeenSent,
+      isFailedLoginAttempt,
+    } = { ...this.state };
     return (
       <Fragment>
         {!isDisplayHow && (
           <div id="section-1-owner">
             <div className="section-contents">
               <form
+                onSubmit={this.authorize}
                 method="POST"
                 action="/authorize"
                 className="card login-card"
@@ -158,7 +186,7 @@ class SocialSupportSetup extends Component {
                 <div className="keycode-btn-container">
                   <input
                     className="keycode-btn"
-                    style={{ width: "210px", fontSize: '18px' }}
+                    style={{ width: "210px", fontSize: "18px" }}
                     type="button"
                     value="Text code to helpers"
                     onClick={() => this.sendKeycodeToHelper()}
@@ -184,6 +212,9 @@ class SocialSupportSetup extends Component {
                   <div className="input-excerpt">
                     Please enter your 6 digit keycode
                   </div>
+                  {isFailedLoginAttempt && (
+                    <div className="error">Failed login attempt</div>
+                  )}
                 </div>
                 <div>
                   <input

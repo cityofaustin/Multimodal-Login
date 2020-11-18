@@ -12,6 +12,7 @@ class TextSetup extends Component {
     phoneNumber: "",
     isTextSet: false,
     confirmDelete: false,
+    isFailedLoginAttempt: false,
   };
   setText = async (e) => {
     e.preventDefault();
@@ -82,6 +83,27 @@ class TextSetup extends Component {
       console.error(err);
     }
   };
+
+  authorize = async (e) => {
+    e.preventDefault();
+    const target = e.target;
+    const httpRes = await fetch(target.action, {
+      body: new URLSearchParams(new FormData(target)),
+      headers: {
+        "Content-Type": target.encoding,
+      },
+      method: target.method,
+    });
+    if (httpRes.status === 401) {
+      this.setState({ isFailedLoginAttempt: true });
+    }
+    if (httpRes.status === 200) {
+      if (httpRes.redirected) {
+        location.replace(httpRes.url);
+      }
+    }
+  };
+
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
     return (
@@ -253,13 +275,14 @@ class TextSetup extends Component {
     );
   }
   renderLogin() {
-    const { keycode, isDisplayHow } = { ...this.state };
+    const { keycode, isDisplayHow, isFailedLoginAttempt } = { ...this.state };
     return (
       <Fragment>
         {!isDisplayHow && (
           <div id="section-1-owner">
             <div className="section-contents">
               <form
+                onSubmit={this.authorize}
                 method="POST"
                 action="/authorize"
                 className="card login-card"
@@ -297,6 +320,9 @@ class TextSetup extends Component {
                   <div className="input-excerpt">
                     Please enter your 6 digit keycode
                   </div>
+                  {isFailedLoginAttempt && (
+                    <div className="error">Failed login attempt</div>
+                  )}
                 </div>
                 <div>
                   <input

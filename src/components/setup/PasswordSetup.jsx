@@ -10,6 +10,7 @@ class PasswordSetup extends Component {
     confirmPassword: "",
     isPasswordSet: false,
     confirmDelete: false,
+    isFailedLoginAttempt: false,
   };
 
   onPasswordChange = (e) => {
@@ -94,6 +95,27 @@ class PasswordSetup extends Component {
       console.error(err);
     }
   };
+
+  authorize = async (e) => {
+    e.preventDefault();
+    const target = e.target;
+    const httpRes = await fetch(target.action, {
+      body: new URLSearchParams(new FormData(target)),
+      headers: {
+        "Content-Type": target.encoding,
+      },
+      method: target.method,
+    });
+    if (httpRes.status === 401) {
+      this.setState({ isFailedLoginAttempt: true });
+    }
+    if (httpRes.status === 200) {
+      if (httpRes.redirected) {
+        location.replace(httpRes.url);
+      }
+    }
+  };
+
   renderHiddenInputs = () => {
     const { username } = { ...this.props };
     return (
@@ -195,6 +217,7 @@ class PasswordSetup extends Component {
                   New Password
                 </div>
                 <input
+                  id="password"
                   name="password"
                   type="password"
                   value={password}
@@ -206,6 +229,7 @@ class PasswordSetup extends Component {
                   Confirm New Password
                 </div>
                 <input
+                  id="confirmPassword"
                   name="confirmPassword"
                   type="password"
                   value={confirmPassword}
@@ -234,6 +258,7 @@ class PasswordSetup extends Component {
               </div>
             </div>
             <input
+              id="submit"
               style={{ width: "210px" }}
               type="submit"
               value="Set Password"
@@ -269,11 +294,16 @@ class PasswordSetup extends Component {
     );
   }
   renderLogin() {
-    const { password } = { ...this.state };
+    const { password, isFailedLoginAttempt } = { ...this.state };
     return (
       <div id="section-1-owner">
         <div className="section-contents">
-          <form method="POST" action="/authorize" className="card login-card">
+          <form
+            onSubmit={this.authorize}
+            method="POST"
+            action="/authorize"
+            className="card login-card"
+          >
             <div className="top-section">
               <div className="card-title">Password</div>
               <PasswordMethodLoginSvg />
@@ -282,18 +312,23 @@ class PasswordSetup extends Component {
               <div className="card-body-section1">
                 <div>Password</div>
                 <input
+                  id="password"
                   name="password"
                   type="password"
                   value={password}
                   // onChange={(e) => this.setState({ password: e.target.value })}
                   onChange={this.onPasswordChange}
                 />
+                {isFailedLoginAttempt && (
+                  <div className="error">Failed login attempt</div>
+                )}
                 <div className="excerpt">
                   Please type your password to gain access to your account.
                 </div>
               </div>
             </div>
             <input
+              id="submit"
               style={{ width: "210px" }}
               type="submit"
               value="Login"

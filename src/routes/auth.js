@@ -77,17 +77,18 @@ router.post(
       return next();
     }
 
-    const params = [
-      "client_id",
-      "redirect_uri",
-      "response_type",
-      "grant_type",
-      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
-      "scope",
-    ]
-      .map((a) => `${a}=${req.body[a]}`)
-      .join("&");
-    return res.redirect(`/login?success=false&${params}`);
+    // const params = [
+    //   "client_id",
+    //   "redirect_uri",
+    //   "response_type",
+    //   "grant_type",
+    //   "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+    //   "scope",
+    // ]
+    //   .map((a) => `${a}=${req.body[a]}`)
+    //   .join("&");
+    // return res.redirect(`/login?success=false&${params}`);
+    return res.status(401).send({message: "Authorization has been refused for those credentials"});
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url
