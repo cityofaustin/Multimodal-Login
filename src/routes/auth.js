@@ -26,7 +26,22 @@ router.post(
     body: Schema.userRegisterSchema,
   }),
   async (req, res, next) => {
-    await common.dbClient.createNewOAuthUser(req.body);
+    try {
+      await common.dbClient.createNewOAuthUser(req.body);
+    } catch (err) {
+      console.log(err.stack);
+      const params = [
+        "client_id",
+        "redirect_uri",
+        "response_type",
+        "grant_type",
+        "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
+        "scope",
+      ]
+        .map((a) => `${a}=${req.body[a]}`)
+        .join("&");
+      return res.redirect(`/?success=false&error=User%20already%20exists&${params}`);
+    }
     const accountMatched = await common.dbClient.getAccountByCredentials(
       req.body
     );
@@ -88,7 +103,11 @@ router.post(
     //   .map((a) => `${a}=${req.body[a]}`)
     //   .join("&");
     // return res.redirect(`/login?success=false&${params}`);
-    return res.status(401).send({message: "Authorization has been refused for those credentials"});
+    return res
+      .status(401)
+      .send({
+        message: "Authorization has been refused for those credentials",
+      });
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url

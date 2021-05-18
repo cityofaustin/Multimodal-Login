@@ -24,12 +24,13 @@ delete process.env.BROWSER;
 
 const app = express();
 
-if (
-  process.env.ENVIRONMENT === "DEVELOPMENT" ||
-  process.env.ENVIRONMENT === "HEROKU"
-) {
-  app.use(cors());
-}
+// if (
+// process.env.ENVIRONMENT === "DEVELOPMENT" ||
+// process.env.ENVIRONMENT === "HEROKU"
+// ) {
+// NOTE: always use express cors as nginx doesn't send cors on failure
+app.use(cors());
+// }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload({ useTempFiles: true }));
