@@ -7,6 +7,16 @@ body {
   overflow: hidden;
 }
 
+.error {
+  text-align: center;
+  min-width: 1px;
+  height: 15px;
+  margin-top: 6px;
+  color: #d95868;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .wave-container {
   position: absolute;
   z-index: -1;
