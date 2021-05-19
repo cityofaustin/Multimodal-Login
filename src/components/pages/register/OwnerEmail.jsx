@@ -46,7 +46,7 @@ export default class OwnerEmail extends Component {
   render() {
     const { email, username, useEmail, error } = { ...this.state };
     const { appSettings } = { ...this.props };
-    const titleSetting = appSettings.find(
+    const titleSetting = appSettings && appSettings.find(
       (a) => a.settingName === "title"
     );
     const title = titleSetting ? titleSetting.settingValue : undefined;
