@@ -1,6 +1,7 @@
 @import "./variables.scss";
 
-html, body {
+html,
+body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -26,7 +27,7 @@ body {
   width: 100vw;
   overflow-x: visible;
   svg {
-    overflow:auto;
+    overflow: auto;
   }
 }
 
@@ -47,7 +48,8 @@ body {
   will-change: width;
 }
 
-input[type=button]:disabled, input[type=submit]:disabled {
+input[type="button"]:disabled,
+input[type="submit"]:disabled {
   background-color: #9a9a9a;
   cursor: not-allowed;
 }
@@ -94,7 +96,7 @@ input[type=button]:disabled, input[type=submit]:disabled {
       opacity: 0;
     }
     .display-none {
-      display: none!important;
+      display: none !important;
     }
     .section {
       height: 100vh;
@@ -216,6 +218,20 @@ input[type=button]:disabled, input[type=submit]:disabled {
             margin-top: 26px;
             display: flex;
             align-items: center;
+            div.error {
+              color: #8e3c3c;
+              font-size: 15px;
+              font-weight: 500;
+            }
+            input.error {
+              border: 1px solid #8e3c3c;
+            }
+            a {
+              font-size: 15px;
+              color: #2975eb;
+              text-decoration: none;
+              padding-bottom: 8px;
+            }
             > div:nth-child(2) {
               width: 154px;
               padding-left: 20.5px;

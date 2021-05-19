@@ -16,6 +16,7 @@ import OwnerPalmQ from './register/quiz/OwnerPalmQ';
 import OwnerSecurityQ from './register/quiz/OwnerSecurityQ';
 import OwnerLoginRecommend from './register/OwnerLoginRecommend';
 import LoginMethodSetup from './register/login-method-setup/LoginMethodSetup';
+import UrlUtil from '../../util/url-util';
 
 // https://stackoverflow.com/a/30355080/6907541
 if (process.env.BROWSER) {
@@ -26,9 +27,30 @@ if (process.env.BROWSER) {
 class Register extends Component {
   constructor() {
     super();
+
+    let step = 1;
+    let emailItem;
+    if (UrlUtil.getQueryVariable('error') === 'user-exists') {
+      step = 2;
+      if(UrlUtil.getQueryVariable('type') === 'email') {
+        emailItem = {
+          email: UrlUtil.getQueryVariable('user'),
+          username: "",
+          useEmail: true
+        }
+      } else {
+        emailItem = {
+          email: "",
+          username: UrlUtil.getQueryVariable('user'),
+          useEmail: false
+        }
+      }
+    }
+
     this.state = {
+      appSettings: [],
       selectedRole: 'owner',
-      step: 1,
+      step,
       // selectedRole: 'owner',
       // step: 10,
       isAnimatingForward: false,
@@ -36,7 +58,7 @@ class Register extends Component {
       faceRegister: false,
       faceTemplate: undefined,
       totalSteps: 10,
-      emailItem: undefined,
+      emailItem,
       questions: {
         forgetsPassword: undefined,
         devicesWithCamera: undefined,
@@ -66,14 +88,14 @@ class Register extends Component {
   }
 
   loadAppSettings = async () => {
+    let {appSettings} = {...this.state};
     try {
       const url = "api/app-settings";
       const init = {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       };
-      const response = await fetch(url, init);
-      const appSettings = await response.json();
+      appSettings = await (await fetch(url, init)).json();
       const titleSetting = appSettings.find(
         (a) => a.settingName === "title"
       );
@@ -84,6 +106,7 @@ class Register extends Component {
       console.log("Error!");
       console.log(err);
     }
+    this.setState({appSettings});
   }
 
   handleInputChange = (e) => {
@@ -252,6 +275,7 @@ class Register extends Component {
       textItem,
       palmItem,
       securityItems,
+      appSettings
     } = {
       ...this.state,
     };
@@ -303,6 +327,7 @@ class Register extends Component {
                   emailItem={emailItem}
                   handleGoBack={this.handleGoBack}
                   handleGoForward={this.handleGoForward}
+                  appSettings={appSettings}
                 />
               );
             }

@@ -110,7 +110,6 @@ class Index extends Component {
                 </div>
                 <div className="sub-section">
                   <img src={img} alt="" />
-                  {UrlUtil.getQueryVariable('error') && <div className="error">{UrlUtil.getQueryVariable('error')}</div>}
                   <div className="already">Already a user?</div>
                   <form method="GET" action="login">
                     {this.renderHiddenInputs()}
