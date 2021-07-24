@@ -11,7 +11,10 @@ import {
   H2_90,
   H2_135,
 } from "./gaussian";
-import storedFeatures from "./palmlinedb.json";
+// TODO: commenting this out for now since we are not using palm recognition
+// and run run build does not currently copy this file over to dist
+// import storedFeatures from "./palmlinedb.json";
+const storedFeatures = [];
 
 const publicPath = process.env.FE ? "" : "/public";
 if (process.env.BROWSER) {
