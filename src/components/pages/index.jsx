@@ -69,8 +69,8 @@ class Index extends Component {
         />
         <input
           type="hidden"
-          name="redirect_url"
-          value={UrlUtil.getQueryVariable('redirect_url')}
+          name="redirect_uri"
+          value={UrlUtil.getQueryVariable('redirect_uri')}
         />
         <input
           type="hidden"

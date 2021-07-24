@@ -611,6 +611,9 @@ class MongoDbClient {
           ? successfulLoginPasswords + 1
           : successfulLoginPasswords;
       }
+      if (body.text && loginType.itemtype === "TextLoginType") {
+        successfulLoginPasswords++;
+      }
     }
 
     if (successfulLoginPasswords >= REQUIRED_PASSWORDS) {

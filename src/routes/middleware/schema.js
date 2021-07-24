@@ -5,7 +5,7 @@ module.exports = {
     .keys({
       client_id: Joi.string().optional().allow(""),
       response_type: Joi.string().optional().allow(""),
-      redirect_url: Joi.string().optional().allow(""),
+      redirect_uri: Joi.string().optional().allow(""),
       scope: Joi.string().optional().allow(""),
       state: Joi.string().optional().allow(""),
       username: Joi.string().min(1),

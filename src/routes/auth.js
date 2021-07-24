@@ -58,15 +58,15 @@ router.post(
 
     const params = [
       "client_id",
-      "redirect_uri",
       "response_type",
+      "redirect_uri",
       "grant_type",
-      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
       "scope",
+      "state", // could be used to prevent CSRF https://www.npmjs.com/package/csurf
     ]
       .map((a) => `${a}=${req.body[a]}`)
       .join("&");
-    return res.redirect(`/oauth?success=false&${params}`);
+    return res.redirect(`/register?success=false&error=no-valid-login-methods&${params}`);
   },
   (req, res, next) => {
     // sends us to our redirect with an authorization code in our url

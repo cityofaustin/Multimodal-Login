@@ -77,10 +77,10 @@ class SocialSupportSetup extends Component {
           value={UrlUtil.getQueryVariable("response_type")}
         />
         <input
-          id="redirect_url"
-          name="redirect_url"
+          id="redirect_uri"
+          name="redirect_uri"
           type="hidden"
-          value={UrlUtil.getQueryVariable("redirect_url")}
+          value={UrlUtil.getQueryVariable("redirect_uri")}
         />
         <input id="scope" name="scope" type="hidden" value="" />
         <input id="state" name="state" type="hidden" value="" />
