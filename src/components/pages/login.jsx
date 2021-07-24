@@ -7,6 +7,7 @@ import UrlUtil from "../../util/url-util";
 import axios from "axios";
 import LoginMethods from "./login/LoginMethods";
 import EthCrypto from "eth-crypto";
+import LoaderSvg from "../svg/LoaderSvg";
 // import opencv from '../../workers/opencv-4-3-0.js';
 // import test from '../../fonts/Montserrat/Montserrat-Regular.ttf'
 
@@ -24,6 +25,7 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
+      isLoading: false,
       username: "",
       // username: "adamtest",
       password: "",
@@ -99,25 +101,42 @@ class Login extends React.Component {
     e.preventDefault();
 
     const { username } = { ...this.state };
+    this.setState({ isLoading: true });
     let { findUserError, loginMethods, securityQuestions } = { ...this.state };
-    const input = "/api/users/login-info";
-    const init = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ usernameOrEmail: username }),
-    };
-    const httpResponse = await fetch(input, init);
-    const response = await httpResponse.json();
-    if (response.loginMethods) {
-      findUserError = "";
-      loginMethods = response.loginMethods;
-      securityQuestions = response.securityQuestions ? response.securityQuestions.map((sq) => {
-        return { answer: "", question: sq };
-      }) : [];
-    } else {
-      findUserError = "No account found with that username";
+    try {
+      const input = "/api/users/login-info";
+      const init = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usernameOrEmail: username }),
+      };
+      const httpResponse = await fetch(input, init);
+      const response = await httpResponse.json();
+      if (response.loginMethods) {
+        findUserError = "";
+        loginMethods = response.loginMethods;
+        securityQuestions = response.securityQuestions
+          ? response.securityQuestions.map((sq) => {
+              return { answer: "", question: sq };
+            })
+          : [];
+      } else {
+        findUserError = "No account found with that username";
+      }
+      this.setState({
+        findUserError,
+        loginMethods,
+        securityQuestions,
+        isLoading: false,
+      });
+    } catch (err) {
+      this.setState({
+        findUserError: "Something went wrong",
+        loginMethods,
+        securityQuestions,
+        isLoading: false,
+      });
     }
-    this.setState({ findUserError, loginMethods, securityQuestions });
   };
 
   handleInputChange = (e) => {
@@ -151,7 +170,7 @@ class Login extends React.Component {
   };
 
   renderUsernamePrompt() {
-    const { username, findUserError } = { ...this.state };
+    const { username, findUserError, isLoading } = { ...this.state };
     return (
       <div className="username-container">
         <div className="section">
@@ -159,7 +178,9 @@ class Login extends React.Component {
           <div className="subtitle">Help us find your account</div>
           <form onSubmit={(e) => this.findUser(e)}>
             <div className="card">
-              <ContactSvg />
+              <div style={{ marginTop: "-20px" }}>
+                <ContactSvg />
+              </div>
               <div className="username">E-mail or Username</div>
               <div className="prompt">
                 Please enter your e-mail or username below...
@@ -183,7 +204,6 @@ class Login extends React.Component {
                   <Fragment>Failed login attempt</Fragment>
                 )}
               </div>
-
               {/* <div className="error">{findUserError}</div> */}
               <input
                 className="find-user"
@@ -191,6 +211,11 @@ class Login extends React.Component {
                 value="Find me"
                 disabled={username.length < 1}
               />
+              {isLoading && (
+                <div className="rotate">
+                  <LoaderSvg />
+                </div>
+              )}
               {/* TODO: not functional so commenting out for now. */}
               {/* <div className="forgot">Forgot your username?</div> */}
             </div>
