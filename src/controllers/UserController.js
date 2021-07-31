@@ -40,8 +40,14 @@ class UserController {
       let res = await common.dbClient.getLoginInfoByUsernameOrEmail(
         usernameOrEmail
       );
+      if (!res.loginMethods) {
+        response.json(res);
+        return;
+      }
       // Don't show social support option if the owner has none enabled.
-      res.loginMethods = res.loginMethods.filter(lm => lm !== 'SocialSupportType');
+      res.loginMethods = res.loginMethods.filter(
+        (lm) => lm !== "SocialSupportType"
+      );
       try {
         const user = await common.dbClient.findUserByUsernameOrEmail(
           usernameOrEmail
@@ -57,8 +63,8 @@ class UserController {
         };
         let res2 = await fetch(url, init);
         const data = await res2.json();
-        if(data.isEnabled) {
-          res.loginMethods.push('SocialSupportType');
+        if (data.isEnabled) {
+          res.loginMethods.push("SocialSupportType");
         }
       } catch (err) {
         console.error(err.stack);
