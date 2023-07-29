@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const baseOptions = {
   discriminatorKey: "itemtype", // our discriminator key, could be anything
@@ -6,14 +6,15 @@ const baseOptions = {
 };
 
 // Our Base schema: these properties will be shared with our "real" schemas
-const LoginTypeBase = mongoose.model(
-  "LoginTypeBase",
-  new mongoose.Schema(
-    {
-      loginTypeName: { type: String, required: false },
-    },
-    baseOptions
-  )
+const LoginTypeBaseSchema = new mongoose.Schema(
+  {
+    loginTypeName: { type: String, required: false },
+  },
+  baseOptions
 );
 
-module.exports = mongoose.model("LoginTypeBase");
+const LoginTypeBase =
+  mongoose.models.LoginTypeBase ||
+  mongoose.model("LoginTypeBase", LoginTypeBaseSchema);
+
+export default LoginTypeBase;

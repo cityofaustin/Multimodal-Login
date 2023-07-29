@@ -1,33 +1,39 @@
-const common = require("../common/common");
-const Crypto = require("crypto");
+import crypto from "crypto";
 
-module.exports = {
-  store: async (guid, key) => {
-    return module.exports.storeToDb(guid, key);
-  },
-  retrieve: async (guid) => {
-    return module.exports.retrieveFromDb(guid);
-  },
+import common from "../common/common";
 
-  storeToDb: async (guid, key) => {
-    let cipher = Crypto.createCipher("aes-256-cbc", process.env.AUTH_SECRET);
-    let encryptedKey = cipher.update(key, "utf8", "hex");
-    encryptedKey += cipher.final("hex");
+const ENC_KEY = process.env.AUTH_SECRET.padEnd(32, "0");
+const IV = "5183666c72eec9e4";
 
-    await common.dbClient.store(guid, encryptedKey);
-  },
+async function store(guid, key) {
+  return storeToDb(guid, key);
+}
+async function retrieve(guid) {
+  return retrieveFromDb(guid);
+}
 
-  retrieveFromDb: async (guid) => {
-    const keyObj = await common.dbClient.retrieve(guid);
+async function storeToDb(guid, key) {
+  let cipher = crypto.createCipheriv("aes-256-cbc", ENC_KEY, IV);
+  let encryptedKey = cipher.update(key, "utf8", "hex");
+  encryptedKey += cipher.final("hex");
 
-    let decipher = Crypto.createDecipher(
-      "aes-256-cbc",
-      process.env.AUTH_SECRET
-    );
+  await common.dbClient.store(guid, encryptedKey);
+}
 
-    let decryptedKey = decipher.update(keyObj.encryptedKey, "hex", "utf8");
-    decryptedKey += decipher.final("utf8");
+async function retrieveFromDb(guid) {
+  const keyObj = await common.dbClient.retrieve(guid);
 
-    return decryptedKey;
-  },
+  let decipher = crypto.createDecipheriv("aes-256-cbc", ENC_KEY, IV);
+
+  let decryptedKey = decipher.update(keyObj.encryptedKey, "hex", "utf8");
+  decryptedKey += decipher.final("utf8");
+
+  return decryptedKey;
+}
+
+const secureKeyStorage = {
+  store,
+  retrieve,
 };
+
+export default secureKeyStorage;

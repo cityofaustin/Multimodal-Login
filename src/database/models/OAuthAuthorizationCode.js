@@ -10,9 +10,8 @@ const OAuthAuthorizationCodeSchema = new mongoose.Schema({
   userId: { type: String },
 });
 
-const OAuthAuthorizationCode = mongoose.model(
-  "OAuthAuthorizationCode",
-  OAuthAuthorizationCodeSchema
-);
+const OAuthAuthorizationCode =
+  mongoose.models.OAuthAuthorizationCode ||
+  mongoose.model("OAuthAuthorizationCode", OAuthAuthorizationCodeSchema);
 
 export default OAuthAuthorizationCode;

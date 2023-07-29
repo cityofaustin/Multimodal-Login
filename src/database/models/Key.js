@@ -1,9 +1,9 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-var KeySchema = new mongoose.Schema({
+const KeySchema = new mongoose.Schema({
   uuid: { type: String, index: true },
   encryptedKey: String,
 });
 
-const Key = mongoose.model("Key", KeySchema);
-module.exports = Key;
+const Key = mongoose.models.Key || mongoose.model("Key", KeySchema);
+export default Key;

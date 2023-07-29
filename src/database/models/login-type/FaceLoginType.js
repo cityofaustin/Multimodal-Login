@@ -1,13 +1,13 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const LoginTypeBase = require("./LoginTypeBase");
+import LoginTypeBase from "./LoginTypeBase";
 
-const FaceLoginType = LoginTypeBase.discriminator(
-  "FaceLoginType",
-  new mongoose.Schema({
-    faceGuidSalt: { type: String, required: true },
-    faceGuidHash: { type: String, required: true },
-  })
-);
+const FaceLoginTypeSchema = new mongoose.Schema({
+  faceGuidSalt: { type: String, required: true },
+  faceGuidHash: { type: String, required: true },
+});
+const FaceLoginType =
+  mongoose.models.FaceLoginType ||
+  LoginTypeBase.discriminator("FaceLoginType", FaceLoginTypeSchema);
 
-module.exports = mongoose.model("FaceLoginType");
+export default FaceLoginType;

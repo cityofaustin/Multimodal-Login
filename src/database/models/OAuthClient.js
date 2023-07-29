@@ -7,6 +7,8 @@ const OAuthClientSchema = new mongoose.Schema({
   grants: { type: Array },
 });
 
-const OAuthClient = mongoose.model("OAuthClient", OAuthClientSchema);
+const OAuthClient =
+  mongoose.models.OAuthClient ||
+  mongoose.model("OAuthClient", OAuthClientSchema);
 
-module.exports = OAuthClient;
+export default OAuthClient;

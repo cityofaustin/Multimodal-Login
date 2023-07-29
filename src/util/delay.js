@@ -1,4 +1,3 @@
-
 export default async (timeout) => {
   return new Promise((resolve, reject) => {
     try {
@@ -9,4 +8,4 @@ export default async (timeout) => {
       reject(err);
     }
   });
-}
+};
