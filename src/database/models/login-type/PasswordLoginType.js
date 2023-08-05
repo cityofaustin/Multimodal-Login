@@ -1,12 +1,12 @@
-var mongoose = require("mongoose");
-const LoginTypeBase = require("./LoginTypeBase");
+import mongoose from "mongoose";
+import LoginTypeBase from "./LoginTypeBase";
 
-const PasswordLoginType = LoginTypeBase.discriminator(
-  "PasswordLoginType",
-  new mongoose.Schema({
-    passwordSalt: { type: String, required: true },
-    passwordHash: { type: String, required: true },
-  })
-);
+const PasswordLoginTypeSchema = new mongoose.Schema({
+  passwordSalt: { type: String, required: true },
+  passwordHash: { type: String, required: true },
+});
+const PasswordLoginType =
+  mongoose.models.PasswordLoginType ||
+  LoginTypeBase.discriminator("PasswordLoginType", PasswordLoginTypeSchema);
 
-module.exports = mongoose.model("PasswordLoginType");
+export default PasswordLoginType;

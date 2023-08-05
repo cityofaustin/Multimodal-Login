@@ -1,4 +1,4 @@
-const jsonwebtoken = require("jsonwebtoken");
+import jsonwebtoken from "jsonwebtoken";
 
 function getTokenFromHeader(req) {
   if (
@@ -39,4 +39,4 @@ var auth = {
   },
 };
 
-module.exports = auth;
+export default auth;

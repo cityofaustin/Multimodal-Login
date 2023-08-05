@@ -1,11 +1,5 @@
-import common from '../common/common';
-
-let fetch;
-if (!process.env.BROWSER) {
-  fetch = require('node-fetch');
-} else {
-  fetch = window.fetch;
-}
+import axios from 'axios';
+import common from "../common/common";
 
 class CognitiveFaceService {
   // ref: api https://eastus.dev.cognitive.microsoft.com/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236
@@ -19,16 +13,16 @@ class CognitiveFaceService {
   // ref: https://azure.microsoft.com/en-us/pricing/details/cognitive-services/face-api/
   // NOTE: the api is on the free plan, which mean's make api calls sparingly. Specifically no more than 20 per minute and 30,000 free per month.
   static uriBase =
-    'https://face-api-mypass.cognitiveservices.azure.com/face/v1.0';
-  static subscriptionKey = '8c0198ff8f774e5eacbe5f18ab29f49a';
-  static subscriptionKey2 = '90ee32d0112e47fa912cd3f709ca512c';
-  static personGroupId = 'mypasstest';
+    "https://face-api-mypass.cognitiveservices.azure.com/face/v1.0";
+  static subscriptionKey = "8c0198ff8f774e5eacbe5f18ab29f49a";
+  static subscriptionKey2 = "90ee32d0112e47fa912cd3f709ca512c";
+  static personGroupId = "mypasstest";
 
   static params = {
-    recognitionModel: 'recognition_02', // "recognition_02" is recommended since its overall accuracy is improved compared with "recognition_01".
-    returnFaceId: 'true',
-    returnFaceLandmarks: 'false',
-    returnRecognitionModel: 'true',
+    recognitionModel: "recognition_02", // "recognition_02" is recommended since its overall accuracy is improved compared with "recognition_01".
+    returnFaceId: "true",
+    returnFaceLandmarks: "false",
+    returnRecognitionModel: "true",
     // NOTE: not using these as not needed but leaving for reference.
     // returnFaceAttributes:
     //   'age,gender,headPose,smile,facialHair,glasses,' +
@@ -37,39 +31,42 @@ class CognitiveFaceService {
 
   // Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks, and attributes.
   static async detectFromUrl(imageUrl) {
-    let input = new URL(this.uriBase + '/detect');
+    let input = new URL(this.uriBase + "/detect");
     for (const key in this.params) {
       input.searchParams.append(key, this.params[key]);
     }
-
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: JSON.stringify({ url: imageUrl }),
-    };
-    const httpResponse = await fetch(input, init);
+      data: {
+        url: imageUrl,
+      },
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
 
   static async detectFromBlob(blob) {
     // Browser only, nodejs doesn't suppoort blobs
-    let input = new URL(this.uriBase + '/detect');
+    let input = new URL(this.uriBase + "/detect");
     for (const key in this.params) {
       input.searchParams.append(key, this.params[key]);
     }
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/octet-stream',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: blob,
-    };
-    const httpResponse = await fetch(input, init);
+      data: {
+        url: blob,
+      },
+    });
     const jsonResponse = await httpResponse.json();
 
     return jsonResponse;
@@ -78,22 +75,22 @@ class CognitiveFaceService {
   static async detectFromDataUrl(b64Str) {
     // Server only, nodejs Buffer type for testing
     // remove header parts
-    const data = b64Str.replace(/^data:image\/\w+;base64,/, '');
-    const bufferData = new Buffer(data, 'base64');
+    const data = b64Str.replace(/^data:image\/\w+;base64,/, "");
+    const bufferData = new Buffer(data, "base64");
 
-    let input = new URL(this.uriBase + '/detect');
+    let input = new URL(this.uriBase + "/detect");
     for (const key in this.params) {
       input.searchParams.append(key, this.params[key]);
     }
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/octet-stream',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: bufferData,
-    };
-    const httpResponse = await fetch(input, init);
+      data: bufferData,
+    });
     const jsonResponse = await httpResponse.json();
 
     return jsonResponse;
@@ -101,16 +98,18 @@ class CognitiveFaceService {
 
   // Verify whether two faces belong to a same person
   static async verifyFaceToFace(faceId1, faceId2) {
-    let input = new URL(this.uriBase + '/verify');
-    const init = {
-      method: 'POST',
+    let input = new URL(this.uriBase + "/verify");
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: JSON.stringify({ faceId1, faceId2 }),
-    };
-    const httpResponse = await fetch(input, init);
+      data: {
+        url: { faceId1, faceId2 },
+      },
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -128,17 +127,17 @@ class CognitiveFaceService {
 
   // Verify whether one face matches person
   static async verifyFaceToPerson(faceId, personId, personGroupId) {
-    let input = new URL(this.uriBase + '/verify');
+    let input = new URL(this.uriBase + "/verify");
     console.log({ faceId, personId, personGroupId });
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: JSON.stringify({ faceId, personId, personGroupId }),
-    };
-    const httpResponse = await fetch(input, init);
+      data: { faceId, personId, personGroupId },
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -149,9 +148,9 @@ class CognitiveFaceService {
     console.log(JSON.stringify(personGroupResponse));
     if (
       personGroupResponse.error &&
-      personGroupResponse.error.code === 'PersonGroupNotFound'
+      personGroupResponse.error.code === "PersonGroupNotFound"
     ) {
-      console.log('create group then');
+      console.log("create group then");
       const responseCreatePersonGroup = await this.createPersonGroup(
         this.personGroupId
       );
@@ -170,12 +169,12 @@ class CognitiveFaceService {
     // await this.deletePersonGroupPerson(personGroupPersonResponse.personId);
     // }
     // if(personGroupPersonResponse.error && personGroupPersonResponse.error.code === 'PersonNotFound') {
-    console.log({personGroupId: this.personGroupId, username});
+    console.log({ personGroupId: this.personGroupId, username });
     const responseCreatePersonGroupPerson = await this.createPersonGroupPerson(
       this.personGroupId,
       username
     );
-    console.log('---created new user');
+    console.log("---created new user");
     console.log(responseCreatePersonGroupPerson);
     const personId = responseCreatePersonGroupPerson.personId;
     // matchedUser.facePersonId = personId;
@@ -193,36 +192,36 @@ class CognitiveFaceService {
 
   // person group create
   static async createPersonGroup(personGroupId) {
-    let input = new URL(this.uriBase + '/persongroups/' + personGroupId);
+    let input = new URL(this.uriBase + "/persongroups/" + personGroupId);
 
-    const init = {
-      method: 'PUT',
+    const httpResponse = await axios({
+      method: "PUT",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: JSON.stringify({
+      data: {
         name: personGroupId,
-        userData: 'the main group for the mypass app',
-        recognitionModel: 'recognition_02',
-      }),
-    };
-    const httpResponse = await fetch(input, init);
+        userData: "the main group for the mypass app",
+        recognitionModel: "recognition_02",
+      },
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
 
   // person group get
   static async getPersonGroup(personGroupId) {
-    let input = new URL(this.uriBase + '/persongroups/' + personGroupId);
-    const init = {
-      method: 'GET',
+    let input = new URL(this.uriBase + "/persongroups/" + personGroupId);
+    const httpResponse = await axios({
+      method: "GET",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-    };
-    const httpResponse = await fetch(input, init);
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -231,16 +230,16 @@ class CognitiveFaceService {
 
   static async getPersonGroupPerson(personGroupId, personId) {
     let input = new URL(
-      this.uriBase + '/persongroups/' + personGroupId + '/persons/' + personId
+      this.uriBase + "/persongroups/" + personGroupId + "/persons/" + personId
     );
-    const init = {
-      method: 'GET',
+    const httpResponse = await axios({
+      method: "GET",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-    };
-    const httpResponse = await fetch(input, init);
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -248,20 +247,20 @@ class CognitiveFaceService {
   // person group person create
   static async createPersonGroupPerson(personGroupId, username) {
     let input = new URL(
-      this.uriBase + '/persongroups/' + personGroupId + '/persons'
+      this.uriBase + "/persongroups/" + personGroupId + "/persons"
     );
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body: JSON.stringify({
-        name: username.length <= 0 ? 'generic-user' : username,
-        userData: 'a registered mypass user',
-      }),
-    };
-    const httpResponse = await fetch(input, init);
+      data: {
+        name: username.length <= 0 ? "generic-user" : username,
+        userData: "a registered mypass user",
+      },
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -270,11 +269,11 @@ class CognitiveFaceService {
   static async addFacePersonGroupPerson(personGroupId, personId, imageData) {
     let input = new URL(
       this.uriBase +
-        '/persongroups/' +
+        "/persongroups/" +
         personGroupId +
-        '/persons/' +
+        "/persons/" +
         personId +
-        '/persistedFaces'
+        "/persistedFaces"
     );
     let body;
     if (!process.env.BROWSER) {
@@ -285,15 +284,15 @@ class CognitiveFaceService {
       // then it's a blob and no further processing is needed
       body = imageData;
     }
-    const init = {
-      method: 'POST',
+    const httpResponse = await axios({
+      method: "POST",
+      url: input,
       headers: {
-        'Content-Type': 'application/octet-stream',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-      body,
-    };
-    const httpResponse = await fetch(input, init);
+      data: body,
+    });
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
   }
@@ -301,16 +300,16 @@ class CognitiveFaceService {
   // person group person list
   static async personGroupPersonList(personGroupId) {
     let input = new URL(
-      this.uriBase + '/persongroups/' + personGroupId + '/persons'
+      this.uriBase + "/persongroups/" + personGroupId + "/persons"
     );
-    const init = {
-      method: 'GET',
+    const httpResponse = await axios({
+      method: "GET",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-    };
-    const httpResponse = await fetch(input, init);
+    });
     console.log(httpResponse.status);
     const jsonResponse = await httpResponse.json();
     return jsonResponse;
@@ -319,33 +318,33 @@ class CognitiveFaceService {
   static async deletePersonGroupPerson(personId) {
     let input = new URL(
       this.uriBase +
-        '/persongroups/' +
+        "/persongroups/" +
         this.personGroupId +
-        '/persons/' +
+        "/persons/" +
         personId
     );
-    const init = {
-      method: 'DELETE',
+    const httpResponse = await axios({
+      method: "DELETE",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-    };
-    const httpResponse = await fetch(input, init);
+    });
     console.log(httpResponse.status);
     return true;
   }
 
   static async personGroupList() {
-    let input = new URL(this.uriBase + '/persongroups');
-    const init = {
-      method: 'GET',
+    let input = new URL(this.uriBase + "/persongroups");
+    const httpResponse = await axios({
+      method: "GET",
+      url: input,
       headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.subscriptionKey,
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
       },
-    };
-    const httpResponse = await fetch(input, init);
+    });
     console.log(httpResponse.status);
     const jsonResponse = await httpResponse.json();
     return jsonResponse;

@@ -1,7 +1,7 @@
-var mongoose = require("mongoose");
-var uniqueValidator = require("mongoose-unique-validator");
+import mongoose from "mongoose";
+import uniqueValidator from "mongoose-unique-validator";
 
-var OAuthUserSchema = new mongoose.Schema({
+const OAuthUserSchema = new mongoose.Schema({
   oauthId: { type: String, index: true },
   username: {
     type: String,
@@ -23,5 +23,7 @@ var OAuthUserSchema = new mongoose.Schema({
 
 OAuthUserSchema.plugin(uniqueValidator, { message: "is already taken." });
 
-const OAuthUser = mongoose.model("OAuthUser", OAuthUserSchema);
-module.exports = OAuthUser;
+// https://stackoverflow.com/questions/62440264/mongoose-nextjs-model-is-not-defined-cannot-overwrite-model-once-compiled
+const OAuthUser = mongoose.models.OAuthUser || mongoose.model("OAuthUser", OAuthUserSchema);
+
+export default OAuthUser;

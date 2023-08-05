@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import LoginTypeBase from "./LoginTypeBase";
 
-LoginTypeBase.discriminator("SocialSupportType", new mongoose.Schema({}));
+const SocialSupportTypeSchema = new mongoose.Schema({});
+const SocialSupportType =
+  mongoose.models.SocialSupportType ||
+  LoginTypeBase.discriminator("SocialSupportType", SocialSupportTypeSchema);
 
-export default mongoose.model("SocialSupportType");
+export default SocialSupportType;
