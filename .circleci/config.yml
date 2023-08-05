@@ -3,13 +3,13 @@ orbs:
   node: circleci/node@5.1.0
 jobs:
   build-and-test:
-    docker:
-      - image: cimg/base:stable
+    executor: node/default
     steps:
       - checkout
-      - node/install:
-          install-yarn: false
-          node-version: '18.12'
+      - run: sudo npm install -g npm@latest
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
       - run: npm run test
   # deploy-staging:
   #   executor:
