@@ -3,12 +3,10 @@ import { handleIOSBrowser } from "../../../util/browser-util";
 import GoBackSvg from "../../../svg/GoBackSvg";
 import PasswordSvg from "../../../svg/PasswordSvg";
 import OptionSvg from "../../../svg/OptionSvg";
-import {
-  animateIn,
-  getSectionClassName,
-} from "../../../util/animation-util";
+import { animateIn, getSectionClassName } from "../../../util/animation-util";
 
 import "./OwnerPasswordQ.scss";
+import "../../../svg/OptionSvg.scss";
 
 export default class OwnerPasswordQ extends Component {
   static defaultProps = {

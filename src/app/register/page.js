@@ -151,15 +151,18 @@ const Register = () => {
 
   const handleGoBack = async (selectedRole, step, data) => {
     const { totalSteps, questions } = { ...state };
+    let newState = { ...state };
     if (data && Object.keys(data)) {
       const key = Object.keys(data)[0];
-      setState({ ...state, [key]: data[key] });
+      newState = { ...newState, [key]: data[key] };
+      setState(newState);
     }
     if (step === 1) {
       goBackToWelcome();
       return;
     }
-    setState({ ...state, isAnimatingBackward: true });
+    newState = { ...newState, isAnimatingBackward: true }
+    setState(newState);
     // waiting for react to put on dom, setState callback didn't seem
     // to do the trick so put in a short delay
     await delay(100);
@@ -178,12 +181,13 @@ const Register = () => {
     elObj.wave.style.transform = `translateX(-${(step - 1) * 360}px)`;
     elObj.progress.style.width = ((step - 1) * 100) / totalSteps + "%";
     await delay(1500);
-    setState({
-      ...state,
+    newState = {
+      ...newState,
       selectedRole: step - 1 === 0 ? undefined : selectedRole,
       step: step - 1,
       isAnimatingBackward: false,
-    });
+    }
+    setState(newState);
   };
 
   const handleGoForward = async (selectedRole, step, data) => {

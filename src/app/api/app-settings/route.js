@@ -1,3 +1,4 @@
+// NOTE: this is not being used, using the express route
 // https://nextjs.org/docs/app/building-your-application/routing/router-handlers
 import axios from "axios";
 import { NextResponse as NextRes } from "next/server";

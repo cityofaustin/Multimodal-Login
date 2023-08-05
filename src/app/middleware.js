@@ -1,4 +1,7 @@
 import bodyParser from "body-parser";
+import cors from "cors";
+import fileUpload from "express-fileupload";
+
 // import path from "path";
 // import oauthServer from "../services/OauthService";
 // const favicon = require("serve-favicon");
@@ -9,8 +12,12 @@ class Middleware {
   }
 
   async init() {
+    // NOTE: always use express cors as nginx doesn't send cors on failure
+    this.express.use(cors());
     this.express.use(bodyParser.json());
-    this.express.use(bodyParser.urlencoded({ extended: false }));
+    this.express.use(bodyParser.urlencoded({ extended: true }));
+    this.express.use(fileUpload({ useTempFiles: true }));
+    // this.express.use(bodyParser.urlencoded({ extended: false }));
     // this.express.use(
     //   favicon(path.join(__dirname, "..", "public", "favicon.png"))
     // );

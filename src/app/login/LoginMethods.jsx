@@ -306,7 +306,7 @@ class LoginMethods extends Component {
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     window.location.href = UrlUtil.getQueryVariable(
-                      "redirect_uri"
+                      "redirect_url"
                     );
                   }}
                 >

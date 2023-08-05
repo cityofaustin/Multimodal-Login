@@ -11,6 +11,7 @@ import UrlUtil from "../../util/url-util";
 import EthCrypto from "eth-crypto";
 
 import "./OwnerLoginRecommend.scss";
+import "./LoginOption.scss";
 
 export default class OwnerLoginRecommend extends Component {
   static defaultProps = {
@@ -20,8 +21,7 @@ export default class OwnerLoginRecommend extends Component {
 
   answerTitles = {
     password: "How often do you completely forget your passwords?",
-    text:
-      "In the last five years, how many times have you permanently lost your phone? ",
+    text: "In the last five years, how many times have you permanently lost your phone? ",
     palm: "How comfortable are you using your camera to scan your palm?",
     securityQuestions: "How good are you at answering security questions?",
   };

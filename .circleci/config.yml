@@ -10,34 +10,34 @@ jobs:
       - node/with-cache:
           steps:
             - run: npm install
-  deploy-staging:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/with-cache:
-          steps:
-            - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-128-18-201.us-east-2.compute.amazonaws.com "bash -s" < deployStaging.sh
-  deploy-aws:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/with-cache:
-          steps:
-            - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-138-238-132.us-east-2.compute.amazonaws.com "bash -s" < deploy.sh
+  # deploy-staging:
+  #   executor:
+  #     name: node/default
+  #   steps:
+  #     - checkout
+  #     - node/with-cache:
+  #         steps:
+  #           - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-128-18-201.us-east-2.compute.amazonaws.com "bash -s" < deployStaging.sh
+  # deploy-aws:
+  #   executor:
+  #     name: node/default
+  #   steps:
+  #     - checkout
+  #     - node/with-cache:
+  #         steps:
+  #           - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-138-238-132.us-east-2.compute.amazonaws.com "bash -s" < deploy.sh
 
-workflows:
-  test-and-deploy:
-    jobs:
-      - build-and-test
-      - deploy-staging:
-          requires:
-            - build-and-test
-      - request-testing:
-          type: approval
-          requires:
-            - build-and-test
-      - deploy-aws:
-          requires:
-            - request-testing
+# workflows:
+#   test-and-deploy:
+#     jobs:
+#       - build-and-test
+#       - deploy-staging:
+#           requires:
+#             - build-and-test
+#       - request-testing:
+#           type: approval
+#           requires:
+#             - build-and-test
+#       - deploy-aws:
+#           requires:
+#             - request-testing

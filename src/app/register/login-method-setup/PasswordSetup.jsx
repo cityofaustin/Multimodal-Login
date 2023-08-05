@@ -1,15 +1,17 @@
-import React, { Component } from 'react';
-import PasswordMethod from '../../../svg/PasswordMethod';
+import React, { Component } from "react";
+import PasswordMethod from "../../../svg/PasswordMethod";
 
 export default class PasswordSetup extends Component {
   constructor(props) {
     super(props);
-    const password = (props.passwordItem) ? props.passwordItem.password : '';
-    const confirmPassword = (props.passwordItem) ? props.passwordItem.confirmPassword : '';
+    const password = props.passwordItem ? props.passwordItem.password : "";
+    const confirmPassword = props.passwordItem
+      ? props.passwordItem.confirmPassword
+      : "";
     this.state = {
       password,
-      confirmPassword
-    }
+      confirmPassword,
+    };
   }
 
   render() {
@@ -52,11 +54,18 @@ export default class PasswordSetup extends Component {
         </div>
         <div className="submit-section">
           <input
-            style={{ width: '210px' }}
+            style={{ width: "210px" }}
             type="button"
             value="Set Password"
-            onClick={() => this.props.handleGoBack('owner', 10, {passwordItem: {password, confirmPassword}})}
-            disabled={!password || !confirmPassword || password !== confirmPassword}
+            onClick={() => {
+              debugger;
+              this.props.handleGoBack("owner", 10, {
+                passwordItem: { password, confirmPassword },
+              });
+            }}
+            disabled={
+              !password || !confirmPassword || password !== confirmPassword
+            }
           />
         </div>
       </div>

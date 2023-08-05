@@ -51,7 +51,7 @@ class UserController {
         const init = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: {
+          data: {
             secret: process.env.AUTH_SECRET,
             username: user.username,
           },

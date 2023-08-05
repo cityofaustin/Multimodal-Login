@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 import LogoSvg from "../svg/logo-svg";
 import UrlUtil from "../util/url-util";
@@ -19,12 +20,12 @@ export default function Home() {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       };
-      newAppSettings = await (await fetch(url, init)).json();
+      newAppSettings = (await axios({ url, ...init })).data;
       const titleSetting = newAppSettings.find(
         (a) => a.settingName === "title"
       );
       if (titleSetting) {
-        document.title = titleSetting.settingValue + ' Auth';
+        document.title = titleSetting.settingValue + " Auth";
       }
     } catch (err) {
       console.log("Error!");

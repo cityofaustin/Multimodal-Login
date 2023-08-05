@@ -2,11 +2,12 @@ import express from "express";
 import { celebrate } from "celebrate";
 import Schema from "./middleware/schema";
 import DebugControl from "../../util/debug";
-import oauthServer from "../../services/OauthService";
+import oauthServer, { oauth } from "../../services/OauthService";
 import common from "../../common/common";
 import secureKeyStorage from "../../common/secureKeyStorage";
 
 import auth from "../../middleware/auth";
+import { Request, Response } from "oauth2-server";
 
 const router = express.Router();
 
@@ -140,33 +141,36 @@ router.post(
 
 router.post(
   "/token",
-  (req, res, next) => {
-    DebugControl.log.flow("Token");
+  async (req, res, next) => {
+    DebugControl.log.flow("Token Before");
     next();
   },
-  tokenHandler(),
-  (req, res, next) => {
-    DebugControl.log.flow("After");
-    next();
+  async (req, res) => {
+    try {
+      const options = {
+        requireClientAuthentication: {
+          // whether client needs to provide client_secret
+          authorization_code: false,
+          accessTokenLifetime: 172800, // 2days, default 1 hour
+          refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
+        },
+      };
+      const request = new Request(req);
+      const response = new Response(res);
+      const token = await oauth.token(request, response, options);
+      token.access_token = token.accessToken;
+      token.refresh_token = token.refreshToken;
+      return res.status(200).json(token);
+      // return res.status(200).json({ test: 'foo'});
+    } catch (err) {
+      console.error(err.message);
+      if (err.code) {
+        return res.status(err.code).json({ message: err.message });
+      } else {
+        return res.status(500).json({ message: err.message });
+      }
+    }
   }
 ); // Sends back token
-
-function tokenHandler() {
-  let response;
-  try {
-    response = oauthServer.token({
-      requireClientAuthentication: {
-        // whether client needs to provide client_secret
-        authorization_code: false,
-        accessTokenLifetime: 172800, // 2days, default 1 hour
-        refreshTokenLifetime: 1209600, // 2wk, default 2 weeks
-      },
-    });
-  } catch (err) {
-    console.log("AUTH Token Error!");
-    console.log(err);
-  }
-  return response;
-}
 
 export default router;

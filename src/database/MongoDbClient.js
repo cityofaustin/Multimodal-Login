@@ -14,6 +14,7 @@ import secureKeyStorage from "../common/secureKeyStorage";
 import SocialSupportType from "./models/login-type/SocialSupportType";
 import OAuthClient from "./models/OAuthClient";
 import Key from "./models/Key";
+import LoginTypeBase from "./models/login-type/LoginTypeBase";
 
 const REQUIRED_PASSWORDS = 1;
 
@@ -217,6 +218,22 @@ async function retrieve(guid) {
   return key;
 }
 
+function validByok(publicAddress, signature, userPublicAddress) {
+  const signer = EthCrypto.recover(
+    signature,
+    EthCrypto.hash.keccak256(publicAddress) // signed message hash
+  );
+
+  if (
+    signer !== undefined &&
+    signer.toLowerCase() === userPublicAddress.toLowerCase()
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // If they are authorized to login
 async function getAccountByCredentials(body) {
   let user = null;
@@ -388,6 +405,16 @@ function validSecret(password, secretSalt, secretHash) {
   return secretHash === hash;
 }
 
+async function findUserByUserName(userName) {
+  if (userName) {
+    let user = await OAuthUser.findOne({
+      username: userName,
+    });
+    return user;
+  }
+  return undefined;
+}
+
 async function findUserByUsernameOrEmail(usernameOrEmail) {
   if (usernameOrEmail) {
     let user = await OAuthUser.findOne({
@@ -398,6 +425,214 @@ async function findUserByUsernameOrEmail(usernameOrEmail) {
   return undefined;
 }
 
+async function createSocialLogin(requestingUserId, providingUserId, uuid) {
+  const socialLogin = new SocialLogin();
+  socialLogin.uuid = uuid;
+  socialLogin.requestingUserId = requestingUserId;
+  socialLogin.providingUserId = providingUserId;
+  socialLogin.timestamp = new Date();
+
+  await socialLogin.save();
+}
+
+async function findSocialLoginByUuid(uuid) {
+  let socialLogin = await SocialLogin.findOne({
+    uuid: uuid,
+  });
+
+  return socialLogin;
+}
+
+async function getUserById(id) {
+  const user = await OAuthUser.findById(id);
+  return user;
+}
+
+async function addOneTimeCode(userId, oneTimeCode) {
+  const user = await OAuthUser.findById(userId);
+  user.oneTimeCode = oneTimeCode;
+  user.oneTimeCodeIssueDate = new Date();
+  await user.save();
+}
+
+async function getAllAuthAccounts() {
+  const authUsers = await OAuthUser.find({});
+  return authUsers;
+}
+
+async function deleteOAuthUser(username) {
+  const user = await OAuthUser.findOne({ username });
+  for (const loginType of user.loginTypes) {
+    await LoginTypeBase.findOneAndDelete({
+      _id: loginType.toString(),
+    });
+  }
+  await OAuthUser.findOneAndDelete({ username });
+}
+
+async function deleteLoginMethod(username, loginMethod) {
+  const user = await OAuthUser.findOne({ username }).populate("loginTypes");
+  if (loginMethod === "SecurityQuestionsLoginType") {
+    let securityQuestionsLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "SecurityQuestionsLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "SecurityQuestionsLoginType"
+    );
+    await user.save();
+    if (securityQuestionsLoginType) {
+      await SecurityQuestionsLoginType.findOneAndDelete({
+        _id: securityQuestionsLoginType._id.toString(),
+      });
+    }
+  }
+  if (loginMethod === "PalmLoginType") {
+    let palmLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "PalmLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "PalmLoginType"
+    );
+    await user.save();
+    if (palmLoginType) {
+      await PalmLoginType.findOneAndDelete({
+        _id: palmLoginType._id.toString(),
+      });
+    }
+  }
+  if (loginMethod === "PasswordLoginType") {
+    let passwordLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "PasswordLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "PasswordLoginType"
+    );
+    await user.save();
+    if (passwordLoginType) {
+      await PasswordLoginType.findOneAndDelete({
+        _id: passwordLoginType._id.toString(),
+      });
+    }
+  }
+  if (loginMethod === "TextLoginType") {
+    let textLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "TextLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "TextLoginType"
+    );
+    await user.save();
+    if (textLoginType) {
+      await TextLoginType.findOneAndDelete({
+        _id: textLoginType._id.toString(),
+      });
+    }
+  }
+  // TODO: other login methods
+  return user._doc;
+}
+
+async function saveLoginMethod(username, loginMethodParams) {
+  const { password, palmTemplate, text, securityQuestions } = {
+    ...loginMethodParams,
+  };
+  const user = await OAuthUser.findOne({ username }).populate("loginTypes");
+  if (password) {
+    // remove old one if there was one there
+    let passwordLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "PasswordLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "PasswordLoginType"
+    );
+    await user.save();
+    if (passwordLoginType) {
+      await PasswordLoginType.findOneAndDelete({
+        _id: passwordLoginType._id.toString(),
+      });
+    }
+    // create the new one and link it
+    passwordLoginType = new PasswordLoginType();
+    const saltHash = getSecretSaltHash(password);
+    passwordLoginType.passwordSalt = saltHash.salt;
+    passwordLoginType.passwordHash = saltHash.hash;
+    await passwordLoginType.save();
+    user.loginTypes.push(passwordLoginType);
+  }
+  if (text) {
+    let textLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "TextLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "TextLoginType"
+    );
+    await user.save();
+    if (textLoginType) {
+      await TextLoginType.findOneAndDelete({
+        _id: textLoginType._id.toString(),
+      });
+    }
+    textLoginType = new TextLoginType();
+    textLoginType.phoneNumber = text;
+    await textLoginType.save();
+    user.loginTypes.push(textLoginType);
+  }
+  if (palmTemplate) {
+    let palmLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "PalmLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "PalmLoginType"
+    );
+    await user.save();
+    if (palmLoginType) {
+      await PalmLoginType.findOneAndDelete({
+        _id: palmLoginType._id.toString(),
+      });
+    }
+    palmLoginType = new PalmLoginType();
+    // NOTE: don't hash template as need original to compare.
+    palmLoginType.palmTemplate = palmTemplate;
+    await palmLoginType.save();
+    user.loginTypes.push(palmLoginType);
+  }
+  if (securityQuestions) {
+    let securityQuestionsLoginType = user.loginTypes.find(
+      (lt) => lt.itemtype === "SecurityQuestionsLoginType"
+    );
+    user.loginTypes = user.loginTypes.filter(
+      (lt) => lt.itemtype !== "SecurityQuestionsLoginType"
+    );
+    await user.save();
+    if (securityQuestionsLoginType) {
+      await SecurityQuestionsLoginType.findOneAndDelete({
+        _id: securityQuestionsLoginType._id.toString(),
+      });
+    }
+    securityQuestionsLoginType = new SecurityQuestionsLoginType();
+    securityQuestionsLoginType.securityQuestions = JSON.parse(
+      securityQuestions
+    ).map((securityQuestion) => {
+      const question = securityQuestion.question;
+      const saltHash = getSecretSaltHash(securityQuestion.answer);
+      return {
+        question,
+        answerSalt: saltHash.salt,
+        answerHash: saltHash.hash,
+      };
+    });
+    await securityQuestionsLoginType.save();
+    user.loginTypes.push(securityQuestionsLoginType);
+  }
+  await user.save();
+  return user._doc;
+}
+
+async function saveUser(user) {
+  await user.save();
+  return user;
+}
+
 const mongoDbClient = {
   getAccountByCredentials,
   createNewOAuthUser,
@@ -405,7 +640,17 @@ const mongoDbClient = {
   getLoginInfoByUsernameOrEmail,
   store,
   retrieve,
+  findUserByUserName,
   findUserByUsernameOrEmail,
+  createSocialLogin,
+  findSocialLoginByUuid,
+  getUserById,
+  addOneTimeCode,
+  getAllAuthAccounts,
+  deleteLoginMethod,
+  saveLoginMethod,
+  saveUser,
+  deleteOAuthUser,
 };
 
 export default mongoDbClient;
